@@ -40,13 +40,6 @@
             margin: auto; 
             color: var(--text-dark);
             line-height: 1.6;
-        body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            padding: 16px 12px 40px 12px; 
-            max-width: 1050px; 
-            margin: auto; 
-            color: var(--text-dark);
-            line-height: 1.6;
             background: linear-gradient(135deg, #eef4ff 0%, #f7f9fc 45%, #eef7f2 100%);
             min-height: 100vh;
             overflow-x: hidden;
@@ -65,6 +58,7 @@
             background-clip: text;
             padding: 0 8px;
         }
+
         h2::after {
             content: "";
             display: block;
@@ -82,7 +76,6 @@
             font-size: clamp(0.95rem, 3vw, 1.1rem);
         }
 
-        /* Scanner/Input Selection Container */
         .input-selection-container {
             display: none; 
             background: #ffffff;
@@ -103,17 +96,9 @@
             font-weight: 700;
         }
 
-        .input-selection-container label::before {
-            content: "🔎";
-            font-size: 18px;
-        }
+        .input-selection-container label::before { content: "🔎"; font-size: 18px; }
 
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 14px;
-            flex-wrap: wrap;
-        }
+        .input-group { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
 
         input[type="text"] {
             flex: 1;
@@ -121,12 +106,13 @@
             padding: 14px 16px;
             border: 1.5px solid var(--border-color);
             border-radius: 10px;
-            font-size: 16px; /* prevents auto-zoom on Android/iOS */
+            font-size: 16px;
             font-family: 'Inter', sans-serif;
             transition: border-color 0.25s ease, box-shadow 0.25s ease;
             background-color: #fbfcfe;
             -webkit-appearance: none;
         }
+
         input[type="text"]:focus {
             outline: none;
             border-color: var(--primary-color);
@@ -157,119 +143,55 @@
             box-shadow: 0 5px 16px rgba(26, 115, 232, 0.45);
             transform: translateY(-2px);
         }
-
         button.action-btn:active { transform: translateY(0) scale(0.98); }
-
         .or-divider {
-            text-align: center; 
-            margin: 16px 0; 
-            color: #9aa0a6; 
-            font-weight: 700;
-            font-size: 12px;
-            letter-spacing: 1.5px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            text-align: center; margin: 16px 0; color: #9aa0a6; font-weight: 700;
+            font-size: 12px; letter-spacing: 1.5px; display: flex; align-items: center; gap: 12px;
         }
-        .or-divider::before, .or-divider::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: var(--border-color);
-        }
+        .or-divider::before, .or-divider::after { content: ""; flex: 1; height: 1px; background: var(--border-color); }
 
-        #reader { 
-            width: 100%; 
-            border-radius: 14px; 
-            overflow: hidden; 
-            margin-top: 10px; 
-            border: 2px dashed var(--border-color);
-            padding: 6px;
-        }
+        #reader { width: 100%; border-radius: 14px; overflow: hidden; margin-top: 10px; border: 2px dashed var(--border-color); padding: 6px; }
 
-        /* Hide default html5-qrcode extra UI controls (permission button / file-scan link) */
         #html5-qrcode-button-camera-permission,
         #html5-qrcode-anchor-scan-type-change,
-        .html5-qrcode-element[type="button"][style*="Request Camera"] {
-            display: none !important;
-        }
+        .html5-qrcode-element[type="button"][style*="Request Camera"] { display: none !important; }
         
-        /* Loading Status */
         #loadingStatus { 
-            color: var(--primary-dark); 
-            font-weight: 600; 
-            text-align: center; 
-            margin: 18px 0; 
-            padding: 14px;
-            background: var(--accent-blue);
-            border-radius: 10px;
-            border: 1px solid #c9dcfb;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            font-size: 14px;
+            color: var(--primary-dark); font-weight: 600; text-align: center; margin: 18px 0; 
+            padding: 14px; background: var(--accent-blue); border-radius: 10px; border: 1px solid #c9dcfb;
+            display: none; align-items: center; justify-content: center; gap: 12px; font-size: 14px;
         }
+
         .spinner {
-            width: 18px;
-            height: 18px;
-            border: 3px solid rgba(26,115,232,0.25);
-            border-top-color: var(--primary-color);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            flex-shrink: 0;
+            width: 18px; height: 18px; border: 3px solid rgba(26,115,232,0.25);
+            border-top-color: var(--primary-color); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0;
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Tab Navigation */
         .tab-bar { 
-            border-bottom: none; 
-            background-color: #eef2f7; 
-            display: none; 
-            margin-top: 26px;
-            border-radius: 14px 14px 0 0;
-            padding: 8px 8px 0 8px;
-            box-shadow: inset 0 -1px 0 rgba(0,0,0,0.04);
-            white-space: nowrap;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
+            border-bottom: none; background-color: #eef2f7; display: none; margin-top: 26px;
+            border-radius: 14px 14px 0 0; padding: 8px 8px 0 8px; box-shadow: inset 0 -1px 0 rgba(0,0,0,0.04);
+            white-space: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin;
         }
         .tab-bar::-webkit-scrollbar { height: 4px; }
 
         .tab-bar button { 
-            background-color: transparent; 
-            border: none; 
-            outline: none; 
-            cursor: pointer; 
-            padding: 14px 18px; 
-            transition: 0.25s ease; 
-            font-size: 13.5px; 
-            font-weight: 700;
-            font-family: 'Inter', sans-serif;
-            color: #5f6368;
-            border-radius: 10px 10px 0 0;
-            position: relative;
-            display: inline-block;
-            user-select: none;
+            background-color: transparent; border: none; outline: none; cursor: pointer; padding: 14px 18px; 
+            transition: 0.25s ease; font-size: 13.5px; font-weight: 700; font-family: 'Inter', sans-serif;
+            color: #5f6368; border-radius: 10px 10px 0 0; position: relative; display: inline-block; user-select: none;
         }
         .tab-bar button:hover { background-color: #ffffff; }
         .tab-bar button.active { background-color: #ffffff; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); }
-
         .general-tab.active { color: var(--primary-color); }
         .maint-tab.active { color: var(--maint-color); }
         .fail-tab.active { color: var(--fail-color); }
         .spec-tab.active { color: var(--spec-color); }
 
         .tab-bar button.active::after {
-            content: "";
-            position: absolute;
-            bottom: -1px; left: 10px; right: 10px;
-            height: 3px;
-            border-radius: 3px 3px 0 0;
+            content: ""; position: absolute; bottom: -1px; left: 10px; right: 10px; height: 3px; border-radius: 3px 3px 0 0;
         }
         .general-tab.active::after { background: linear-gradient(90deg, var(--primary-color), var(--primary-light)); }
         .maint-tab.active::after { background: linear-gradient(90deg, var(--maint-color), var(--maint-light)); }
@@ -277,42 +199,25 @@
         .spec-tab.active::after { background: linear-gradient(90deg, var(--spec-color), var(--spec-light)); }
 
         .tabcontent { 
-            display: none; 
-            padding: 22px 16px; 
-            border: 1px solid var(--border-color); 
-            border-top: none; 
-            background: #ffffff; 
-            border-radius: 0 0 14px 14px;
-            overflow-x: auto; 
-            box-shadow: 0 6px 24px rgba(0,0,0,0.05);
-            animation: fadeIn 0.35s ease;
+            display: none; padding: 22px 16px; border: 1px solid var(--border-color); border-top: none; 
+            background: #ffffff; border-radius: 0 0 14px 14px; overflow-x: auto; 
+            box-shadow: 0 6px 24px rgba(0,0,0,0.05); animation: fadeIn 0.35s ease;
         }
 
         .tabcontent h4 {
-            margin-top:0; 
-            padding-bottom: 12px;
-            border-bottom: 1px solid #eef1f4;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin-top:0; padding-bottom: 12px; border-bottom: 1px solid #eef1f4; margin-bottom: 18px;
+            display: flex; align-items: center; gap: 8px;
         }
         #Page1 h4 { color: var(--primary-color); }
         #Page2 h4 { color: var(--maint-color); }
         #Page3 h4 { color: var(--fail-color); }
         #Page4 h4 { color: var(--spec-color); }
         
-        /* Data Cards (General Tab) */
         .data-card { 
-            background: linear-gradient(180deg, #ffffff, #fbfcfe); 
-            padding: 20px 18px; 
-            margin-bottom: 12px; 
-            border-left: 5px solid var(--primary-color); 
-            border-top: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-            border-radius: 4px 14px 14px 4px;
-            box-shadow: 0 3px 14px rgba(26,115,232,0.06);
+            background: linear-gradient(180deg, #ffffff, #fbfcfe); padding: 20px 18px; margin-bottom: 12px; 
+            border-left: 5px solid var(--primary-color); border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);
+            border-radius: 4px 14px 14px 4px; box-shadow: 0 3px 14px rgba(26,115,232,0.06);
             transition: box-shadow 0.25s ease, transform 0.25s ease;
         }
         .data-card:hover { box-shadow: 0 6px 22px rgba(26,115,232,0.12); }
@@ -320,64 +225,46 @@
         .label { font-weight: 700; color: #5f6368; display: inline-block; min-width: 170px; }
         
         .alert-error { 
-            color: var(--danger-color); 
-            background-color: #fce8e6; 
-            border: 1px solid #f6c6c1; 
-            padding: 14px 16px; 
-            border-radius: 10px; 
-            line-height: 1.6; 
-            font-size: 14px;
+            color: var(--danger-color); background-color: #fce8e6; border: 1px solid #f6c6c1; 
+            padding: 14px 16px; border-radius: 10px; line-height: 1.6; font-size: 14px;
         }
 
-        /* Status Pills */
         .status-pill {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11.5px;
-            font-weight: 800;
-            letter-spacing: 0.3px;
-            text-transform: capitalize;
-            white-space: nowrap;
+            display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11.5px;
+            font-weight: 800; letter-spacing: 0.3px; text-transform: capitalize; white-space: nowrap;
         }
         .status-good { background: #e6f4ea; color: #1e8e3e; }
         .status-warn { background: #fef7e0; color: #b06000; }
         .status-bad  { background: #fce8e6; color: #c5221f; }
         .status-neutral { background: #eef1f4; color: #5f6368; }
 
-        /* Tables */
+        .overdue-badge {
+            background: var(--danger-color); color: #fff; font-size: 10px; padding: 3px 9px;
+            border-radius: 10px; margin-left: 6px; font-weight: 800; letter-spacing: 0.4px;
+            display: inline-block; animation: pulseWarn 1.6s infinite;
+        }
+        @keyframes pulseWarn {
+            0%,100% { box-shadow: 0 0 0 0 rgba(217,48,37,0.4); }
+            50% { box-shadow: 0 0 0 5px rgba(217,48,37,0); }
+        }
+        .overdue-row { background-color: #fff2f0 !important; }
+        .overdue-row td { border-color: #f5c6c0 !important; }
+        .overdue-text { color: var(--danger-color); font-weight: 800; }
+
         table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 10px;
-            font-size: 13.5px;
-            text-align: left;
-            border-radius: 10px;
-            overflow: hidden;
+            width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px;
+            font-size: 13.5px; text-align: left; border-radius: 10px; overflow: hidden;
             box-shadow: 0 2px 10px rgba(0,0,0,0.04);
         }
 
         th {
-            color: #ffffff;
-            font-weight: 700;
-            padding: 13px 12px;
-            border: 1px solid rgba(255,255,255,0.15);
-            white-space: nowrap;
-            text-transform: uppercase;
-            font-size: 11.5px;
-            letter-spacing: 0.4px;
+            color: #ffffff; font-weight: 700; padding: 13px 12px; border: 1px solid rgba(255,255,255,0.15);
+            white-space: nowrap; text-transform: uppercase; font-size: 11.5px; letter-spacing: 0.4px;
         }
 
-        td {
-            padding: 12px 12px;
-            border: 1px solid var(--border-color);
-            color: var(--text-dark);
-            word-break: break-word;
-        }
-
+        td { padding: 12px 12px; border: 1px solid var(--border-color); color: var(--text-dark); word-break: break-word; }
         tr:nth-child(even) { background-color: #fafbfd; }
-        /* Themed table headers */
+
         .maint-table thead th { background: linear-gradient(135deg, var(--maint-color), var(--maint-light)); }
         .maint-table tbody tr:hover { background-color: #e6fbf7; }
 
@@ -386,52 +273,91 @@
 
         .spec-table td.spec-label {
             background: linear-gradient(135deg, var(--spec-color), var(--spec-light));
-            color: #fff;
-            font-weight: 700;
-            width: 40%;
+            color: #fff; font-weight: 700; width: 40%;
         }
         .spec-table tbody tr:hover { background-color: #f5f0ff; }
 
-        /* Scrollbar polish */
         ::-webkit-scrollbar { height: 8px; width: 8px; }
         ::-webkit-scrollbar-thumb { background: #c3d3ee; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary-light); }
 
-        /* ============ MOBILE RESPONSIVE (Android-friendly) ============ */
+        /* ============ NEW: Toolbar (counters + filter + export) ============ */
+        .records-toolbar {
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+            gap: 12px; margin-bottom: 18px; padding: 12px 14px; background: #f8fafc;
+            border: 1px solid var(--border-color); border-radius: 10px;
+        }
+        .record-counters { display: flex; flex-wrap: wrap; gap: 8px; }
+        .counter-badge {
+            font-size: 12.5px; font-weight: 700; padding: 6px 12px; border-radius: 20px;
+            background: #eef2f7; color: #3c4043; white-space: nowrap;
+        }
+        .counter-badge.total { background: var(--accent-blue); color: var(--primary-dark); }
+        .counter-badge.overdue-counter { background: #fce8e6; color: var(--danger-color); }
+        .counter-badge.showing { background: #e6f4ea; color: var(--success-color); }
+
+        .toolbar-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .date-filter-select {
+            padding: 9px 12px; border-radius: 8px; border: 1.5px solid var(--border-color);
+            font-size: 13px; font-weight: 600; background: #fff; cursor: pointer;
+        }
+        .export-btn {
+            color: #fff; border:none; padding: 9px 16px; font-size: 13px; font-weight: 700;
+            border-radius: 8px; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease;
+            white-space: nowrap;
+        }
+        .export-btn:hover { transform: translateY(-1px); }
+        .export-btn.maint-btn { background: linear-gradient(135deg, var(--maint-color), var(--maint-light)); box-shadow: 0 2px 8px rgba(15,118,110,0.3); }
+        .export-btn.fail-btn { background: linear-gradient(135deg, var(--fail-color), var(--fail-light)); box-shadow: 0 2px 8px rgba(185,28,28,0.3); }
+
+        /* ============ NEW: Year Grouping ============ */
+        .year-group { margin-bottom: 16px; border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; }
+        .year-header {
+            display: flex; align-items: center; gap: 10px; padding: 12px 16px; cursor: pointer;
+            background: linear-gradient(135deg,#eef2f7,#f8fafc); font-weight: 700; font-size: 14px;
+            user-select: none; transition: background 0.2s ease;
+        }
+        .year-header:hover { background: #e4ecf7; }
+        .fail-year-header { background: linear-gradient(135deg,#fdf0ee,#fff8f6); }
+        .fail-year-header:hover { background: #fbe4e0; }
+        .fail-year-header .year-toggle-icon { color: var(--fail-color); }
+        .maint-year-header .year-toggle-icon { color: var(--maint-color); }
+
+        .year-toggle-icon { display: inline-block; transition: transform 0.25s ease; font-size: 11px; }
+        .year-toggle-icon.expanded { transform: rotate(90deg); }
+        .year-label { color: var(--text-dark); }
+        .year-count { color: #5f6368; font-weight: 600; font-size: 12.5px; }
+        .year-body { padding: 14px; animation: fadeIn 0.3s ease; }
+        .year-body.collapsed { display: none; }
+
+        /* ============ NEW: Pagination ============ */
+        .pagination-controls { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 14px; }
+        .page-btn {
+            padding: 8px 16px; border-radius: 8px; border: 1.5px solid var(--border-color);
+            background: #fff; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s ease;
+        }
+        .page-btn:hover:not(:disabled) { background: var(--accent-blue); border-color: var(--primary-color); color: var(--primary-color); }
+        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .page-info { font-size: 13px; font-weight: 600; color: #5f6368; }
+
         @media (max-width: 700px) {
             .responsive-table thead { display: none; }
-            .responsive-table, .responsive-table tbody, .responsive-table tr, .responsive-table td {
-                display: block; width: 100%;
-            }
+            .responsive-table, .responsive-table tbody, .responsive-table tr, .responsive-table td { display: block; width: 100%; }
             .responsive-table tr {
-                margin-bottom: 14px;
-                border: 1px solid var(--border-color);
-                border-radius: 12px;
-                overflow: hidden;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                margin-bottom: 14px; border: 1px solid var(--border-color); border-radius: 12px;
+                overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             }
             .maint-table.responsive-table tr { border-left: 4px solid var(--maint-color); }
             .fail-table.responsive-table tr { border-left: 4px solid var(--fail-color); }
+            .overdue-row.responsive-row { border-left: 4px solid var(--danger-color) !important; }
             .responsive-table td {
-                border: none;
-                border-bottom: 1px solid #f0f0f0;
-                position: relative;
-                padding: 10px 12px 10px 46%;
-                text-align: right;
-                min-height: 20px;
+                border: none; border-bottom: 1px solid #f0f0f0; position: relative;
+                padding: 10px 12px 10px 46%; text-align: right; min-height: 20px;
             }
             .responsive-table td:last-child { border-bottom: none; }
             .responsive-table td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 12px;
-                width: 40%;
-                text-align: left;
-                font-weight: 700;
-                color: #5f6368;
-                font-size: 11.5px;
-                text-transform: uppercase;
-                letter-spacing: 0.3px;
+                content: attr(data-label); position: absolute; left: 12px; width: 40%; text-align: left;
+                font-weight: 700; color: #5f6368; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.3px;
             }
         }
 
@@ -445,6 +371,9 @@
             .data-card p { font-size: 13.5px; }
             th, td { font-size: 12.5px; padding: 10px 8px; }
             .tabcontent { padding: 16px 10px; }
+            .records-toolbar { flex-direction: column; align-items: stretch; }
+            .toolbar-actions { justify-content: space-between; }
+            .date-filter-select, .export-btn { flex: 1; }
         }
 
         @media (max-width: 380px) {
@@ -468,7 +397,7 @@
         <div id="reader"></div>
     </div>
 
-    <div id="loadingStatus"><span class="spinner"></span> Processing requests and communicating with sheet servers...</div>
+    <div id="loadingStatus"><span class="spinner"></span> <span id="loadingText">Processing request...</span></div>
 
     <div id="tabMenu" class="tab-bar">
       <button class="tablinks general-tab active" onclick="switchTab(event, 'Page1')">🧩 General</button>
@@ -497,59 +426,103 @@
     </div>
 
     <script>
-        // CONFIGURATION: ENTER YOUR SHEET ID AND KEY HERE
+        // ============================================================
+        // CONFIGURATION
+        // ============================================================
         const SPREADSHEET_ID = "1Jid66wBQ1ktKoysqpoCF1sIKengpsHq8CQKW9euMWh0"; 
         const API_KEY = "AIzaSyAjBceUqA-G1ueMCsqevOiPEhb2Nk-pOhI";
+        const ROWS_PER_PAGE = 12; // records per page, per year group
 
-        const TAB_NAMES = ["Maintenance", "Failure", "Specifications"];
-        // Built-in Static Dictionary Mapper for Station Codes, Groups, and Subgroups
+        const groupSheetSuffixMap = {
+            "01": "HT",
+            "02": "LT",
+            "03": "Pump",
+            "04": "DG",
+            "05": "Third_rail",
+            "06": "Lift_&_Escalator",
+            "07": "Fire",
+            "08": "Split_&_HVAC"
+        };
+
+        function getSheetNamesForAsset(assetId) {
+            const groupCode = assetId.substring(3, 5);
+            const suffix = groupSheetSuffixMap[groupCode];
+            if (!suffix) return null;
+            return {
+                suffix: suffix,
+                maintenance: `Maintenance_${suffix}`,
+                failure: `Failure_${suffix}`,
+                specifications: `Specifications_${suffix}`
+            };
+        }
+
         const mappingDictionary = {
             station: { "200":"KKSO DEPOT", "201":"KKSO", "202":"KSJR", "203":"KJNN", "204":"KKSK", "205":"KHMD", "206":"KVIB", "207":"KRWT", "208":"KBST", "209":"KBGA" },
-            group: { "01":"HT" },
-            subGroup: { 
+            group: {
+                "01": "HT", "02": "LT", "03": "PUMP", "04": "DG",
+                "05": "THIRD RAIL", "06": "LIFT & ESCALATOR", "07": "FIRE", "08": "SPLIT & HVAC"
+            }
+        };
+
+        const subGroupMap = {
+            "01": {
                 "01":"33KV GIS SWITCHGEAR", "02":"RECTIFIER TRANSFORMER", "03":"DIODE RECTIFIER", 
                 "04":"AUXILIARY TRANSFORMER", "05":"HSCB", "06":"BCP", "07":"MOTORISED ISOLATOR", 
                 "08":"TRACK DISCONNECTOR", "09":"THIRD RAIL EARTHING", "10":"NEGATIVE RETURN PANEL", 
                 "11":"OVPD", "12":"ETS", "13":"ACDB", "14":"DCDB", "15":"BATTERY CHARGER", "16":"NI-CD BATTERY BANK" 
-            }
+            },
+            "02": {}, "03": {}, "04": {}, "05": {}, "06": {}, "07": {}, "08": {}
         };
 
-        // Equipment Name dynamic translation mapping dictionary based on Subgroup code and Asset ID code
         const equipmentNameMap = {
             "01": {
-                "01":"HB01", "02":"HB02", "03":"HB03", "04":"HB04", "05":"HB05", "06":"HB06", "07":"HB07", "08":"HB08", 
-                "09":"HB09", "10":"HB10", "11":"HB11", "12":"HB12", "13":"HB13", "14":"HB14", "15":"HB15", "16":"HB16", 
-                "17":"HB17", "18":"HB18", "19":"HB19", "20":"HB20", "21":"BRP01", "22":"BRP02"
+                "01": {
+                    "01":"HB01", "02":"HB02", "03":"HB03", "04":"HB04", "05":"HB05", "06":"HB06", "07":"HB07", "08":"HB08", 
+                    "09":"HB09", "10":"HB10", "11":"HB11", "12":"HB12", "13":"HB13", "14":"HB14", "15":"HB15", "16":"HB16", 
+                    "17":"HB17", "18":"HB18", "19":"HB19", "20":"HB20", "21":"BRP01", "22":"BRP02"
+                },
+                "02": { "01":"TT01", "02":"TT02", "03":"TT03" },
+                "03": { "01":"SR01", "02":"SR02", "03":"SR03" },
+                "04": { "01":"AT01", "02":"AT02", "03":"AT03" },
+                "05": {
+                    "01":"DB 01", "02":"DB 02", "03":"DB 03", "04":"DB 04", "05":"DB 05", "06":"DB 06", "07":"DB 07", 
+                    "08":"DB 08", "09":"DB 09", "10":"DB 10", "11":"DB 11"
+                },
+                "06": { "01":"BCP01", "02":"BCP02" },
+                "07": { "01":"IM 01", "02":"IM 02", "03":"IM 03", "04":"IM 04", "05":"IM 05", "09":"IM 09", "10":"IM 10" },
+                "08": {
+                    "01":"TD 01", "02":"TD 02", "03":"TD 03", "04":"TD 04", "05":"TD 05", "06":"TD 06", "07":"TD 07", 
+                    "08":"TD 07A", "09":"TD 07B", "10":"TD 08", "11":"TD 09A", "12":"TD 09B", "13":"TD 10A", 
+                    "14":"TD 10B", "15":"TD 13", "16":"TD 23", "17":"TD 76", "18":"TD 45"
+                },
+                "09": { "01":"TRE01", "02":"TRE02" },
+                "10": { "01":"IM06", "02":"IM07", "03":"IM08" },
+                "11": { "01":"OVPD01" },
+                "12": {
+                    "01":"ETS01", "02":"ETS01A", "03":"ETS02", "04":"ETS02A", "05":"ETS03", "06":"ETS03A", 
+                    "07":"ETS04", "08":"ETS04A", "09":"ETS05", "10":"ETS06", "11":"ETS07", "12":"ETS08", 
+                    "13":"ETS09", "14":"ETS10"
+                },
+                "13": { "01":"ACDB01", "02":"ACDB02" },
+                "14": { "01":"DCDB01" },
+                "15": { "01":"BC01", "02":"BC02", "03":"BC03" },
+                "16": { "01":"BB01", "02":"BB02" }
             },
-            "02": { "01":"TT01", "02":"TT02", "03":"TT03" },
-            "03": { "01":"SR01", "02":"SR02", "03":"SR03" },
-            "04": { "01":"AT01", "02":"AT02", "03":"AT03" },
-            "05": {
-                "01":"DB 01", "02":"DB 02", "03":"DB 03", "04":"DB 04", "05":"DB 05", "06":"DB 06", "07":"DB 07", 
-                "08":"DB 08", "09":"DB 09", "10":"DB 10", "11":"DB 11"
-            },
-            "06": { "01":"BCP01", "02":"BCP02" },
-            "07": { "01":"IM 01", "02":"IM 02", "03":"IM 03", "04":"IM 04", "05":"IM 05", "09":"IM 09", "10":"IM 10" },
-            "08": {
-                "01":"TD 01", "02":"TD 02", "03":"TD 03", "04":"TD 04", "05":"TD 05", "06":"TD 06", "07":"TD 07", 
-                "08":"TD 07A", "09":"TD 07B", "10":"TD 08", "11":"TD 09A", "12":"TD 09B", "13":"TD 10A", 
-                "14":"TD 10B", "15":"TD 13", "16":"TD 23", "17":"TD 76", "18":"TD 45"
-            },
-            "09": { "01":"TRE01", "02":"TRE02" },
-            "10": { "01":"IM06", "02":"IM07", "03":"IM08" },
-            "11": { "01":"OVPD01" },
-            "12": {
-                "01":"ETS01", "02":"ETS01A", "03":"ETS02", "04":"ETS02A", "05":"ETS03", "06":"ETS03A", 
-                "07":"ETS04", "08":"ETS04A", "09":"ETS05", "10":"ETS06", "11":"ETS07", "12":"ETS08", 
-                "13":"ETS09", "14":"ETS10"
-            },
-            "13": { "01":"ACDB01", "02":"ACDB02" },
-            "14": { "01":"DCDB01" },
-            "15": { "01":"BC01", "02":"BC02", "03":"BC03" },
-            "16": { "01":"BB01", "02":"BB02" }
+            "02": {}, "03": {}, "04": {}, "05": {}, "06": {}, "07": {}, "08": {}
         };
 
-        // RUNS AUTOMATICALLY ON PAGE LOAD
+        // ============================================================
+        // NEW: GLOBAL STATE for Maintenance & Failure tabs
+        // (Holds fetched data + current filter/pagination/collapse state)
+        // ============================================================
+        const state = {
+            maintenance: { rows: [], meta: null, filter: 'all', pages: {}, expandedYears: null },
+            failure:     { rows: [], meta: null, filter: 'all', pages: {}, expandedYears: null }
+        };
+
+        // ============================================================
+        // PAGE LOAD / SCANNER SETUP
+        // ============================================================
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const idFromUrl = urlParams.get('id');
@@ -563,11 +536,9 @@
             }
         });
 
-        // Initialize QR camera reader if needed
         const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
         html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 
-        // Cleans up default html5-qrcode UI clutter (Request Camera Permissions / Scan an Image File)
         const readerHost = document.getElementById('reader');
         if (readerHost) {
             const hideExtraLibraryUI = () => {
@@ -589,7 +560,6 @@
             document.getElementById('inputContainer').style.display = "none";
             processAssetPipelines(clearedId);
         }
-
         function onScanFailure(error) {}
 
         function handleManualSearch() {
@@ -602,7 +572,9 @@
             processAssetPipelines(enteredId);
         }
 
-        // Decode basic metadata using local static mapping
+        // ============================================================
+        // METADATA DECODING
+        // ============================================================
         function getAssetMetadata(id) {
             let parsedStation = id.substring(0,3);
             let parsedGroup = id.substring(3,5);
@@ -611,22 +583,52 @@
 
             let stationName = mappingDictionary.station[parsedStation] || null;
             let groupName = mappingDictionary.group[parsedGroup] || null;
-            let subGroupName = mappingDictionary.subGroup[parsedSubGroup] || null;
-
-            let equipmentName = null;
-            if (equipmentNameMap[parsedSubGroup] && equipmentNameMap[parsedSubGroup][parsedAssetNo]) {
-                equipmentName = equipmentNameMap[parsedSubGroup][parsedAssetNo];
+            let subGroupName = null;
+            if (subGroupMap[parsedGroup]) {
+                subGroupName = subGroupMap[parsedGroup][parsedSubGroup] || null;
             }
 
-            return {
-                station: stationName,
-                group: groupName,
-                subGroup: subGroupName,
-                equipmentName: equipmentName
-            };
+            let equipmentName = null;
+            if (equipmentNameMap[parsedGroup] && equipmentNameMap[parsedGroup][parsedSubGroup]) {
+                equipmentName = equipmentNameMap[parsedGroup][parsedSubGroup][parsedAssetNo] || null;
+            }
+
+            return { station: stationName, group: groupName, subGroup: subGroupName, equipmentName: equipmentName };
         }
 
-        // Generates a colored pill for status values
+        // ============================================================
+        // DATE HANDLING (DD-MM-YY format) + OVERDUE DETECTION
+        // ============================================================
+        function parseDDMMYY(dateStr) {
+            if (!dateStr) return null;
+            const cleaned = dateStr.toString().trim();
+            const parts = cleaned.split(/[-\/]/);
+            if (parts.length !== 3) return null;
+            let [dd, mm, yy] = parts;
+            dd = parseInt(dd, 10);
+            mm = parseInt(mm, 10);
+            yy = parseInt(yy, 10);
+            if (isNaN(dd) || isNaN(mm) || isNaN(yy)) return null;
+            yy = yy < 100 ? 2000 + yy : yy;
+            const dateObj = new Date(yy, mm - 1, dd);
+            return isNaN(dateObj.getTime()) ? null : dateObj;
+        }
+
+        function isOverdue(dueDateStr, status) {
+            const dueDate = parseDDMMYY(dueDateStr);
+            if (!dueDate) return false;
+            const statusLower = (status || "").toString().trim().toLowerCase();
+            if (["completed","complete","done","closed","ok","resolved"].includes(statusLower)) return false;
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            return dueDate < today;
+        }
+
+        function isUnresolvedFailure(status) {
+            const lower = (status || "").toString().trim().toLowerCase();
+            return !["completed","complete","resolved","closed","done","restored","ok"].includes(lower);
+        }
+
         function statusBadge(status) {
             if (!status) return "-";
             const clean = status.toString().trim();
@@ -638,14 +640,286 @@
             return `<span class="status-pill ${cls}">${clean}</span>`;
         }
 
+        // ============================================================
+        // NEW: SORT / FILTER / GROUP / PAGINATE HELPERS
+        // ============================================================
+        function filterRowsByDateRange(rows, dateColIndex, rangeValue) {
+            if (rangeValue === 'all' || !rangeValue) return rows;
+            const today = new Date(); today.setHours(0,0,0,0);
+            return rows.filter(row => {
+                const d = parseDDMMYY(row[dateColIndex]);
+                if (!d) return false;
+                if (rangeValue === '30days') {
+                    const diffDays = (today - d) / 86400000;
+                    return diffDays >= 0 && diffDays <= 30;
+                }
+                if (rangeValue === 'thisyear') return d.getFullYear() === today.getFullYear();
+                return true;
+            });
+        }
+
+        function sortRowsByDateDesc(rows, dateColIndex) {
+            return [...rows].sort((a, b) => {
+                const da = parseDDMMYY(a[dateColIndex]);
+                const db = parseDDMMYY(b[dateColIndex]);
+                if (!da && !db) return 0;
+                if (!da) return 1;
+                if (!db) return -1;
+                return db - da;
+            });
+        }
+
+        function groupRowsByYear(rows, dateColIndex) {
+            const groups = {};
+            rows.forEach(row => {
+                const d = parseDDMMYY(row[dateColIndex]);
+                const year = d ? d.getFullYear().toString() : 'Unknown';
+                if (!groups[year]) groups[year] = [];
+                groups[year].push(row);
+            });
+            return groups;
+        }
+
+        function getSortedYearKeys(groups) {
+            return Object.keys(groups).sort((a, b) => {
+                if (a === 'Unknown') return 1;
+                if (b === 'Unknown') return -1;
+                return parseInt(b) - parseInt(a);
+            });
+        }
+        function paginateArray(arr, page, perPage) {
+            const start = (page - 1) * perPage;
+            return arr.slice(start, start + perPage);
+        }
+
+        function downloadCSV(filename, headers, rows) {
+            let csvContent = headers.join(",") + "\n";
+            rows.forEach(r => {
+                const escaped = r.map(val => {
+                    let v = (val === undefined || val === null) ? "" : val.toString();
+                    v = v.replace(/"/g, '""');
+                    if (/[",\n]/.test(v)) v = `"${v}"`;
+                    return v;
+                });
+                csvContent += escaped.join(",") + "\n";
+            });
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function toggleYearGroup(type, year) {
+            const st = state[type];
+            st.expandedYears[year] = !st.expandedYears[year];
+            if (type === 'maintenance') renderMaintenanceUI(); else renderFailureUI();
+        }
+
+        function changeYearPage(type, year, direction) {
+            const st = state[type];
+            const current = st.pages[year] || 1;
+            st.pages[year] = Math.max(1, current + direction);
+            if (type === 'maintenance') renderMaintenanceUI(); else renderFailureUI();
+        }
+
+        function onDateFilterChange(type, selectEl) {
+            state[type].filter = selectEl.value;
+            state[type].pages = {};
+            if (type === 'maintenance') renderMaintenanceUI(); else renderFailureUI();
+        }
+
+        // ============================================================
+        // NEW: CSV EXPORT (respects current date filter, ignores pagination)
+        // ============================================================
+        function exportMaintenanceCSV() {
+            const st = state.maintenance;
+            if (!st.rows.length) return;
+            const meta = st.meta;
+            const DATE_COL = 1;
+            const filtered = filterRowsByDateRange(st.rows, DATE_COL, st.filter);
+            const sorted = sortRowsByDateDesc(filtered, DATE_COL);
+
+            const headers = ["SL","Station","Group","Sub-Group","Asset Name","Date of Maintenance","Due Date","Attended By","Status","Remarks"];
+            const csvRows = sorted.map((row, idx) => [
+                idx + 1, meta.station, meta.group, meta.subGroup, meta.equipmentName,
+                row[1] || "", row[2] || "", row[3] || "", row[4] || "", row[5] || ""
+            ]);
+            downloadCSV(`Maintenance_${meta.equipmentName || 'Asset'}_${Date.now()}.csv`, headers, csvRows);
+        }
+
+        function exportFailureCSV() {
+            const st = state.failure;
+            if (!st.rows.length) return;
+            const meta = st.meta;
+            const DATE_COL = 1;
+            const filtered = filterRowsByDateRange(st.rows, DATE_COL, st.filter);
+            const sorted = sortRowsByDateDesc(filtered, DATE_COL);
+
+            const headers = ["SL","Station","Group","Sub-Group","Asset Name","Date of Failure","Time of Failure","Date of Restoration","Time of Restoration","Description","Action Taken","Attended By","Status","Time"];
+            const csvRows = sorted.map((row, idx) => [
+                idx + 1, meta.station, meta.group, meta.subGroup, meta.equipmentName,
+                row[1] || "", row[2] || "", row[3] || "", row[4] || "", row[5] || "", row[6] || "", row[7] || "", row[8] || "", row[9] || ""
+            ]);
+            downloadCSV(`Failure_${meta.equipmentName || 'Asset'}_${Date.now()}.csv`, headers, csvRows);
+        }
+
+        // ============================================================
+        // DIAGNOSTIC HELPER
+        // ============================================================
+        async function fetchActualSheetTitles() {
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?key=${API_KEY}&fields=sheets.properties.title`;
+            const res = await fetch(url);
+            const data = await res.json();
+            if (!res.ok) return { error: data.error ? data.error.message : "Unknown metadata error" };
+            return { titles: (data.sheets || []).map(s => s.properties.title) };
+        }
+
+        function buildDiagnosticHtml(expectedNames, actualTitlesResult, rawErrorMessage) {
+            let html = `<div class="alert-error" style="margin-top:10px; text-align:left;">
+                <strong>❌ Sync failed — Diagnostic Report</strong><br><br>
+                <strong>Raw API error:</strong> ${rawErrorMessage || "N/A"}<br><br>
+                <strong>Sheets this Asset ID needs:</strong><br>
+                &nbsp;&nbsp;• ${expectedNames.maintenance}<br>
+                &nbsp;&nbsp;• ${expectedNames.failure}<br>
+                &nbsp;&nbsp;• ${expectedNames.specifications}<br><br>`;
+
+            if (actualTitlesResult.error) {
+                html += `<strong>Could not read your spreadsheet's tab list:</strong> ${actualTitlesResult.error}<br>
+                    (Check that the Sheet is shared as "Anyone with the link can view" and API key is valid/unrestricted for this domain.)`;
+            } else {
+                const actual = actualTitlesResult.titles;
+                html += `<strong>Tabs that actually exist in your spreadsheet:</strong><br>&nbsp;&nbsp;${actual.join("<br>&nbsp;&nbsp;")}<br><br>`;
+                const missing = [expectedNames.maintenance, expectedNames.failure, expectedNames.specifications]
+                    .filter(n => !actual.includes(n));
+                if (missing.length > 0) {
+                    html += `<strong style="color:#b91c1c;">⚠️ Missing or mismatched tab(s):</strong><br>&nbsp;&nbsp;${missing.join("<br>&nbsp;&nbsp;")}<br><br>
+                        Create these exact tab names (case-sensitive, no trailing spaces) in your spreadsheet.`;
+                } else {
+                    html += `All 3 expected tabs exist with matching names. The issue may be a temporary network error — please try again.`;
+                }
+            }
+            html += `</div>`;
+            return html;
+        }
+
+        // ============================================================
+        // TWO-PHASE FETCH ENGINE
+        // ============================================================
+        function qSheet(name) { return `'${name}'`; }
+
+        async function fetchColumnAOnly(sheetNames) {
+            const ranges = [
+                `${qSheet(sheetNames.maintenance)}!A2:A`,
+                `${qSheet(sheetNames.failure)}!A2:A`,
+                `${qSheet(sheetNames.specifications)}!A2:A`
+            ];
+            const rangesQuery = ranges.map(r => `ranges=${encodeURIComponent(r)}`).join("&");
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${rangesQuery}&key=${API_KEY}`;
+
+            const response = await fetch(url);
+            const payload = await response.json();
+            if (!response.ok) {
+                const msg = payload.error ? payload.error.message : `HTTP ${response.status}`;
+                throw new Error(msg);
+            }
+            return payload.valueRanges || [];
+        }
+
+        function findExactMatchRows(columnAValueRange, targetId) {
+            if (!columnAValueRange || !columnAValueRange.values) return [];
+            const rows = [];
+            columnAValueRange.values.forEach((rowArr, idx) => {
+                const cell = rowArr[0] ? rowArr[0].toString().trim() : "";
+                if (cell === targetId) rows.push(idx + 2);
+            });
+            return rows;
+        }
+
+        function findSpecHeaderRow(columnAValueRange, targetId7) {
+            if (!columnAValueRange || !columnAValueRange.values) return null;
+            for (let idx = 0; idx < columnAValueRange.values.length; idx++) {
+                const cell = columnAValueRange.values[idx][0];
+                if (cell && cell.toString().trim().substring(0, 7) === targetId7) {
+                    return idx + 2;
+                }
+            }
+            return null;
+        }
+
+        function buildRowRanges(sheetName, rowNumbers, colStart, colEnd) {
+            return rowNumbers.map(r => `${qSheet(sheetName)}!${colStart}${r}:${colEnd}${r}`);
+        }
+        async function fetchTargetedRows(sheetNames, maintRows, failRows, specHeaderRow) {
+            let ranges = [];
+            let sections = { maint: 0, fail: 0, spec: 0 };
+
+            if (maintRows.length > 0) {
+                ranges.push(...buildRowRanges(sheetNames.maintenance, maintRows, "A", "F"));
+                sections.maint = maintRows.length;
+            }
+            if (failRows.length > 0) {
+                ranges.push(...buildRowRanges(sheetNames.failure, failRows, "A", "J"));
+                sections.fail = failRows.length;
+            }
+            if (specHeaderRow !== null) {
+                ranges.push(`${qSheet(sheetNames.specifications)}!A${specHeaderRow}:Z${specHeaderRow}`);
+                ranges.push(`${qSheet(sheetNames.specifications)}!A${specHeaderRow + 1}:Z${specHeaderRow + 1}`);
+                sections.spec = 1;
+            }
+
+            if (ranges.length === 0) {
+                return { maintenance: [], failure: [], specifications: null };
+            }
+
+            const rangesQuery = ranges.map(r => `ranges=${encodeURIComponent(r)}`).join("&");
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${rangesQuery}&key=${API_KEY}`;
+
+            const response = await fetch(url);
+            const payload = await response.json();
+            if (!response.ok) {
+                const msg = payload.error ? payload.error.message : `HTTP ${response.status}`;
+                throw new Error(msg);
+            }
+            const valueRanges = payload.valueRanges || [];
+
+            let cursor = 0;
+            const maintenance = [];
+            for (let i = 0; i < sections.maint; i++) {
+                const vr = valueRanges[cursor++];
+                maintenance.push(vr && vr.values ? vr.values[0] : []);
+            }
+            const failure = [];
+            for (let i = 0; i < sections.fail; i++) {
+                const vr = valueRanges[cursor++];
+                failure.push(vr && vr.values ? vr.values[0] : []);
+            }
+            let specifications = null;
+            if (sections.spec) {
+                const headerVR = valueRanges[cursor++];
+                const valueVR = valueRanges[cursor++];
+                specifications = {
+                    headers: headerVR && headerVR.values ? headerVR.values[0] : [],
+                    values: valueVR && valueVR.values ? valueVR.values[0] : []
+                };
+            }
+            return { maintenance, failure, specifications };
+        }
+
+        // ============================================================
+        // MAIN ORCHESTRATOR
+        // ============================================================
         async function processAssetPipelines(assetId) {
             const loadingEl = document.getElementById('loadingStatus');
+            const loadingText = document.getElementById('loadingText');
             loadingEl.style.display = "flex";
-            
-            // Build early local decoded card on Tab 1
-            const isValid = runLocalDecoder(assetId);
+            loadingText.innerText = "Decoding asset identity...";
 
-            // If local validation fails, stop execution early
+            const isValid = runLocalDecoder(assetId);
             if (!isValid) {
                 loadingEl.style.display = "none";
                 document.getElementById('tabMenu').style.display = "none";
@@ -655,223 +929,359 @@
                 return;
             }
 
-            const rangesQuery = TAB_NAMES.map(sheet => `ranges=${encodeURIComponent(sheet)}`).join("&");
-            const fetchUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${rangesQuery}&key=${API_KEY}`;
+            const sheetNames = getSheetNamesForAsset(assetId);
+            if (!sheetNames) {
+                loadingEl.style.display = "none";
+                document.getElementById('decodedData').innerHTML += `
+                    <div class="alert-error" style="margin-top:10px;">
+                        <strong>No data sheets mapped for this equipment Group code.</strong><br>
+                        Please add an entry in <code>groupSheetSuffixMap</code>.
+                    </div>`;
+                document.getElementById('tabMenu').style.display = "none";
+                return;
+            }
 
             try {
-                const response = await fetch(fetchUrl);
-                if (!response.ok) throw new Error(`API Status: ${response.status}`);
-                const rawPayload = await response.json();
-                
+                loadingText.innerText = "Scanning index (Column A)...";
+                const columnAResults = await fetchColumnAOnly(sheetNames);
+
+                const maintRows = findExactMatchRows(columnAResults[0], assetId);
+                const failRows  = findExactMatchRows(columnAResults[1], assetId);
+                const specHeaderRow = findSpecHeaderRow(columnAResults[2], assetId.substring(0, 7));
+
+                loadingText.innerText = "Fetching matched records...";
+                const detailed = await fetchTargetedRows(sheetNames, maintRows, failRows, specHeaderRow);
+
                 loadingEl.style.display = "none";
                 document.getElementById('tabMenu').style.display = "block";
                 document.getElementById('Page1').style.display = "block";
 
-                const valueRanges = rawPayload.valueRanges || [];
+                const meta = getAssetMetadata(assetId);
 
-                function extractMatchedRawRows(valueRange, idToMatch) {
-                    if (!valueRange || !valueRange.values || valueRange.values.length < 2) return [];
-                    const gridData = valueRange.values;
-                    const headers = gridData[0];
-                    
-                    const assetIdColIndex = headers.findIndex(title => 
-                        title.toLowerCase().includes("id") || 
-                        title.toLowerCase().includes("asset") || 
-                        title.toLowerCase().includes("code")
-                    );
-
-                    if (assetIdColIndex === -1) return [];
-
-                    const matchingRows = [];
-                    for (let i = 1; i < gridData.length; i++) {
-                        const currentRow = gridData[i];
-                        if (currentRow[assetIdColIndex] && currentRow[assetIdColIndex].toString().trim() === idToMatch) {
-                            matchingRows.push(currentRow);
-                        }
-                    }
-                    return matchingRows;
-                }
-
-                const maintenanceMatches = extractMatchedRawRows(valueRanges[0], assetId);
-                const failureMatches = extractMatchedRawRows(valueRanges[1], assetId);
-                
-                // Fetch dual-row specification matching using the 7-digit lookup strategy
-                const specificationsMatchedData = extractMatchedSpecifications7Digit(valueRanges[2], assetId);
-
-                if(maintenanceMatches.length > 0) {
-                    let topRow = maintenanceMatches[0];
+                // General tab summary — uses NEWEST maintenance record (sorted)
+                if (detailed.maintenance.length > 0) {
+                    const sortedMaint = sortRowsByDateDesc(detailed.maintenance, 1);
+                    const topRow = sortedMaint[0];
+                    const dueDateVal = topRow[2] || "";
+                    const statusVal = topRow[4] || "";
                     document.getElementById('lastMaintField').innerText = topRow[1] || "Not Tracked";
-                    document.getElementById('nextMaintField').innerText = topRow[2] || "Not Tracked";
+
+                    const overdueNow = isOverdue(dueDateVal, statusVal);
+                    document.getElementById('nextMaintField').innerHTML = 
+                        (dueDateVal || "Not Tracked") + (overdueNow ? `<span class="overdue-badge">OVERDUE</span>` : "");
+                    if (overdueNow) document.getElementById('nextMaintField').classList.add('overdue-text');
                 } else {
                     document.getElementById('lastMaintField').innerText = "No Records Available";
                     document.getElementById('nextMaintField').innerText = "No Records Available";
                 }
 
-                renderMaintenanceTable(maintenanceMatches, assetId);
-                renderFailureTable(failureMatches, assetId);
-                
-                // Render specifications in a vertical key-value layout
-                renderSpecificationsOutput(specificationsMatchedData, 'specData');
+                // NEW: initialize state-driven UI for Maintenance & Failure tabs
+                initMaintenanceUI(detailed.maintenance, meta);
+                initFailureUI(detailed.failure, meta);
+
+                renderSpecificationsOutput(detailed.specifications, 'specData');
 
             } catch (err) {
-                document.getElementById('loadingStatus').innerHTML = `
-                    <div class='alert-error'><strong>Sync failed. Check connection configuration or Google Sheet shared status.</strong></div>`;
                 console.error(err);
+                loadingText.innerText = "Running diagnostics...";
+                const actualTitlesResult = await fetchActualSheetTitles();
+                document.getElementById('loadingStatus').style.display = "none";
+                document.getElementById('decodedData').innerHTML += buildDiagnosticHtml(sheetNames, actualTitlesResult, err.message);
             }
         }
 
-        // CUSTOMIZED TABLE: MAINTENANCE TAB
-        function renderMaintenanceTable(matchingRows, assetId) {
+        // ============================================================
+        // NEW: MAINTENANCE TAB — init + render (counter/filter/sort/group/paginate/export)
+        // ============================================================
+        function initMaintenanceUI(rows, meta) {
+            state.maintenance.rows = rows;
+            state.maintenance.meta = meta;
+            state.maintenance.filter = 'all';
+            state.maintenance.pages = {};
+            state.maintenance.expandedYears = null;
+            renderMaintenanceUI();
+        }
+
+        function renderMaintenanceUI() {
             const container = document.getElementById('maintData');
-            if (matchingRows.length === 0) {
+            const st = state.maintenance;
+            const meta = st.meta;
+
+            if (!st.rows || st.rows.length === 0) {
                 container.innerHTML = "<p style='color:#666; font-style: italic;'>No matching records in Maintenance registry.</p>";
                 return;
             }
 
-            const meta = getAssetMetadata(assetId);
+            const DATE_COL = 1, DUE_COL = 2, STATUS_COL = 4;
 
-            let tableHtml = `
-                <table class="maint-table responsive-table">
-                    <thead>
-                        <tr>
-                            <th>SL.</th>
-                            <th>STATION</th>
-                            <th>GROUP</th>
-                            <th>SUB-GROUP</th>
-                            <th>ASSET NAME</th>
-                            <th>DATE OF MAINTENANCE</th>
-                            <th>DUE DATE</th>
-                            <th>ATTENDED BY</th>
-                            <th>STATUS</th>
-                            <th>REMARKS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+            const overdueCount = st.rows.filter(r => isOverdue(r[DUE_COL], r[STATUS_COL])).length;
+            const totalCount = st.rows.length;
+
+            const filtered = filterRowsByDateRange(st.rows, DATE_COL, st.filter);
+            const sorted = sortRowsByDateDesc(filtered, DATE_COL);
+            const showingCount = sorted.length;
+
+            const yearGroups = groupRowsByYear(sorted, DATE_COL);
+            const yearKeys = getSortedYearKeys(yearGroups);
+
+            if (st.expandedYears === null) {
+                st.expandedYears = {};
+                yearKeys.forEach((y, idx) => { st.expandedYears[y] = idx === 0; });
+            } else {
+                yearKeys.forEach(y => { if (!(y in st.expandedYears)) st.expandedYears[y] = false; });
+            }
+
+            let html = `
+                <div class="records-toolbar">
+                    <div class="record-counters">
+                        <span class="counter-badge total">Total: <strong>${totalCount}</strong></span>
+                        <span class="counter-badge overdue-counter">Overdue: <strong>${overdueCount}</strong></span>
+                        <span class="counter-badge showing">Showing: <strong>${showingCount}</strong></span>
+                    </div>
+                    <div class="toolbar-actions">
+                        <select class="date-filter-select" onchange="onDateFilterChange('maintenance', this)">
+                            <option value="all" ${st.filter === 'all' ? 'selected' : ''}>All Time</option>
+                            <option value="30days" ${st.filter === '30days' ? 'selected' : ''}>Last 30 Days</option>
+                            <option value="thisyear" ${st.filter === 'thisyear' ? 'selected' : ''}>This Year</option>
+                        </select>
+                        <button class="export-btn maint-btn" onclick="exportMaintenanceCSV()">⬇ Export CSV</button>
+                    </div>
+                </div>
             `;
 
-            matchingRows.forEach((row, index) => {
-                const dateOfMaintenance = row[1] || "";
-                const dueDate           = row[2] || "";
-                const attendedBy        = row[3] || "";
-                const status            = row[4] || "";
-                const remarks           = row[5] || "";
+            if (sorted.length === 0) {
+                html += `<p style='color:#666; font-style: italic; margin-top:14px;'>No records match the selected date range.</p>`;
+                container.innerHTML = html;
+                return;
+            }
 
-                tableHtml += `
-                    <tr>
-                        <td data-label="SL.">${index + 1}</td>
-                        <td data-label="Station">${meta.station}</td>
-                        <td data-label="Group">${meta.group}</td>
-                        <td data-label="Sub-Group">${meta.subGroup}</td>
-                        <td data-label="Asset Name">${meta.equipmentName}</td>
-                        <td data-label="Date of Maintenance">${dateOfMaintenance}</td>
-                        <td data-label="Due Date">${dueDate}</td>
-                        <td data-label="Attended By">${attendedBy}</td>
-                        <td data-label="Status">${statusBadge(status)}</td>
-                        <td data-label="Remarks">${remarks}</td>
-                    </tr>
+            yearKeys.forEach(year => {
+                const yearRows = yearGroups[year];
+                const isExpanded = st.expandedYears[year];
+                const page = st.pages[year] || 1;
+                const totalPages = Math.max(1, Math.ceil(yearRows.length / ROWS_PER_PAGE));
+                const pageRows = paginateArray(yearRows, page, ROWS_PER_PAGE);
+
+                html += `
+                    <div class="year-group">
+                        <div class="year-header maint-year-header" onclick="toggleYearGroup('maintenance', '${year}')">
+                            <span class="year-toggle-icon ${isExpanded ? 'expanded' : ''}">▶</span>
+                            <span class="year-label">${year}</span>
+                            <span class="year-count">(${yearRows.length} record${yearRows.length !== 1 ? 's' : ''})</span>
+                        </div>
+                        <div class="year-body ${isExpanded ? '' : 'collapsed'}">
+                            <table class="maint-table responsive-table">
+                                <thead>
+                                    <tr>
+                                        <th>SL.</th><th>STATION</th><th>GROUP</th><th>SUB-GROUP</th><th>ASSET NAME</th>
+                                        <th>DATE OF MAINTENANCE</th><th>DUE DATE</th><th>ATTENDED BY</th><th>STATUS</th><th>REMARKS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+
+                pageRows.forEach((row, idx) => {
+                    const slNo = (page - 1) * ROWS_PER_PAGE + idx + 1;
+                    const dateOfMaintenance = row[1] || "";
+                    const dueDate = row[2] || "";
+                    const attendedBy = row[3] || "";
+                    const status = row[4] || "";
+                    const remarks = row[5] || "";
+                    const overdueFlag = isOverdue(dueDate, status);
+
+                    html += `
+                        <tr class="${overdueFlag ? 'overdue-row responsive-row' : ''}">
+                            <td data-label="SL.">${slNo}</td>
+                            <td data-label="Station">${meta.station}</td>
+                            <td data-label="Group">${meta.group}</td>
+                            <td data-label="Sub-Group">${meta.subGroup}</td>
+                            <td data-label="Asset Name">${meta.equipmentName}</td>
+                            <td data-label="Date of Maintenance">${dateOfMaintenance}</td>
+                            <td data-label="Due Date">${dueDate}${overdueFlag ? '<span class="overdue-badge">OVERDUE</span>' : ''}</td>
+                            <td data-label="Attended By">${attendedBy}</td>
+                            <td data-label="Status">${statusBadge(status)}</td>
+                            <td data-label="Remarks">${remarks}</td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                                </tbody>
+                            </table>
+                `;
+
+                if (totalPages > 1) {
+                    html += `
+                        <div class="pagination-controls">
+                            <button class="page-btn" onclick="changeYearPage('maintenance','${year}',-1)" ${page <= 1 ? 'disabled' : ''}>‹ Prev</button>
+                            <span class="page-info">Page ${page} of ${totalPages}</span>
+                            <button class="page-btn" onclick="changeYearPage('maintenance','${year}',1)" ${page >= totalPages ? 'disabled' : ''}>Next ›</button>
+                        </div>
+                    `;
+                }
+
+                html += `
+                        </div>
+                    </div>
                 `;
             });
 
-            tableHtml += `</tbody></table>`;
-            container.innerHTML = tableHtml;
+            container.innerHTML = html;
         }
 
-        // CUSTOMIZED TABLE: FAILURE TAB
-        function renderFailureTable(matchingRows, assetId) {
+        // ============================================================
+        // NEW: FAILURE TAB — init + render
+        // ============================================================
+        function initFailureUI(rows, meta) {
+            state.failure.rows = rows;
+            state.failure.meta = meta;
+            state.failure.filter = 'all';
+            state.failure.pages = {};
+            state.failure.expandedYears = null;
+            renderFailureUI();
+        }
+
+        function renderFailureUI() {
             const container = document.getElementById('failData');
-            if (matchingRows.length === 0) {
+            const st = state.failure;
+            const meta = st.meta;
+
+            if (!st.rows || st.rows.length === 0) {
                 container.innerHTML = "<p style='color:#666; font-style: italic;'>No matching records in Failure registry.</p>";
                 return;
             }
 
-            const meta = getAssetMetadata(assetId);
+            const DATE_COL = 1, STATUS_COL = 8;
 
-            let tableHtml = `
-                <table class="fail-table responsive-table">
-                    <thead>
-                        <tr>
-                            <th>SL.</th>
-                            <th>STATION</th>
-                            <th>GROUP</th>
-                            <th>SUB-GROUP</th>
-                            <th>ASSET NAME</th>
-                            <th>DATE OF FAILURE</th>
-                            <th>TIME OF FAILURE</th>
-                            <th>DATE OF RESTORATION</th>
-                            <th>TIME OF RESTORATION</th>
-                            <th>DESCRIPTION</th>
-                            <th>ACTION TAKEN</th>
-                            <th>ATTENDED BY</th>
-                            <th>STATUS</th>
-                            <th>TIME</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+            const unresolvedCount = st.rows.filter(r => isUnresolvedFailure(r[STATUS_COL])).length;
+            const totalCount = st.rows.length;
+
+            const filtered = filterRowsByDateRange(st.rows, DATE_COL, st.filter);
+            const sorted = sortRowsByDateDesc(filtered, DATE_COL);
+            const showingCount = sorted.length;
+
+            const yearGroups = groupRowsByYear(sorted, DATE_COL);
+            const yearKeys = getSortedYearKeys(yearGroups);
+
+            if (st.expandedYears === null) {
+                st.expandedYears = {};
+                yearKeys.forEach((y, idx) => { st.expandedYears[y] = idx === 0; });
+            } else {
+                yearKeys.forEach(y => { if (!(y in st.expandedYears)) st.expandedYears[y] = false; });
+            }
+
+            let html = `
+                <div class="records-toolbar">
+                    <div class="record-counters">
+                        <span class="counter-badge total">Total: <strong>${totalCount}</strong></span>
+                        <span class="counter-badge overdue-counter">Open/Unresolved: <strong>${unresolvedCount}</strong></span>
+                        <span class="counter-badge showing">Showing: <strong>${showingCount}</strong></span>
+                    </div>
+                    <div class="toolbar-actions">
+                        <select class="date-filter-select" onchange="onDateFilterChange('failure', this)">
+                            <option value="all" ${st.filter === 'all' ? 'selected' : ''}>All Time</option>
+                            <option value="30days" ${st.filter === '30days' ? 'selected' : ''}>Last 30 Days</option>
+                            <option value="thisyear" ${st.filter === 'thisyear' ? 'selected' : ''}>This Year</option>
+                        </select>
+                        <button class="export-btn fail-btn" onclick="exportFailureCSV()">⬇ Export CSV</button>
+                    </div>
+                </div>
             `;
 
-            matchingRows.forEach((row, index) => {
-                const dateOfFailure     = row[1] || "";
-                const timeOfFailure     = row[2] || "";
-                const dateOfRestoration = row[3] || "";
-                const timeOfRestoration = row[4] || "";
-                const description       = row[5] || "";
-                const actionTaken       = row[6] || "";
-                const attendedBy        = row[7] || "";
-                const status            = row[8] || "";
-                const totalTime         = row[9] || "";
+            if (sorted.length === 0) {
+                html += `<p style='color:#666; font-style: italic; margin-top:14px;'>No records match the selected date range.</p>`;
+                container.innerHTML = html;
+                return;
+            }
 
-                tableHtml += `
-                    <tr>
-                        <td data-label="SL.">${index + 1}</td>
-                        <td data-label="Station">${meta.station}</td>
-                        <td data-label="Group">${meta.group}</td>
-                        <td data-label="Sub-Group">${meta.subGroup}</td>
-                        <td data-label="Asset Name">${meta.equipmentName}</td>
-                        <td data-label="Date of Failure">${dateOfFailure}</td>
-                        <td data-label="Time of Failure">${timeOfFailure}</td>
-                        <td data-label="Date of Restoration">${dateOfRestoration}</td>
-                        <td data-label="Time of Restoration">${timeOfRestoration}</td>
-                        <td data-label="Description">${description}</td>
-                        <td data-label="Action Taken">${actionTaken}</td>
-                        <td data-label="Attended By">${attendedBy}</td>
-                        <td data-label="Status">${statusBadge(status)}</td>
-                        <td data-label="Time">${totalTime}</td>
-                    </tr>
+            yearKeys.forEach(year => {
+                const yearRows = yearGroups[year];
+                const isExpanded = st.expandedYears[year];
+                const page = st.pages[year] || 1;
+                const totalPages = Math.max(1, Math.ceil(yearRows.length / ROWS_PER_PAGE));
+                const pageRows = paginateArray(yearRows, page, ROWS_PER_PAGE);
+
+                html += `
+                    <div class="year-group">
+                        <div class="year-header fail-year-header" onclick="toggleYearGroup('failure', '${year}')">
+                            <span class="year-toggle-icon ${isExpanded ? 'expanded' : ''}">▶</span>
+                            <span class="year-label">${year}</span>
+                            <span class="year-count">(${yearRows.length} record${yearRows.length !== 1 ? 's' : ''})</span>
+                        </div>
+                        <div class="year-body ${isExpanded ? '' : 'collapsed'}">
+                            <table class="fail-table responsive-table">
+                                <thead>
+                                    <tr>
+                                        <th>SL.</th><th>STATION</th><th>GROUP</th><th>SUB-GROUP</th><th>ASSET NAME</th>
+                                        <th>DATE OF FAILURE</th><th>TIME OF FAILURE</th><th>DATE OF RESTORATION</th>
+                                        <th>TIME OF RESTORATION</th><th>DESCRIPTION</th><th>ACTION TAKEN</th>
+                                        <th>ATTENDED BY</th><th>STATUS</th><th>TIME</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+
+                pageRows.forEach((row, idx) => {
+                    const slNo = (page - 1) * ROWS_PER_PAGE + idx + 1;
+                    const dateOfFailure     = row[1] || "";
+                    const timeOfFailure     = row[2] || "";
+                    const dateOfRestoration = row[3] || "";
+                    const timeOfRestoration = row[4] || "";
+                    const description       = row[5] || "";
+                    const actionTaken       = row[6] || "";
+                    const attendedBy        = row[7] || "";
+                    const status            = row[8] || "";
+                    const totalTime         = row[9] || "";
+
+                    html += `
+                        <tr>
+                            <td data-label="SL.">${slNo}</td>
+                            <td data-label="Station">${meta.station}</td>
+                            <td data-label="Group">${meta.group}</td>
+                            <td data-label="Sub-Group">${meta.subGroup}</td>
+                            <td data-label="Asset Name">${meta.equipmentName}</td>
+                            <td data-label="Date of Failure">${dateOfFailure}</td>
+                            <td data-label="Time of Failure">${timeOfFailure}</td>
+                            <td data-label="Date of Restoration">${dateOfRestoration}</td>
+                            <td data-label="Time of Restoration">${timeOfRestoration}</td>
+                            <td data-label="Description">${description}</td>
+                            <td data-label="Action Taken">${actionTaken}</td>
+                            <td data-label="Attended By">${attendedBy}</td>
+                            <td data-label="Status">${statusBadge(status)}</td>
+                            <td data-label="Time">${totalTime}</td>
+                        </tr>
+                    `;
+                });
+                html += `
+                                </tbody>
+                            </table>
+                `;
+
+                if (totalPages > 1) {
+                    html += `
+                        <div class="pagination-controls">
+                            <button class="page-btn" onclick="changeYearPage('failure','${year}',-1)" ${page <= 1 ? 'disabled' : ''}>‹ Prev</button>
+                            <span class="page-info">Page ${page} of ${totalPages}</span>
+                            <button class="page-btn" onclick="changeYearPage('failure','${year}',1)" ${page >= totalPages ? 'disabled' : ''}>Next ›</button>
+                        </div>
+                    `;
+                }
+
+                html += `
+                        </div>
+                    </div>
                 `;
             });
-
-            tableHtml += `</tbody></table>`;
-            container.innerHTML = tableHtml;
+            container.innerHTML = html;
         }
 
-        // Dynamic match for 7-digit prefix, capturing two exact row profiles (Heading Profile & Values Profile)
-        function extractMatchedSpecifications7Digit(valueRange, fullAssetId) {
-            if (!valueRange || !valueRange.values || valueRange.values.length < 2) return null;
-            const gridData = valueRange.values;
-            const target7DigitKey = fullAssetId.substring(0, 7);
-
-            for (let i = 1; i < gridData.length; i++) {
-                const rowValue = gridData[i][0]; // Check Column A
-                if (rowValue && rowValue.toString().trim().substring(0, 7) === target7DigitKey) {
-                    // Extract both title row and value row
-                    if (i + 1 < gridData.length) {
-                        return {
-                            headers: gridData[i],
-                            values: gridData[i + 1]
-                        };
-                    }
-                }
-            }
-            return null;
-        }
-
+        // ============================================================
+        // LOCAL DECODER (General Tab)
+        // ============================================================
         function runLocalDecoder(id) {
-            // Ensure General tab becomes visible whenever a decode attempt occurs
             document.getElementById('Page1').style.display = "block";
-
             const meta = getAssetMetadata(id);
 
-            // Validation: Show "Asset ID not matched" if any critical property is null/undefined
             if (!meta.station || !meta.group || !meta.subGroup || !meta.equipmentName) {
                 let errorHtml = `
                     <div class="data-card" style="border-left-color: #d93025; background-color: #fce8e6;">
@@ -884,6 +1294,9 @@
                 return false; 
             }
 
+            const sheetInfo = getSheetNamesForAsset(id);
+            const categoryTag = sheetInfo ? sheetInfo.suffix : "Unmapped";
+
             let mappedHtml = `
                 <div class="data-card">
                     <p><span class="label">Asset ID :</span> <strong>${id}</strong></p>
@@ -891,6 +1304,7 @@
                     <p><span class="label">Group :</span> ${meta.group}</p>
                     <p><span class="label">Sub-Group :</span> ${meta.subGroup}</p>
                     <p><span class="label">Equipment Name :</span> <strong>${meta.equipmentName}</strong></p>
+                    <p><span class="label">Data Source Category :</span> <span class="status-pill status-neutral">${categoryTag}</span></p>
                     <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 12px 0;">
                     <p><span class="label">Last Service Instance:</span> <span id="lastMaintField" style="font-weight:600; color:var(--primary-color)">Awaiting Sync...</span></p>
                     <p><span class="label">Next Service Target:</span> <span id="nextMaintField" style="font-weight:600; color:var(--primary-color)">Awaiting Sync...</span></p>
@@ -899,8 +1313,9 @@
             document.getElementById('decodedData').innerHTML = mappedHtml;
             return true; 
         }
-
-        // MODIFIED: Renders horizontal Google Sheets layout vertically in the UI specifications tab
+        // ============================================================
+        // RENDER: SPECIFICATIONS TAB
+        // ============================================================
         function renderSpecificationsOutput(specMatchedData, containerTargetId) {
             let frame = document.getElementById(containerTargetId);
             if (!specMatchedData || !specMatchedData.headers || !specMatchedData.values) {
@@ -911,12 +1326,8 @@
             const headingCols = specMatchedData.headers;
             const valueCols = specMatchedData.values;
 
-            let tableHtml = `
-                <table class="spec-table">
-                    <tbody>
-            `;
+            let tableHtml = `<table class="spec-table"><tbody>`;
 
-            // Skip index 0 (which contains the 7-digit Asset ID) and construct vertical rows
             for (let c = 1; c < headingCols.length; c++) {
                 const headText = headingCols[c] ? headingCols[c].toString().trim() : "";
                 if (headText !== "") {
@@ -930,23 +1341,18 @@
                 }
             }
 
-            tableHtml += `
-                    </tbody>
-                </table>
-            `;
-            
+            tableHtml += `</tbody></table>`;
             frame.innerHTML = tableHtml;
         }
 
+        // ============================================================
+        // TAB SWITCHING
+        // ============================================================
         function switchTab(clickEvent, targetPanelName) {
             let individualPanels = document.getElementsByClassName("tabcontent");
-            for (let x = 0; x < individualPanels.length; x++) {
-                individualPanels[x].style.display = "none";
-            }
+            for (let x = 0; x < individualPanels.length; x++) individualPanels[x].style.display = "none";
             let operationalTabs = document.getElementsByClassName("tablinks");
-            for (let y = 0; y < operationalTabs.length; y++) {
-                operationalTabs[y].className = operationalTabs[y].className.replace(" active", "");
-            }
+            for (let y = 0; y < operationalTabs.length; y++) operationalTabs[y].className = operationalTabs[y].className.replace(" active", "");
             document.getElementById(targetPanelName).style.display = "block";
             clickEvent.currentTarget.className += " active";
         }
