@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#1a73e8">
+    <meta name="theme-color" content="#6d28d9">
     <title>Asset Tracker & Diagnostic Dashboard</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #1a73e8;
@@ -28,6 +28,15 @@
             --fail-light: #f97316;
             --spec-color: #6d28d9;
             --spec-light: #a78bfa;
+
+            --header-frame-1: #c9b6f0;
+            --header-frame-2: #a487e6;
+            --clock-bar-1: #3b0764;
+            --clock-bar-2: #6d28d9;
+            --hero-bg-1: #2c0b52;
+            --hero-bg-2: #4c1d95;
+            --hero-green-1: #22c55e;
+            --hero-green-2: #86efac;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -35,7 +44,7 @@
 
         body { 
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            padding: 16px 12px 40px 12px; 
+            padding: 12px 12px 40px 12px; 
             max-width: 1050px; 
             margin: auto; 
             color: var(--text-dark);
@@ -44,37 +53,128 @@
             min-height: 100vh;
             overflow-x: hidden;
         }
-        
-        h2 { 
-            text-align: center; 
+
+        /* ============================================================
+           COMPACT HEADER FRAME (reduced heights & gaps, target <30% screen)
+        ============================================================ */
+        .header-frame {
+            background: linear-gradient(160deg, var(--header-frame-1), var(--header-frame-2));
+            border-radius: 18px;
+            padding: 8px;
+            margin-bottom: 14px;
+            box-shadow: 0 6px 18px rgba(109, 40, 217, 0.22);
+        }
+
+        .header-top-bar {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .header-logo-left, .header-logo-right {
+            height: clamp(34px, 7vw, 46px);
+            width: clamp(34px, 7vw, 46px);
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+        .header-logo-left {
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px var(--primary-color);
+        }
+
+        .header-title-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 6px;
+            min-width: 0;
+        }
+        .header-title-img {
+            max-height: clamp(34px, 8vw, 50px);
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .header-clock-bar {
+            background: linear-gradient(90deg, var(--clock-bar-1), var(--clock-bar-2));
+            border-radius: 30px;
+            padding: 6px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 6px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+        }
+
+        .clock-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: clamp(11px, 3vw, 14px);
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.2px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6);
+            animation: liveDotPulse 1.6s infinite;
+            flex-shrink: 0;
+        }
+        @keyframes liveDotPulse {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6); }
+            70% { box-shadow: 0 0 0 7px rgba(74, 222, 128, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        }
+
+        #liveClockText { font-variant-numeric: tabular-nums; }
+
+        .header-hero {
+            background: linear-gradient(135deg, var(--hero-bg-1), var(--hero-bg-2));
+            border-radius: 14px;
+            padding: 10px 14px;
+            text-align: center;
+        }
+
+        .hero-title {
             font-family: 'Poppins', sans-serif;
-            font-weight: 800;
-            font-size: clamp(1.3rem, 5vw, 2rem);
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
-            background: linear-gradient(90deg, var(--primary-dark), var(--primary-color), #5b9dfb);
+            font-weight: 900;
+            font-size: clamp(1rem, 4.2vw, 1.6rem);
+            letter-spacing: -0.4px;
+            margin: 0;
+            line-height: 1.15;
+            background: linear-gradient(90deg, var(--hero-green-1), var(--hero-green-2), var(--hero-green-1));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            padding: 0 8px;
+            text-shadow: 0 0 24px rgba(74, 222, 128, 0.12);
         }
 
-        h2::after {
-            content: "";
-            display: block;
-            width: 80px;
-            height: 4px;
-            margin: 12px auto 22px auto;
-            border-radius: 10px;
-            background: linear-gradient(90deg, var(--primary-color), #7cc4ff);
+        .hero-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: clamp(0.68rem, 2.6vw, 0.88rem);
+            color: var(--hero-green-2);
+            margin: 3px 0 0 0;
+            line-height: 1.25;
+            letter-spacing: 0.1px;
         }
 
-        h4 {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            letter-spacing: 0.2px;
-            font-size: clamp(0.95rem, 3vw, 1.1rem);
-        }
+        /* ============================================================ */
 
         .input-selection-container {
             display: none; 
@@ -144,6 +244,7 @@
             transform: translateY(-2px);
         }
         button.action-btn:active { transform: translateY(0) scale(0.98); }
+
         .or-divider {
             text-align: center; margin: 16px 0; color: #9aa0a6; font-weight: 700;
             font-size: 12px; letter-spacing: 1.5px; display: flex; align-items: center; gap: 12px;
@@ -171,42 +272,80 @@
         @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* ============================================================
+           TAB BAR — forced INLINE (single row, no wrap)
+        ============================================================ */
         .tab-bar { 
-            border-bottom: none; background-color: #eef2f7; display: none; margin-top: 26px;
-            border-radius: 14px 14px 0 0; padding: 8px 8px 0 8px; box-shadow: inset 0 -1px 0 rgba(0,0,0,0.04);
-            white-space: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin;
+            border-bottom: none;
+            background-color: transparent;
+            display: none; 
+            margin-top: 6px;
+            margin-bottom: 4px;
+            border-radius: 0;
+            padding: 4px 2px;
+            box-shadow: none;
+            white-space: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            gap: 8px;
         }
         .tab-bar::-webkit-scrollbar { height: 4px; }
 
         .tab-bar button { 
-            background-color: transparent; border: none; outline: none; cursor: pointer; padding: 14px 18px; 
-            transition: 0.25s ease; font-size: 13.5px; font-weight: 700; font-family: 'Inter', sans-serif;
-            color: #5f6368; border-radius: 10px 10px 0 0; position: relative; display: inline-block; user-select: none;
+            background: linear-gradient(135deg, #ede9fe, #ddd6fe); 
+            border: 1.5px solid #c4b5fd;
+            outline: none; 
+            cursor: pointer; 
+            padding: 10px 16px; 
+            transition: 0.25s ease; 
+            font-size: 12.5px; 
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            color: #5b21b6;
+            border-radius: 30px;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+            box-shadow: 0 2px 6px rgba(109,40,217,0.12);
+            flex-shrink: 0;
+            white-space: nowrap;
         }
-        .tab-bar button:hover { background-color: #ffffff; }
-        .tab-bar button.active { background-color: #ffffff; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); }
-        .general-tab.active { color: var(--primary-color); }
-        .maint-tab.active { color: var(--maint-color); }
-        .fail-tab.active { color: var(--fail-color); }
-        .spec-tab.active { color: var(--spec-color); }
+        .tab-bar button:hover { 
+            background: linear-gradient(135deg, #ddd6fe, #c4b5fd);
+            transform: translateY(-1px);
+        }
+        .tab-bar button.active { 
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+            transform: translateY(-1px);
+        }
 
-        .tab-bar button.active::after {
-            content: ""; position: absolute; bottom: -1px; left: 10px; right: 10px; height: 3px; border-radius: 3px 3px 0 0;
-        }
-        .general-tab.active::after { background: linear-gradient(90deg, var(--primary-color), var(--primary-light)); }
-        .maint-tab.active::after { background: linear-gradient(90deg, var(--maint-color), var(--maint-light)); }
-        .fail-tab.active::after { background: linear-gradient(90deg, var(--fail-color), var(--fail-light)); }
-        .spec-tab.active::after { background: linear-gradient(90deg, var(--spec-color), var(--spec-light)); }
+        .general-tab.active { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); }
+        .maint-tab.active { background: linear-gradient(135deg, var(--maint-color), var(--maint-light)); }
+        .fail-tab.active { background: linear-gradient(135deg, var(--fail-color), var(--fail-light)); }
+        .spec-tab.active { background: linear-gradient(135deg, var(--spec-color), var(--spec-light)); }
 
         .tabcontent { 
             display: none; padding: 22px 16px; border: 1px solid var(--border-color); border-top: none; 
             background: #ffffff; border-radius: 0 0 14px 14px; overflow-x: auto; 
             box-shadow: 0 6px 24px rgba(0,0,0,0.05); animation: fadeIn 0.35s ease;
+            margin-top: -2px;
+        }
+        #tabMenu + .tabcontent, .tabcontent {
+            border-radius: 14px;
         }
 
         .tabcontent h4 {
             margin-top:0; padding-bottom: 12px; border-bottom: 1px solid #eef1f4; margin-bottom: 18px;
             display: flex; align-items: center; gap: 8px;
+            font-family: 'Poppins', sans-serif; font-weight: 700; letter-spacing: 0.2px;
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
         }
         #Page1 h4 { color: var(--primary-color); }
         #Page2 h4 { color: var(--maint-color); }
@@ -281,7 +420,6 @@
         ::-webkit-scrollbar-thumb { background: #c3d3ee; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary-light); }
 
-        /* ============ NEW: Toolbar (counters + filter + export) ============ */
         .records-toolbar {
             display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
             gap: 12px; margin-bottom: 18px; padding: 12px 14px; background: #f8fafc;
@@ -310,7 +448,6 @@
         .export-btn.maint-btn { background: linear-gradient(135deg, var(--maint-color), var(--maint-light)); box-shadow: 0 2px 8px rgba(15,118,110,0.3); }
         .export-btn.fail-btn { background: linear-gradient(135deg, var(--fail-color), var(--fail-light)); box-shadow: 0 2px 8px rgba(185,28,28,0.3); }
 
-        /* ============ NEW: Year Grouping ============ */
         .year-group { margin-bottom: 16px; border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; }
         .year-header {
             display: flex; align-items: center; gap: 10px; padding: 12px 16px; cursor: pointer;
@@ -330,7 +467,6 @@
         .year-body { padding: 14px; animation: fadeIn 0.3s ease; }
         .year-body.collapsed { display: none; }
 
-        /* ============ NEW: Pagination ============ */
         .pagination-controls { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 14px; }
         .page-btn {
             padding: 8px 16px; border-radius: 8px; border: 1.5px solid var(--border-color);
@@ -362,9 +498,9 @@
         }
 
         @media (max-width: 600px) {
-            body { padding: 12px 8px 30px 8px; }
+            body { padding: 10px 8px 30px 8px; }
             .label { min-width: 130px; font-size: 13px; }
-            .tab-bar button { padding: 12px 14px; font-size: 12.5px; }
+            .tab-bar button { padding: 9px 13px; font-size: 11.5px; }
             .input-group { flex-direction: column; }
             .input-group input, .input-group button { width: 100%; }
             .data-card { padding: 16px 14px; }
@@ -374,18 +510,47 @@
             .records-toolbar { flex-direction: column; align-items: stretch; }
             .toolbar-actions { justify-content: space-between; }
             .date-filter-select, .export-btn { flex: 1; }
+            .header-top-bar { padding: 7px 10px; }
+            .header-clock-bar { padding: 6px 12px; }
+            .header-hero { padding: 8px 10px; }
         }
 
         @media (max-width: 380px) {
-            h2 { font-size: 1.15rem; }
             .label { min-width: 100%; margin-bottom: 2px; }
             .data-card p { flex-direction: column; gap: 2px; }
+            .tab-bar { gap: 6px; }
+            .tab-bar button { padding: 8px 12px; font-size: 11px; }
+            .header-logo-left, .header-logo-right { height: 30px; width: 30px; }
+            .header-title-img { max-height: 30px; }
         }
     </style>
 </head>
 <body>
 
-    <h2>⚙️ Asset Infrastructure Management</h2>
+    <!-- ============================================================
+         COMPACT HEADER: Railway logos + Live Clock + Hero banner
+    ============================================================ -->
+    <div class="header-frame">
+        <div class="header-top-bar">
+            <img src="https://lh3.googleusercontent.com/d/1oYWlcTQA9fugWbxnbyw9CUaRabmjUzlI" alt="Indian Railways" class="header-logo-left">
+            <div class="header-title-center">
+                <img src="https://lh3.googleusercontent.com/d/1Lq0ri1xMDU4PERzu3QAfuZ3XfkHMnF0b" alt="Metro Railway Kolkata" class="header-title-img">
+            </div>
+            <img src="https://lh3.googleusercontent.com/d/1z57jNNPGjl3jZvXcCoTDcK7cWTeNIt87" alt="Ashok Stambh" class="header-logo-right">
+        </div>
+
+        <div class="header-clock-bar">
+            <div class="clock-display">
+                <span class="live-dot"></span>
+                <span id="liveClockText">--</span>
+            </div>
+        </div>
+
+        <div class="header-hero">
+            <h1 class="hero-title">KKSO-KBGA Asset Management</h1>
+            <p class="hero-subtitle">A Cloud Based Asset Management in Orange Line</p>
+        </div>
+    </div>
 
     <div class="input-selection-container" id="inputContainer">
         <label>Select Asset Discovery Feature:</label>
@@ -427,11 +592,34 @@
 
     <script>
         // ============================================================
+        // LIVE CLOCK
+        // ============================================================
+        (function initLiveClock() {
+            const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+            const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            const clockEl = document.getElementById('liveClockText');
+
+            function pad(n) { return n.toString().padStart(2, '0'); }
+
+            function updateClock() {
+                const now = new Date();
+                const dayStr = dayNames[now.getDay()];
+                const dateStr = pad(now.getDate());
+                const monthStr = monthNames[now.getMonth()];
+                const yearStr = now.getFullYear().toString().slice(-2);
+                const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+                if (clockEl) clockEl.innerText = `${dayStr} ${dateStr} ${monthStr} ${yearStr}   ${timeStr}`;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        })();
+
+        // ============================================================
         // CONFIGURATION
         // ============================================================
         const SPREADSHEET_ID = "1Jid66wBQ1ktKoysqpoCF1sIKengpsHq8CQKW9euMWh0"; 
         const API_KEY = "AIzaSyAjBceUqA-G1ueMCsqevOiPEhb2Nk-pOhI";
-        const ROWS_PER_PAGE = 12; // records per page, per year group
+        const ROWS_PER_PAGE = 12;
 
         const groupSheetSuffixMap = {
             "01": "HT",
@@ -511,18 +699,11 @@
             "02": {}, "03": {}, "04": {}, "05": {}, "06": {}, "07": {}, "08": {}
         };
 
-        // ============================================================
-        // NEW: GLOBAL STATE for Maintenance & Failure tabs
-        // (Holds fetched data + current filter/pagination/collapse state)
-        // ============================================================
         const state = {
             maintenance: { rows: [], meta: null, filter: 'all', pages: {}, expandedYears: null },
             failure:     { rows: [], meta: null, filter: 'all', pages: {}, expandedYears: null }
         };
 
-        // ============================================================
-        // PAGE LOAD / SCANNER SETUP
-        // ============================================================
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const idFromUrl = urlParams.get('id');
@@ -572,9 +753,6 @@
             processAssetPipelines(enteredId);
         }
 
-        // ============================================================
-        // METADATA DECODING
-        // ============================================================
         function getAssetMetadata(id) {
             let parsedStation = id.substring(0,3);
             let parsedGroup = id.substring(3,5);
@@ -583,6 +761,7 @@
 
             let stationName = mappingDictionary.station[parsedStation] || null;
             let groupName = mappingDictionary.group[parsedGroup] || null;
+
             let subGroupName = null;
             if (subGroupMap[parsedGroup]) {
                 subGroupName = subGroupMap[parsedGroup][parsedSubGroup] || null;
@@ -596,9 +775,6 @@
             return { station: stationName, group: groupName, subGroup: subGroupName, equipmentName: equipmentName };
         }
 
-        // ============================================================
-        // DATE HANDLING (DD-MM-YY format) + OVERDUE DETECTION
-        // ============================================================
         function parseDDMMYY(dateStr) {
             if (!dateStr) return null;
             const cleaned = dateStr.toString().trim();
@@ -640,9 +816,6 @@
             return `<span class="status-pill ${cls}">${clean}</span>`;
         }
 
-        // ============================================================
-        // NEW: SORT / FILTER / GROUP / PAGINATE HELPERS
-        // ============================================================
         function filterRowsByDateRange(rows, dateColIndex, rangeValue) {
             if (rangeValue === 'all' || !rangeValue) return rows;
             const today = new Date(); today.setHours(0,0,0,0);
@@ -687,6 +860,7 @@
                 return parseInt(b) - parseInt(a);
             });
         }
+
         function paginateArray(arr, page, perPage) {
             const start = (page - 1) * perPage;
             return arr.slice(start, start + perPage);
@@ -733,9 +907,6 @@
             if (type === 'maintenance') renderMaintenanceUI(); else renderFailureUI();
         }
 
-        // ============================================================
-        // NEW: CSV EXPORT (respects current date filter, ignores pagination)
-        // ============================================================
         function exportMaintenanceCSV() {
             const st = state.maintenance;
             if (!st.rows.length) return;
@@ -768,9 +939,6 @@
             downloadCSV(`Failure_${meta.equipmentName || 'Asset'}_${Date.now()}.csv`, headers, csvRows);
         }
 
-        // ============================================================
-        // DIAGNOSTIC HELPER
-        // ============================================================
         async function fetchActualSheetTitles() {
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?key=${API_KEY}&fields=sheets.properties.title`;
             const res = await fetch(url);
@@ -807,9 +975,6 @@
             return html;
         }
 
-        // ============================================================
-        // TWO-PHASE FETCH ENGINE
-        // ============================================================
         function qSheet(name) { return `'${name}'`; }
 
         async function fetchColumnAOnly(sheetNames) {
@@ -854,6 +1019,7 @@
         function buildRowRanges(sheetName, rowNumbers, colStart, colEnd) {
             return rowNumbers.map(r => `${qSheet(sheetName)}!${colStart}${r}:${colEnd}${r}`);
         }
+
         async function fetchTargetedRows(sheetNames, maintRows, failRows, specHeaderRow) {
             let ranges = [];
             let sections = { maint: 0, fail: 0, spec: 0 };
@@ -910,9 +1076,6 @@
             return { maintenance, failure, specifications };
         }
 
-        // ============================================================
-        // MAIN ORCHESTRATOR
-        // ============================================================
         async function processAssetPipelines(assetId) {
             const loadingEl = document.getElementById('loadingStatus');
             const loadingText = document.getElementById('loadingText');
@@ -953,12 +1116,11 @@
                 const detailed = await fetchTargetedRows(sheetNames, maintRows, failRows, specHeaderRow);
 
                 loadingEl.style.display = "none";
-                document.getElementById('tabMenu').style.display = "block";
+                document.getElementById('tabMenu').style.display = "flex";
                 document.getElementById('Page1').style.display = "block";
 
                 const meta = getAssetMetadata(assetId);
 
-                // General tab summary — uses NEWEST maintenance record (sorted)
                 if (detailed.maintenance.length > 0) {
                     const sortedMaint = sortRowsByDateDesc(detailed.maintenance, 1);
                     const topRow = sortedMaint[0];
@@ -975,7 +1137,6 @@
                     document.getElementById('nextMaintField').innerText = "No Records Available";
                 }
 
-                // NEW: initialize state-driven UI for Maintenance & Failure tabs
                 initMaintenanceUI(detailed.maintenance, meta);
                 initFailureUI(detailed.failure, meta);
 
@@ -990,9 +1151,6 @@
             }
         }
 
-        // ============================================================
-        // NEW: MAINTENANCE TAB — init + render (counter/filter/sort/group/paginate/export)
-        // ============================================================
         function initMaintenanceUI(rows, meta) {
             state.maintenance.rows = rows;
             state.maintenance.meta = meta;
@@ -1129,9 +1287,6 @@
             container.innerHTML = html;
         }
 
-        // ============================================================
-        // NEW: FAILURE TAB — init + render
-        // ============================================================
         function initFailureUI(rows, meta) {
             state.failure.rows = rows;
             state.failure.meta = meta;
@@ -1252,6 +1407,7 @@
                         </tr>
                     `;
                 });
+
                 html += `
                                 </tbody>
                             </table>
@@ -1272,12 +1428,10 @@
                     </div>
                 `;
             });
+
             container.innerHTML = html;
         }
 
-        // ============================================================
-        // LOCAL DECODER (General Tab)
-        // ============================================================
         function runLocalDecoder(id) {
             document.getElementById('Page1').style.display = "block";
             const meta = getAssetMetadata(id);
@@ -1313,9 +1467,7 @@
             document.getElementById('decodedData').innerHTML = mappedHtml;
             return true; 
         }
-        // ============================================================
-        // RENDER: SPECIFICATIONS TAB
-        // ============================================================
+
         function renderSpecificationsOutput(specMatchedData, containerTargetId) {
             let frame = document.getElementById(containerTargetId);
             if (!specMatchedData || !specMatchedData.headers || !specMatchedData.values) {
@@ -1345,9 +1497,6 @@
             frame.innerHTML = tableHtml;
         }
 
-        // ============================================================
-        // TAB SWITCHING
-        // ============================================================
         function switchTab(clickEvent, targetPanelName) {
             let individualPanels = document.getElementsByClassName("tabcontent");
             for (let x = 0; x < individualPanels.length; x++) individualPanels[x].style.display = "none";
