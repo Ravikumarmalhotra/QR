@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#6d28d9">
-    <title>Asset Tracker & Diagnostic Dashboard</title>
+    <title>QR Code Based Asset Dashboard</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
@@ -60,9 +60,9 @@
         .header-frame {
             background: linear-gradient(160deg, var(--header-frame-1), var(--header-frame-2));
             border-radius: 18px;
-            padding: 8px;
-            margin-bottom: 14px;
-            box-shadow: 0 6px 18px rgba(109, 40, 217, 0.22);
+            padding: 3px;
+            margin-bottom: 4px;
+            box-shadow: 0 60px 1800px rgba(109, 40, 217, 0.22);
         }
 
         .header-top-bar {
@@ -73,7 +73,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 8px;
-            margin-bottom: 6px;
+            margin-bottom: 1px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
@@ -111,7 +111,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 6px;
+            margin-bottom: 1px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.18);
         }
 
@@ -555,7 +555,7 @@
     <div class="input-selection-container" id="inputContainer">
         <label>Select Asset Discovery Feature:</label>
         <div class="input-group">
-            <input type="text" id="manualAssetId" placeholder="Enter 9-Digit ID (e.g., 200010101)" maxlength="9" inputmode="numeric">
+            <input type="text" id="manualAssetId" placeholder="Enter 9-Digit Assed ID (e.g., 200010101)" maxlength="9" inputmode="numeric">
             <button class="action-btn" onclick="handleManualSearch()">Search ID</button>
         </div>
         <div class="or-divider">OR SCAN QR CODE</div>
@@ -1105,14 +1105,14 @@
             }
 
             try {
-                loadingText.innerText = "Scanning index (Column A)...";
+                loadingText.innerText = "Scanning...";
                 const columnAResults = await fetchColumnAOnly(sheetNames);
 
                 const maintRows = findExactMatchRows(columnAResults[0], assetId);
                 const failRows  = findExactMatchRows(columnAResults[1], assetId);
                 const specHeaderRow = findSpecHeaderRow(columnAResults[2], assetId.substring(0, 7));
 
-                loadingText.innerText = "Fetching matched records...";
+                loadingText.innerText = "Just a second...";
                 const detailed = await fetchTargetedRows(sheetNames, maintRows, failRows, specHeaderRow);
 
                 loadingEl.style.display = "none";
@@ -1454,14 +1454,13 @@
             let mappedHtml = `
                 <div class="data-card">
                     <p><span class="label">Asset ID :</span> <strong>${id}</strong></p>
-                    <p><span class="label">Station :</span> ${meta.station}</p>
-                    <p><span class="label">Group :</span> ${meta.group}</p>
-                    <p><span class="label">Sub-Group :</span> ${meta.subGroup}</p>
+                    <p><span class="label">Station :</span> <strong> ${meta.station}</p>
+                    <p><span class="label">Group :</span> <strong> ${meta.group}</p>
+                    <p><span class="label">Sub-Group :</span> <strong> ${meta.subGroup}</p>
                     <p><span class="label">Equipment Name :</span> <strong>${meta.equipmentName}</strong></p>
-                    <p><span class="label">Data Source Category :</span> <span class="status-pill status-neutral">${categoryTag}</span></p>
                     <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 12px 0;">
-                    <p><span class="label">Last Service Instance:</span> <span id="lastMaintField" style="font-weight:600; color:var(--primary-color)">Awaiting Sync...</span></p>
-                    <p><span class="label">Next Service Target:</span> <span id="nextMaintField" style="font-weight:600; color:var(--primary-color)">Awaiting Sync...</span></p>
+                    <p><span class="label">Last Maintenance:</span> <span id="lastMaintField" style="font-weight:600; color:var(--primary-color)">wait...</span></p>
+                    <p><span class="label">Next Maintenance:</span> <span id="nextMaintField" style="font-weight:600; color:var(--primary-color)">wait...</span></p>
                 </div>
             `;
             document.getElementById('decodedData').innerHTML = mappedHtml;
