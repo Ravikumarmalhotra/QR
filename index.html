@@ -1,1509 +1,1368 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#6d28d9">
-    <title>QR Code Based Asset Dashboard</title>
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #1a73e8;
-            --primary-dark: #174ea6;
-            --primary-light: #4c9aff;
-            --secondary-color: #f8f9fa;
-            --border-color: #dadce0;
-            --text-dark: #202124;
-            --accent-blue: #e8f0fe;
-            --table-header-bg: #f1f3f4;
-            --table-row-hover: #f2f7ff;
-            --success-color: #1e8e3e;
-            --danger-color: #d93025;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Maintenance Entry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<style>
+  :root{
+    --primary:#4f46e5;
+    --primary-dark:#3730a3;
+    --secondary:#06b6d4;
+    --success:#10b981;
+    --success-dark:#059669;
+    --danger:#ef4444;
+    --danger-dark:#dc2626;
+    --warning:#f59e0b;
+    --bg:#eef1f8;
+    --card-bg:#ffffff;
+    --text-main:#1e293b;
+    --text-muted:#64748b;
+    --border:#e2e8f0;
+    --radius:16px;
+    --radius-sm:10px;
+    --shadow-sm:0 1px 4px rgba(15,23,42,0.06);
+    --shadow-md:0 6px 18px rgba(15,23,42,0.08);
+    --shadow-lg:0 14px 34px rgba(15,23,42,0.14);
+  }
+  *{ box-sizing:border-box; }
+  body{
+    font-family:'Poppins', sans-serif;
+    background:var(--bg);
+    margin:0;
+    color:var(--text-main);
+    -webkit-tap-highlight-color: transparent;
+  }
 
-            --maint-color: #0f766e;
-            --maint-light: #14b8a6;
-            --fail-color: #b91c1c;
-            --fail-light: #f97316;
-            --spec-color: #6d28d9;
-            --spec-light: #a78bfa;
+  /* ===== Sticky App Header ===== */
+  .appHeader{
+    position:sticky; top:0; z-index:200;
+    background:linear-gradient(135deg, var(--primary), var(--secondary));
+    box-shadow:var(--shadow-md);
+    padding:12px 16px;
+  }
+  .appHeaderInner{
+    max-width:480px; margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .appTitle{ color:#fff; font-weight:700; font-size:1.05rem; display:flex; align-items:center; gap:8px; }
+  .lockToggleWrap{ display:flex; align-items:center; gap:8px; }
+  .lockLabel{ color:#fff; font-size:0.78rem; font-weight:600; white-space:nowrap; }
 
-            --header-frame-1: #c9b6f0;
-            --header-frame-2: #a487e6;
-            --clock-bar-1: #3b0764;
-            --clock-bar-2: #6d28d9;
-            --hero-bg-1: #2c0b52;
-            --hero-bg-2: #4c1d95;
-            --hero-green-1: #22c55e;
-            --hero-green-2: #86efac;
-        }
+  .switch{ position:relative; display:inline-block; width:48px; height:26px; flex-shrink:0; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider{
+    position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0;
+    background-color:rgba(255,255,255,0.35);
+    transition:.3s; border-radius:34px;
+  }
+  .slider:before{
+    position:absolute; content:""; height:20px; width:20px; left:3px; bottom:3px;
+    background-color:#fff; transition:.3s; border-radius:50%;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+  input:checked + .slider{ background-color:#10b981; }
+  input:checked + .slider:before{ transform:translateX(22px); }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        html { -webkit-text-size-adjust: 100%; }
+  .sessionChip{
+    max-width:480px; margin:8px auto 0; padding:0 16px;
+    display:flex; justify-content:flex-end;
+  }
+  .sessionBadge{
+    background:rgba(255,255,255,0.25); color:#fff; font-size:0.72rem; font-weight:600;
+    padding:3px 10px; border-radius:20px; backdrop-filter: blur(4px);
+  }
 
-        body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            padding: 12px 12px 40px 12px; 
-            max-width: 1050px; 
-            margin: auto; 
-            color: var(--text-dark);
-            line-height: 1.6;
-            background: linear-gradient(135deg, #eef4ff 0%, #f7f9fc 45%, #eef7f2 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+  /* ===== Page Container ===== */
+  .page{
+    max-width:480px;
+    margin:0 auto;
+    background:transparent;
+    min-height:calc(100vh - 60px);
+    padding:18px 16px 50px;
+    animation: fadeIn .35s ease;
+  }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+  .page:not(.active){ display:none; }
 
-        /* ============================================================
-           COMPACT HEADER FRAME (reduced heights & gaps, target <30% screen)
-        ============================================================ */
-        .header-frame {
-            background: linear-gradient(160deg, var(--header-frame-1), var(--header-frame-2));
-            border-radius: 18px;
-            padding: 3px;
-            margin-bottom: 4px;
-            box-shadow: 0 60px 1800px rgba(109, 40, 217, 0.22);
-        }
+  h1{ font-size:1.3rem; color:var(--primary-dark); text-align:center; margin:4px 0 16px; font-weight:800; }
 
-        .header-top-bar {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 8px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            margin-bottom: 1px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
+  /* ===== Section Cards ===== */
+  .section{
+    margin-bottom:18px;
+    padding:18px;
+    border-radius:var(--radius);
+    background:var(--card-bg);
+    box-shadow:var(--shadow-sm);
+    border:1px solid var(--border);
+    transition: box-shadow .25s ease;
+  }
+  .section:hover{ box-shadow:var(--shadow-md); }
+  .section > label.title{
+    font-weight:700; display:flex; align-items:center; gap:8px;
+    margin-bottom:12px; color:var(--primary-dark); font-size:1rem;
+  }
+  label.sub{ font-weight:600; display:block; margin:12px 0 6px; color:var(--text-muted); font-size:0.85rem; text-transform:uppercase; letter-spacing:.3px; }
 
-        .header-logo-left, .header-logo-right {
-            height: clamp(34px, 7vw, 46px);
-            width: clamp(34px, 7vw, 46px);
-            object-fit: contain;
-            flex-shrink: 0;
-        }
-        .header-logo-left {
-            border-radius: 50%;
-            box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px var(--primary-color);
-        }
+  .divider{
+    text-align:center; color:#a3adc2; margin:14px 0; font-weight:700;
+    font-size:0.72rem; letter-spacing:1.5px; position:relative;
+  }
+  .divider::before, .divider::after{
+    content:""; position:absolute; top:50%; width:38%; height:1px; background:var(--border);
+  }
+  .divider::before{ left:0; } .divider::after{ right:0; }
 
-        .header-title-center {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0 6px;
-            min-width: 0;
-        }
-        .header-title-img {
-            max-height: clamp(34px, 8vw, 50px);
-            width: auto;
-            max-width: 100%;
-            object-fit: contain;
-        }
+  /* ===== Buttons ===== */
+  button{
+    cursor:pointer; border:none; border-radius:var(--radius-sm);
+    padding:13px 18px; font-size:0.95rem; font-weight:600;
+    font-family:inherit; transition:all .2s ease;
+  }
+  button:active{ transform:scale(0.97); }
+  button:disabled{ opacity:0.55; cursor:not-allowed; transform:none !important; }
 
-        .header-clock-bar {
-            background: linear-gradient(90deg, var(--clock-bar-1), var(--clock-bar-2));
-            border-radius: 30px;
-            padding: 6px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 1px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.18);
-        }
+  #btnScanQr{
+    background:linear-gradient(135deg,#00b09b,#00897b);
+    color:#fff; width:100%; box-shadow:0 4px 14px rgba(0,137,123,0.35);
+  }
+  #btnScanQr:hover{ box-shadow:0 6px 20px rgba(0,137,123,0.45); transform:translateY(-1px); }
 
-        .clock-display {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #ffffff;
-            font-weight: 700;
-            font-size: clamp(11px, 3vw, 14px);
-            font-family: 'Inter', sans-serif;
-            letter-spacing: 0.2px;
-        }
+  #btnGetFormById, #btnGetFormByDropdown{
+    background:linear-gradient(135deg, var(--primary), #6366f1);
+    color:#fff; white-space:nowrap; box-shadow:0 4px 14px rgba(79,70,229,0.35);
+  }
+  #btnGetFormById:hover, #btnGetFormByDropdown:hover{ box-shadow:0 6px 20px rgba(79,70,229,0.45); transform:translateY(-1px); }
 
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #4ade80;
-            box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6);
-            animation: liveDotPulse 1.6s infinite;
-            flex-shrink: 0;
-        }
-        @keyframes liveDotPulse {
-            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6); }
-            70% { box-shadow: 0 0 0 7px rgba(74, 222, 128, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
-        }
+  #btnAddStaff, #btnAddRemark{
+    background:linear-gradient(135deg, var(--success), var(--success-dark));
+    color:#fff; box-shadow:0 4px 12px rgba(16,185,129,0.3);
+  }
+  #btnAddStaff:hover, #btnAddRemark:hover{ box-shadow:0 6px 18px rgba(16,185,129,0.4); transform:translateY(-1px); }
 
-        #liveClockText { font-variant-numeric: tabular-nums; }
+  .submitBtn{
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+    color:#fff; width:100%; padding:16px; font-size:1.08rem; margin-top:14px;
+    box-shadow:0 6px 18px rgba(239,68,68,0.4); letter-spacing:.3px;
+  }
+  .submitBtn:hover{ box-shadow:0 8px 24px rgba(239,68,68,0.5); transform:translateY(-1px); }
 
-        .header-hero {
-            background: linear-gradient(135deg, var(--hero-bg-1), var(--hero-bg-2));
-            border-radius: 14px;
-            padding: 10px 14px;
-            text-align: center;
-        }
+  .backBtn{
+    background:#fff; color:var(--text-muted); width:100%; padding:13px; margin-top:10px;
+    border:1.5px solid var(--border);
+  }
+  .backBtn:hover{ background:#f8fafc; border-color:#cbd5e1; }
 
-        .hero-title {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 900;
-            font-size: clamp(1rem, 4.2vw, 1.6rem);
-            letter-spacing: -0.4px;
-            margin: 0;
-            line-height: 1.15;
-            background: linear-gradient(90deg, var(--hero-green-1), var(--hero-green-2), var(--hero-green-1));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 24px rgba(74, 222, 128, 0.12);
-        }
+  .clearFieldsBtn{
+    background:#fff7ed; color:#b45309; border:1.5px solid #fdba74;
+    padding:8px 14px; font-size:0.82rem; font-weight:600; white-space:nowrap;
+  }
+  .clearFieldsBtn:hover{ background:#ffedd5; }
 
-        .hero-subtitle {
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: clamp(0.68rem, 2.6vw, 0.88rem);
-            color: var(--hero-green-2);
-            margin: 3px 0 0 0;
-            line-height: 1.25;
-            letter-spacing: 0.1px;
-        }
+  .row{ display:flex; gap:8px; }
 
-        /* ============================================================ */
+  /* ===== Inputs ===== */
+  input[type=text], input[type=date], select, textarea{
+    width:100%;
+    padding:12px 13px;
+    font-size:0.96rem;
+    font-family:inherit;
+    border:1.5px solid var(--border);
+    border-radius:var(--radius-sm);
+    margin-bottom:6px;
+    background:#fbfcfe;
+    color:var(--text-main);
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  input[type=text]:focus, input[type=date]:focus, select:focus, textarea:focus{
+    outline:none; border-color:var(--primary); background:#fff;
+    box-shadow:0 0 0 3px rgba(79,70,229,0.15);
+  }
+  select:disabled{ background:#f1f5f9; color:#94a3b8; cursor:not-allowed; }
+  input.invalid, select.invalid, textarea.invalid{
+    border-color:var(--danger) !important;
+    background:#fff1f1 !important;
+    box-shadow:0 0 0 3px rgba(239,68,68,0.12) !important;
+  }
+  #assetIdInput{ flex:1; }
 
-        .input-selection-container {
-            display: none; 
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(26, 115, 232, 0.08), 0 1px 3px rgba(0,0,0,0.05);
-            animation: fadeSlideIn 0.5s ease;
-        }
+  .error{ color:var(--danger); font-size:0.82rem; margin-top:2px; min-height:16px; font-weight:500; }
 
-        .input-selection-container label {
-            font-size: 14.5px;
-            color: #3c4043;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-        }
+  /* ===== Info box ===== */
+  .infoBox{
+    background:linear-gradient(135deg,#eef2ff,#e0f2fe);
+    padding:16px; border-radius:var(--radius);
+    margin-bottom:14px; border:1px solid #dbeafe;
+  }
+  .infoRow{ display:flex; justify-content:space-between; padding:4px 0; font-size:0.9rem; gap:8px; }
+  .infoRow span.k{ color:var(--text-muted); font-weight:500; }
+  .infoRow span.v{ font-weight:700; text-align:right; color:var(--primary-dark); }
 
-        .input-selection-container label::before { content: "🔎"; font-size: 18px; }
+  hr.sep{ border:none; border-top:2px dashed #cbd5e1; margin:16px 0; }
 
-        .input-group { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  /* ===== Lock Banner (shared: entry + form) ===== */
+  .lockBanner{
+    display:none;
+    background:linear-gradient(135deg,#ecfdf5,#d1fae5);
+    border:1.5px solid #6ee7b7;
+    border-radius:var(--radius-sm);
+    padding:12px 14px;
+    margin-bottom:16px;
+    font-size:0.85rem;
+    color:#065f46;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .lockBanner.show{ display:flex; }
+  .lockBanner b{ display:block; margin-bottom:2px; }
+  .lockBanner span{ line-height:1.4; }
 
-        input[type="text"] {
-            flex: 1;
-            min-width: 180px;
-            padding: 14px 16px;
-            border: 1.5px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 16px;
-            font-family: 'Inter', sans-serif;
-            transition: border-color 0.25s ease, box-shadow 0.25s ease;
-            background-color: #fbfcfe;
-            -webkit-appearance: none;
-        }
+  /* ===== Form Groups ===== */
+  .formGroup{ margin-bottom:22px; }
+  .formGroup > label{ font-weight:700; display:block; margin-bottom:9px; color:var(--primary-dark); font-size:0.95rem; }
+  .fieldErr{ color:var(--danger); font-size:0.78rem; margin-top:-2px; margin-bottom:6px; min-height:14px; font-weight:500; }
 
-        input[type="text"]:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.12);
-            background-color: #ffffff;
-        }
+  .staffRow, .remarkRow{ display:flex; gap:8px; align-items:flex-start; margin-bottom:9px; }
+  .staffRow select{ flex:1; margin-bottom:0; }
 
-        button.action-btn {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            border: none;
-            padding: 14px 24px;
-            font-size: 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 700;
-            font-family: 'Inter', sans-serif;
-            box-shadow: 0 3px 10px rgba(26, 115, 232, 0.35);
-            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.2s ease;
-            white-space: nowrap;
-            touch-action: manipulation;
-            min-height: 48px;
-            flex-shrink: 0;
-        }
+  .remarkRow textarea{
+    flex:1; resize:vertical; font-size:1rem; line-height:1.5; font-family:inherit;
+  }
+  .remarkText.readonlyRemark{
+    background:#eef2f7; color:#334155; cursor:not-allowed; min-height:56px; font-weight:600;
+    border-style:dashed;
+  }
+  .remarkText.addedRemark{
+    min-height:150px; font-size:1.05rem; font-weight:600; color:#111;
+  }
 
-        button.action-btn:hover {
-            background: linear-gradient(135deg, var(--primary-dark), #123a7a);
-            box-shadow: 0 5px 16px rgba(26, 115, 232, 0.45);
-            transform: translateY(-2px);
-        }
-        button.action-btn:active { transform: translateY(0) scale(0.98); }
+  .delBtn{
+    background:linear-gradient(135deg,#f87171,#ef4444);
+    color:#fff; padding:11px 14px; font-size:1.05rem;
+    align-self:flex-start; line-height:1;
+    box-shadow:0 3px 10px rgba(239,68,68,0.3);
+  }
+  .delBtn:hover{ box-shadow:0 5px 14px rgba(239,68,68,0.4); }
 
-        .or-divider {
-            text-align: center; margin: 16px 0; color: #9aa0a6; font-weight: 700;
-            font-size: 12px; letter-spacing: 1.5px; display: flex; align-items: center; gap: 12px;
-        }
-        .or-divider::before, .or-divider::after { content: ""; flex: 1; height: 1px; background: var(--border-color); }
+  #submitStatus{
+    text-align:center; margin-top:14px; font-weight:700; min-height:24px;
+    padding:10px; border-radius:var(--radius-sm); font-size:0.92rem;
+  }
+  #submitStatus.ok{ background:#dcfce7; color:#166534; }
+  #submitStatus.err{ background:#fee2e2; color:#991b1b; }
+  #submitStatus.loading{ background:#e0f2fe; color:#075985; }
 
-        #reader { width: 100%; border-radius: 14px; overflow: hidden; margin-top: 10px; border: 2px dashed var(--border-color); padding: 6px; }
-
-        #html5-qrcode-button-camera-permission,
-        #html5-qrcode-anchor-scan-type-change,
-        .html5-qrcode-element[type="button"][style*="Request Camera"] { display: none !important; }
-        
-        #loadingStatus { 
-            color: var(--primary-dark); font-weight: 600; text-align: center; margin: 18px 0; 
-            padding: 14px; background: var(--accent-blue); border-radius: 10px; border: 1px solid #c9dcfb;
-            display: none; align-items: center; justify-content: center; gap: 12px; font-size: 14px;
-        }
-
-        .spinner {
-            width: 18px; height: 18px; border: 3px solid rgba(26,115,232,0.25);
-            border-top-color: var(--primary-color); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* ============================================================
-           TAB BAR — forced INLINE (single row, no wrap)
-        ============================================================ */
-        .tab-bar { 
-            border-bottom: none;
-            background-color: transparent;
-            display: none; 
-            margin-top: 6px;
-            margin-bottom: 4px;
-            border-radius: 0;
-            padding: 4px 2px;
-            box-shadow: none;
-            white-space: nowrap;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-            flex-wrap: nowrap;
-            justify-content: flex-start;
-            gap: 8px;
-        }
-        .tab-bar::-webkit-scrollbar { height: 4px; }
-
-        .tab-bar button { 
-            background: linear-gradient(135deg, #ede9fe, #ddd6fe); 
-            border: 1.5px solid #c4b5fd;
-            outline: none; 
-            cursor: pointer; 
-            padding: 10px 16px; 
-            transition: 0.25s ease; 
-            font-size: 12.5px; 
-            font-weight: 700;
-            font-family: 'Inter', sans-serif;
-            color: #5b21b6;
-            border-radius: 30px;
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            user-select: none;
-            box-shadow: 0 2px 6px rgba(109,40,217,0.12);
-            flex-shrink: 0;
-            white-space: nowrap;
-        }
-        .tab-bar button:hover { 
-            background: linear-gradient(135deg, #ddd6fe, #c4b5fd);
-            transform: translateY(-1px);
-        }
-        .tab-bar button.active { 
-            color: #ffffff;
-            border-color: transparent;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
-            transform: translateY(-1px);
-        }
-
-        .general-tab.active { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); }
-        .maint-tab.active { background: linear-gradient(135deg, var(--maint-color), var(--maint-light)); }
-        .fail-tab.active { background: linear-gradient(135deg, var(--fail-color), var(--fail-light)); }
-        .spec-tab.active { background: linear-gradient(135deg, var(--spec-color), var(--spec-light)); }
-
-        .tabcontent { 
-            display: none; padding: 22px 16px; border: 1px solid var(--border-color); border-top: none; 
-            background: #ffffff; border-radius: 0 0 14px 14px; overflow-x: auto; 
-            box-shadow: 0 6px 24px rgba(0,0,0,0.05); animation: fadeIn 0.35s ease;
-            margin-top: -2px;
-        }
-        #tabMenu + .tabcontent, .tabcontent {
-            border-radius: 14px;
-        }
-
-        .tabcontent h4 {
-            margin-top:0; padding-bottom: 12px; border-bottom: 1px solid #eef1f4; margin-bottom: 18px;
-            display: flex; align-items: center; gap: 8px;
-            font-family: 'Poppins', sans-serif; font-weight: 700; letter-spacing: 0.2px;
-            font-size: clamp(0.95rem, 3vw, 1.1rem);
-        }
-        #Page1 h4 { color: var(--primary-color); }
-        #Page2 h4 { color: var(--maint-color); }
-        #Page3 h4 { color: var(--fail-color); }
-        #Page4 h4 { color: var(--spec-color); }
-        
-        .data-card { 
-            background: linear-gradient(180deg, #ffffff, #fbfcfe); padding: 20px 18px; margin-bottom: 12px; 
-            border-left: 5px solid var(--primary-color); border-top: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);
-            border-radius: 4px 14px 14px 4px; box-shadow: 0 3px 14px rgba(26,115,232,0.06);
-            transition: box-shadow 0.25s ease, transform 0.25s ease;
-        }
-        .data-card:hover { box-shadow: 0 6px 22px rgba(26,115,232,0.12); }
-        .data-card p { margin: 10px 0; font-size: 14.5px; display: flex; flex-wrap: wrap; gap: 4px; }
-        .label { font-weight: 700; color: #5f6368; display: inline-block; min-width: 170px; }
-        
-        .alert-error { 
-            color: var(--danger-color); background-color: #fce8e6; border: 1px solid #f6c6c1; 
-            padding: 14px 16px; border-radius: 10px; line-height: 1.6; font-size: 14px;
-        }
-
-        .status-pill {
-            display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11.5px;
-            font-weight: 800; letter-spacing: 0.3px; text-transform: capitalize; white-space: nowrap;
-        }
-        .status-good { background: #e6f4ea; color: #1e8e3e; }
-        .status-warn { background: #fef7e0; color: #b06000; }
-        .status-bad  { background: #fce8e6; color: #c5221f; }
-        .status-neutral { background: #eef1f4; color: #5f6368; }
-
-        .overdue-badge {
-            background: var(--danger-color); color: #fff; font-size: 10px; padding: 3px 9px;
-            border-radius: 10px; margin-left: 6px; font-weight: 800; letter-spacing: 0.4px;
-            display: inline-block; animation: pulseWarn 1.6s infinite;
-        }
-        @keyframes pulseWarn {
-            0%,100% { box-shadow: 0 0 0 0 rgba(217,48,37,0.4); }
-            50% { box-shadow: 0 0 0 5px rgba(217,48,37,0); }
-        }
-        .overdue-row { background-color: #fff2f0 !important; }
-        .overdue-row td { border-color: #f5c6c0 !important; }
-        .overdue-text { color: var(--danger-color); font-weight: 800; }
-
-        table {
-            width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px;
-            font-size: 13.5px; text-align: left; border-radius: 10px; overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-        }
-
-        th {
-            color: #ffffff; font-weight: 700; padding: 13px 12px; border: 1px solid rgba(255,255,255,0.15);
-            white-space: nowrap; text-transform: uppercase; font-size: 11.5px; letter-spacing: 0.4px;
-        }
-
-        td { padding: 12px 12px; border: 1px solid var(--border-color); color: var(--text-dark); word-break: break-word; }
-        tr:nth-child(even) { background-color: #fafbfd; }
-
-        .maint-table thead th { background: linear-gradient(135deg, var(--maint-color), var(--maint-light)); }
-        .maint-table tbody tr:hover { background-color: #e6fbf7; }
-
-        .fail-table thead th { background: linear-gradient(135deg, var(--fail-color), var(--fail-light)); }
-        .fail-table tbody tr:hover { background-color: #fff1ee; }
-
-        .spec-table td.spec-label {
-            background: linear-gradient(135deg, var(--spec-color), var(--spec-light));
-            color: #fff; font-weight: 700; width: 40%;
-        }
-        .spec-table tbody tr:hover { background-color: #f5f0ff; }
-
-        ::-webkit-scrollbar { height: 8px; width: 8px; }
-        ::-webkit-scrollbar-thumb { background: #c3d3ee; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary-light); }
-
-        .records-toolbar {
-            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
-            gap: 12px; margin-bottom: 18px; padding: 12px 14px; background: #f8fafc;
-            border: 1px solid var(--border-color); border-radius: 10px;
-        }
-        .record-counters { display: flex; flex-wrap: wrap; gap: 8px; }
-        .counter-badge {
-            font-size: 12.5px; font-weight: 700; padding: 6px 12px; border-radius: 20px;
-            background: #eef2f7; color: #3c4043; white-space: nowrap;
-        }
-        .counter-badge.total { background: var(--accent-blue); color: var(--primary-dark); }
-        .counter-badge.overdue-counter { background: #fce8e6; color: var(--danger-color); }
-        .counter-badge.showing { background: #e6f4ea; color: var(--success-color); }
-
-        .toolbar-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-        .date-filter-select {
-            padding: 9px 12px; border-radius: 8px; border: 1.5px solid var(--border-color);
-            font-size: 13px; font-weight: 600; background: #fff; cursor: pointer;
-        }
-        .export-btn {
-            color: #fff; border:none; padding: 9px 16px; font-size: 13px; font-weight: 700;
-            border-radius: 8px; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease;
-            white-space: nowrap;
-        }
-        .export-btn:hover { transform: translateY(-1px); }
-        .export-btn.maint-btn { background: linear-gradient(135deg, var(--maint-color), var(--maint-light)); box-shadow: 0 2px 8px rgba(15,118,110,0.3); }
-        .export-btn.fail-btn { background: linear-gradient(135deg, var(--fail-color), var(--fail-light)); box-shadow: 0 2px 8px rgba(185,28,28,0.3); }
-
-        .year-group { margin-bottom: 16px; border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; }
-        .year-header {
-            display: flex; align-items: center; gap: 10px; padding: 12px 16px; cursor: pointer;
-            background: linear-gradient(135deg,#eef2f7,#f8fafc); font-weight: 700; font-size: 14px;
-            user-select: none; transition: background 0.2s ease;
-        }
-        .year-header:hover { background: #e4ecf7; }
-        .fail-year-header { background: linear-gradient(135deg,#fdf0ee,#fff8f6); }
-        .fail-year-header:hover { background: #fbe4e0; }
-        .fail-year-header .year-toggle-icon { color: var(--fail-color); }
-        .maint-year-header .year-toggle-icon { color: var(--maint-color); }
-
-        .year-toggle-icon { display: inline-block; transition: transform 0.25s ease; font-size: 11px; }
-        .year-toggle-icon.expanded { transform: rotate(90deg); }
-        .year-label { color: var(--text-dark); }
-        .year-count { color: #5f6368; font-weight: 600; font-size: 12.5px; }
-        .year-body { padding: 14px; animation: fadeIn 0.3s ease; }
-        .year-body.collapsed { display: none; }
-
-        .pagination-controls { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 14px; }
-        .page-btn {
-            padding: 8px 16px; border-radius: 8px; border: 1.5px solid var(--border-color);
-            background: #fff; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s ease;
-        }
-        .page-btn:hover:not(:disabled) { background: var(--accent-blue); border-color: var(--primary-color); color: var(--primary-color); }
-        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .page-info { font-size: 13px; font-weight: 600; color: #5f6368; }
-
-        @media (max-width: 700px) {
-            .responsive-table thead { display: none; }
-            .responsive-table, .responsive-table tbody, .responsive-table tr, .responsive-table td { display: block; width: 100%; }
-            .responsive-table tr {
-                margin-bottom: 14px; border: 1px solid var(--border-color); border-radius: 12px;
-                overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            }
-            .maint-table.responsive-table tr { border-left: 4px solid var(--maint-color); }
-            .fail-table.responsive-table tr { border-left: 4px solid var(--fail-color); }
-            .overdue-row.responsive-row { border-left: 4px solid var(--danger-color) !important; }
-            .responsive-table td {
-                border: none; border-bottom: 1px solid #f0f0f0; position: relative;
-                padding: 10px 12px 10px 46%; text-align: right; min-height: 20px;
-            }
-            .responsive-table td:last-child { border-bottom: none; }
-            .responsive-table td::before {
-                content: attr(data-label); position: absolute; left: 12px; width: 40%; text-align: left;
-                font-weight: 700; color: #5f6368; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.3px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            body { padding: 10px 8px 30px 8px; }
-            .label { min-width: 130px; font-size: 13px; }
-            .tab-bar button { padding: 9px 13px; font-size: 11.5px; }
-            .input-group { flex-direction: column; }
-            .input-group input, .input-group button { width: 100%; }
-            .data-card { padding: 16px 14px; }
-            .data-card p { font-size: 13.5px; }
-            th, td { font-size: 12.5px; padding: 10px 8px; }
-            .tabcontent { padding: 16px 10px; }
-            .records-toolbar { flex-direction: column; align-items: stretch; }
-            .toolbar-actions { justify-content: space-between; }
-            .date-filter-select, .export-btn { flex: 1; }
-            .header-top-bar { padding: 7px 10px; }
-            .header-clock-bar { padding: 6px 12px; }
-            .header-hero { padding: 8px 10px; }
-        }
-
-        @media (max-width: 380px) {
-            .label { min-width: 100%; margin-bottom: 2px; }
-            .data-card p { flex-direction: column; gap: 2px; }
-            .tab-bar { gap: 6px; }
-            .tab-bar button { padding: 8px 12px; font-size: 11px; }
-            .header-logo-left, .header-logo-right { height: 30px; width: 30px; }
-            .header-title-img { max-height: 30px; }
-        }
-    </style>
+  /* ===== QR ===== */
+  #qrReaderContainer{ margin-top:12px; text-align:center; }
+  #qrVideo{ width:100%; border-radius:var(--radius-sm); background:#000; box-shadow:var(--shadow-md); }
+  #btnCancelScan{ margin-top:10px; background:#f1f5f9; color:var(--text-muted); width:100%; border:1.5px solid var(--border); }
+  #btnCancelScan:hover{ background:#e2e8f0; }
+  #qrResult{ text-align:center; font-size:0.85rem; color:#00695c; margin-top:8px; font-weight:600; }
+  #qrHint{ text-align:center; font-size:0.75rem; color:#94a3b8; margin-top:8px; }
+</style>
 </head>
 <body>
 
-    <!-- ============================================================
-         COMPACT HEADER: Railway logos + Live Clock + Hero banner
-    ============================================================ -->
-    <div class="header-frame">
-        <div class="header-top-bar">
-            <img src="https://lh3.googleusercontent.com/d/1oYWlcTQA9fugWbxnbyw9CUaRabmjUzlI" alt="Indian Railways" class="header-logo-left">
-            <div class="header-title-center">
-                <img src="https://lh3.googleusercontent.com/d/1Lq0ri1xMDU4PERzu3QAfuZ3XfkHMnF0b" alt="Metro Railway Kolkata" class="header-title-img">
-            </div>
-            <img src="https://lh3.googleusercontent.com/d/1z57jNNPGjl3jZvXcCoTDcK7cWTeNIt87" alt="Ashok Stambh" class="header-logo-right">
-        </div>
-
-        <div class="header-clock-bar">
-            <div class="clock-display">
-                <span class="live-dot"></span>
-                <span id="liveClockText">--</span>
-            </div>
-        </div>
-
-        <div class="header-hero">
-            <h1 class="hero-title">KKSO-KBGA Asset Management</h1>
-            <p class="hero-subtitle">A Cloud Based Asset Management in Orange Line</p>
-        </div>
+<!-- ============================================================ -->
+<!-- STICKY HEADER (LOCK TOGGLE) -->
+<!-- ============================================================ -->
+<div class="appHeader">
+  <div class="appHeaderInner">
+    <div class="appTitle">🛠️ Maintenance Manager</div>
+    <div class="lockToggleWrap">
+      <span class="lockLabel" id="lockLabelText">🔓 Unlocked</span>
+      <label class="switch">
+        <input type="checkbox" id="lockToggle">
+        <span class="slider"></span>
+      </label>
     </div>
+  </div>
+</div>
+<div class="sessionChip" id="sessionChipWrap" style="display:none;">
+  <span class="sessionBadge" id="sessionBadge">✅ 0 entries submitted</span>
+</div>
 
-    <div class="input-selection-container" id="inputContainer">
-        <label>Select Asset Discovery Feature:</label>
-        <div class="input-group">
-            <input type="text" id="manualAssetId" placeholder="Enter 9-Digit Assed ID (e.g., 200010101)" maxlength="9" inputmode="numeric">
-            <button class="action-btn" onclick="handleManualSearch()">Search ID</button>
-        </div>
-        <div class="or-divider">OR SCAN QR CODE</div>
-        <div id="reader"></div>
+<!-- ============================================================ -->
+<!-- PAGE 1: MAINTENANCE ENTRY PAGE -->
+<!-- ============================================================ -->
+<div id="entryPage" class="page active">
+  <h1>Maintenance Entry Page</h1>
+
+  <div class="lockBanner" id="entryLockBanner">
+    <div>
+      <b>🔒 Lock Mode Active</b>
+      <span>Asset Id / Dropdown selections are retained (except QR) for faster repeat entry.</span>
     </div>
+    <button type="button" class="clearFieldsBtn" id="btnClearEntrySelections">↺ Clear Selections</button>
+  </div>
 
-    <div id="loadingStatus"><span class="spinner"></span> <span id="loadingText">Processing request...</span></div>
-
-    <div id="tabMenu" class="tab-bar">
-      <button class="tablinks general-tab active" onclick="switchTab(event, 'Page1')">🧩 General</button>
-      <button class="tablinks maint-tab" onclick="switchTab(event, 'Page2')">🛠️ Maintenance</button>
-      <button class="tablinks fail-tab" onclick="switchTab(event, 'Page3')">⚠️ Failure Logs</button>
-      <button class="tablinks spec-tab" onclick="switchTab(event, 'Page4')">📋 Specifications</button>
+  <div class="section">
+    <label class="title">📷 By Scan QR Code</label>
+    <button id="btnScanQr" type="button">Scan QR</button>
+    <div id="qrReaderContainer" style="display:none;">
+      <video id="qrVideo" playsinline autoplay muted></video>
+      <canvas id="qrCanvas" style="display:none;"></canvas>
+      <button id="btnCancelScan" type="button">Cancel</button>
     </div>
+    <div id="qrResult"></div>
+    <div id="qrError" class="error"></div>
+    <div id="qrHint">Camera requires HTTPS (or localhost) and permission access.</div>
+  </div>
 
-    <div id="Page1" class="tabcontent">
-      <div id="decodedData"></div>
+  <div class="divider">OR</div>
+
+  <div class="section">
+    <label class="title">🔢 By Asset Id</label>
+    <div class="row">
+      <input type="text" id="assetIdInput" maxlength="9" placeholder="Enter 9-digit Asset Id" inputmode="numeric">
+      <button id="btnGetFormById" type="button">Get Form</button>
     </div>
+    <div id="assetIdError" class="error"></div>
+  </div>
 
-    <div id="Page2" class="tabcontent">
-      <h4>🛠️ Historical Maintenance Events</h4>
-      <div id="maintData">No asset actively loaded.</div>
+  <div class="divider">OR</div>
+
+  <div class="section">
+    <label class="title">📋 By Dropdown Selection</label>
+
+    <label class="sub">Station</label>
+    <select id="ddStation"><option value="">Select Station</option></select>
+
+    <label class="sub">Group</label>
+    <select id="ddGroup" disabled><option value="">Select Group</option></select>
+
+    <label class="sub">Sub-Group</label>
+    <select id="ddSubGroup" disabled><option value="">Select Sub-Group</option></select>
+
+    <label class="sub">Equipment Name</label>
+    <select id="ddEquipment" disabled><option value="">Select Equipment</option></select>
+
+    <button id="btnGetFormByDropdown" type="button" style="width:100%; margin-top:12px;">Get Form</button>
+    <div id="dropdownError" class="error"></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PAGE 2: MAINTENANCE ENTRY FORM -->
+<!-- ============================================================ -->
+<div id="formPage" class="page">
+  <h1>Maintenance Entry Form</h1>
+
+  <div class="lockBanner" id="lockBanner">
+    <div>
+      <b id="lockBannerTitle">🔒 Lock Mode Active</b>
+      <span id="lockBannerText">Fields auto-filled from previous entry. Review & Submit.</span>
     </div>
-
-    <div id="Page3" class="tabcontent">
-      <h4>⚠️ Past Failure Metrics</h4>
-      <div id="failData">No asset actively loaded.</div>
-    </div>
-
-    <div id="Page4" class="tabcontent">
-      <h4>📋 Design Specifications</h4>
-      <div id="specData">No asset actively loaded.</div>
-    </div>
-
-    <script>
-        // ============================================================
-        // LIVE CLOCK
-        // ============================================================
-        (function initLiveClock() {
-            const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-            const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-            const clockEl = document.getElementById('liveClockText');
-
-            function pad(n) { return n.toString().padStart(2, '0'); }
-
-            function updateClock() {
-                const now = new Date();
-                const dayStr = dayNames[now.getDay()];
-                const dateStr = pad(now.getDate());
-                const monthStr = monthNames[now.getMonth()];
-                const yearStr = now.getFullYear().toString().slice(-2);
-                const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-                if (clockEl) clockEl.innerText = `${dayStr} ${dateStr} ${monthStr} ${yearStr}   ${timeStr}`;
-            }
-            updateClock();
-            setInterval(updateClock, 1000);
-        })();
-
-        // ============================================================
-        // CONFIGURATION
-        // ============================================================
-        const SPREADSHEET_ID = "1Jid66wBQ1ktKoysqpoCF1sIKengpsHq8CQKW9euMWh0"; 
-        const API_KEY = "AIzaSyAjBceUqA-G1ueMCsqevOiPEhb2Nk-pOhI";
-        const ROWS_PER_PAGE = 12;
-
-        const groupSheetSuffixMap = {
-            "01": "HT",
-            "02": "LT",
-            "03": "Pump",
-            "04": "DG",
-            "05": "Third_rail",
-            "06": "Lift_&_Escalator",
-            "07": "Fire",
-            "08": "Split_&_HVAC"
-        };
-
-        function getSheetNamesForAsset(assetId) {
-            const groupCode = assetId.substring(3, 5);
-            const suffix = groupSheetSuffixMap[groupCode];
-            if (!suffix) return null;
-            return {
-                suffix: suffix,
-                maintenance: `Maintenance_${suffix}`,
-                failure: `Failure_${suffix}`,
-                specifications: `Specifications_${suffix}`
-            };
-        }
-
-        const mappingDictionary = {
-            station: { "200":"KKSO DEPOT", "201":"KKSO", "202":"KSJR", "203":"KJNN", "204":"KKSK", "205":"KHMD", "206":"KVIB", "207":"KRWT", "208":"KBST", "209":"KBGA" },
-            group: {
-                "01": "HT", "02": "LT", "03": "PUMP", "04": "DG",
-                "05": "THIRD RAIL", "06": "LIFT & ESCALATOR", "07": "FIRE", "08": "SPLIT & HVAC"
-            }
-        };
-
-        const subGroupMap = {
-            "01": {
-                "01":"33KV GIS SWITCHGEAR", "02":"RECTIFIER TRANSFORMER", "03":"DIODE RECTIFIER", 
-                "04":"AUXILIARY TRANSFORMER", "05":"HSCB", "06":"BCP", "07":"MOTORISED ISOLATOR", 
-                "08":"TRACK DISCONNECTOR", "09":"THIRD RAIL EARTHING", "10":"NEGATIVE RETURN PANEL", 
-                "11":"OVPD", "12":"ETS", "13":"ACDB", "14":"DCDB", "15":"BATTERY CHARGER", "16":"NI-CD BATTERY BANK" 
-            },
-            "02": {}, "03": {}, "04": {}, "05": {}, "06": {}, "07": {}, "08": {}
-        };
-
-        const equipmentNameMap = {
-            "01": {
-                "01": {
-                    "01":"HB01", "02":"HB02", "03":"HB03", "04":"HB04", "05":"HB05", "06":"HB06", "07":"HB07", "08":"HB08", 
-                    "09":"HB09", "10":"HB10", "11":"HB11", "12":"HB12", "13":"HB13", "14":"HB14", "15":"HB15", "16":"HB16", 
-                    "17":"HB17", "18":"HB18", "19":"HB19", "20":"HB20", "21":"BRP01", "22":"BRP02"
-                },
-                "02": { "01":"TT01", "02":"TT02", "03":"TT03" },
-                "03": { "01":"SR01", "02":"SR02", "03":"SR03" },
-                "04": { "01":"AT01", "02":"AT02", "03":"AT03" },
-                "05": {
-                    "01":"DB 01", "02":"DB 02", "03":"DB 03", "04":"DB 04", "05":"DB 05", "06":"DB 06", "07":"DB 07", 
-                    "08":"DB 08", "09":"DB 09", "10":"DB 10", "11":"DB 11"
-                },
-                "06": { "01":"BCP01", "02":"BCP02" },
-                "07": { "01":"IM 01", "02":"IM 02", "03":"IM 03", "04":"IM 04", "05":"IM 05", "09":"IM 09", "10":"IM 10" },
-                "08": {
-                    "01":"TD 01", "02":"TD 02", "03":"TD 03", "04":"TD 04", "05":"TD 05", "06":"TD 06", "07":"TD 07", 
-                    "08":"TD 07A", "09":"TD 07B", "10":"TD 08", "11":"TD 09A", "12":"TD 09B", "13":"TD 10A", 
-                    "14":"TD 10B", "15":"TD 13", "16":"TD 23", "17":"TD 76", "18":"TD 45"
-                },
-                "09": { "01":"TRE01", "02":"TRE02" },
-                "10": { "01":"IM06", "02":"IM07", "03":"IM08" },
-                "11": { "01":"OVPD01" },
-                "12": {
-                    "01":"ETS01", "02":"ETS01A", "03":"ETS02", "04":"ETS02A", "05":"ETS03", "06":"ETS03A", 
-                    "07":"ETS04", "08":"ETS04A", "09":"ETS05", "10":"ETS06", "11":"ETS07", "12":"ETS08", 
-                    "13":"ETS09", "14":"ETS10"
-                },
-                "13": { "01":"ACDB01", "02":"ACDB02" },
-                "14": { "01":"DCDB01" },
-                "15": { "01":"BC01", "02":"BC02", "03":"BC03" },
-                "16": { "01":"BB01", "02":"BB02" }
-            },
-            "02": {}, "03": {}, "04": {}, "05": {}, "06": {}, "07": {}, "08": {}
-        };
-
-        const state = {
-            maintenance: { rows: [], meta: null, filter: 'all', pages: {}, expandedYears: null },
-            failure:     { rows: [], meta: null, filter: 'all', pages: {}, expandedYears: null }
-        };
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const idFromUrl = urlParams.get('id');
-            
-            if (idFromUrl && idFromUrl.length === 9 && !isNaN(idFromUrl)) {
-                document.getElementById('inputContainer').style.display = "none";
-                document.getElementById('manualAssetId').value = idFromUrl;
-                processAssetPipelines(idFromUrl);
-            } else {
-                document.getElementById('inputContainer').style.display = "block";
-            }
-        });
-
-        const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-
-        const readerHost = document.getElementById('reader');
-        if (readerHost) {
-            const hideExtraLibraryUI = () => {
-                readerHost.querySelectorAll('button, a, span, div').forEach(el => {
-                    const txt = (el.textContent || "").trim();
-                    if (txt === "Request Camera Permissions" || txt === "Scan an Image File" || txt === "Scan using camera directly") {
-                        el.style.display = 'none';
-                    }
-                });
-            };
-            const readerObserver = new MutationObserver(hideExtraLibraryUI);
-            readerObserver.observe(readerHost, { childList: true, subtree: true });
-            hideExtraLibraryUI();
-        }
-
-        function onScanSuccess(decodedText) {
-            let clearedId = decodedText.trim();
-            document.getElementById('manualAssetId').value = clearedId;
-            document.getElementById('inputContainer').style.display = "none";
-            processAssetPipelines(clearedId);
-        }
-        function onScanFailure(error) {}
-
-        function handleManualSearch() {
-            let enteredId = document.getElementById('manualAssetId').value.trim();
-            if(enteredId.length !== 9 || isNaN(enteredId)) {
-                alert("Invalid format. Please enter a valid 9-digit asset ID.");
-                return;
-            }
-            document.getElementById('inputContainer').style.display = "none";
-            processAssetPipelines(enteredId);
-        }
-
-        function getAssetMetadata(id) {
-            let parsedStation = id.substring(0,3);
-            let parsedGroup = id.substring(3,5);
-            let parsedSubGroup = id.substring(5,7);
-            let parsedAssetNo = id.substring(7,9);
-
-            let stationName = mappingDictionary.station[parsedStation] || null;
-            let groupName = mappingDictionary.group[parsedGroup] || null;
-
-            let subGroupName = null;
-            if (subGroupMap[parsedGroup]) {
-                subGroupName = subGroupMap[parsedGroup][parsedSubGroup] || null;
-            }
-
-            let equipmentName = null;
-            if (equipmentNameMap[parsedGroup] && equipmentNameMap[parsedGroup][parsedSubGroup]) {
-                equipmentName = equipmentNameMap[parsedGroup][parsedSubGroup][parsedAssetNo] || null;
-            }
-
-            return { station: stationName, group: groupName, subGroup: subGroupName, equipmentName: equipmentName };
-        }
-
-        function parseDDMMYY(dateStr) {
-            if (!dateStr) return null;
-            const cleaned = dateStr.toString().trim();
-            const parts = cleaned.split(/[-\/]/);
-            if (parts.length !== 3) return null;
-            let [dd, mm, yy] = parts;
-            dd = parseInt(dd, 10);
-            mm = parseInt(mm, 10);
-            yy = parseInt(yy, 10);
-            if (isNaN(dd) || isNaN(mm) || isNaN(yy)) return null;
-            yy = yy < 100 ? 2000 + yy : yy;
-            const dateObj = new Date(yy, mm - 1, dd);
-            return isNaN(dateObj.getTime()) ? null : dateObj;
-        }
-
-        function isOverdue(dueDateStr, status) {
-            const dueDate = parseDDMMYY(dueDateStr);
-            if (!dueDate) return false;
-            const statusLower = (status || "").toString().trim().toLowerCase();
-            if (["completed","complete","done","closed","ok","resolved"].includes(statusLower)) return false;
-            const today = new Date();
-            today.setHours(0,0,0,0);
-            return dueDate < today;
-        }
-
-        function isUnresolvedFailure(status) {
-            const lower = (status || "").toString().trim().toLowerCase();
-            return !["completed","complete","resolved","closed","done","restored","ok"].includes(lower);
-        }
-
-        function statusBadge(status) {
-            if (!status) return "-";
-            const clean = status.toString().trim();
-            const lower = clean.toLowerCase();
-            let cls = "status-neutral";
-            if (["completed","complete","resolved","closed","done","ok","normal","healthy","restored"].includes(lower)) cls = "status-good";
-            else if (["pending","in progress","ongoing","scheduled","due","under observation"].includes(lower)) cls = "status-warn";
-            else if (["failed","failure","critical","open","overdue","not ok","tripped"].includes(lower)) cls = "status-bad";
-            return `<span class="status-pill ${cls}">${clean}</span>`;
-        }
-
-        function filterRowsByDateRange(rows, dateColIndex, rangeValue) {
-            if (rangeValue === 'all' || !rangeValue) return rows;
-            const today = new Date(); today.setHours(0,0,0,0);
-            return rows.filter(row => {
-                const d = parseDDMMYY(row[dateColIndex]);
-                if (!d) return false;
-                if (rangeValue === '30days') {
-                    const diffDays = (today - d) / 86400000;
-                    return diffDays >= 0 && diffDays <= 30;
-                }
-                if (rangeValue === 'thisyear') return d.getFullYear() === today.getFullYear();
-                return true;
-            });
-        }
-
-        function sortRowsByDateDesc(rows, dateColIndex) {
-            return [...rows].sort((a, b) => {
-                const da = parseDDMMYY(a[dateColIndex]);
-                const db = parseDDMMYY(b[dateColIndex]);
-                if (!da && !db) return 0;
-                if (!da) return 1;
-                if (!db) return -1;
-                return db - da;
-            });
-        }
-
-        function groupRowsByYear(rows, dateColIndex) {
-            const groups = {};
-            rows.forEach(row => {
-                const d = parseDDMMYY(row[dateColIndex]);
-                const year = d ? d.getFullYear().toString() : 'Unknown';
-                if (!groups[year]) groups[year] = [];
-                groups[year].push(row);
-            });
-            return groups;
-        }
-
-        function getSortedYearKeys(groups) {
-            return Object.keys(groups).sort((a, b) => {
-                if (a === 'Unknown') return 1;
-                if (b === 'Unknown') return -1;
-                return parseInt(b) - parseInt(a);
-            });
-        }
-
-        function paginateArray(arr, page, perPage) {
-            const start = (page - 1) * perPage;
-            return arr.slice(start, start + perPage);
-        }
-
-        function downloadCSV(filename, headers, rows) {
-            let csvContent = headers.join(",") + "\n";
-            rows.forEach(r => {
-                const escaped = r.map(val => {
-                    let v = (val === undefined || val === null) ? "" : val.toString();
-                    v = v.replace(/"/g, '""');
-                    if (/[",\n]/.test(v)) v = `"${v}"`;
-                    return v;
-                });
-                csvContent += escaped.join(",") + "\n";
-            });
-            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        }
-
-        function toggleYearGroup(type, year) {
-            const st = state[type];
-            st.expandedYears[year] = !st.expandedYears[year];
-            if (type === 'maintenance') renderMaintenanceUI(); else renderFailureUI();
-        }
-
-        function changeYearPage(type, year, direction) {
-            const st = state[type];
-            const current = st.pages[year] || 1;
-            st.pages[year] = Math.max(1, current + direction);
-            if (type === 'maintenance') renderMaintenanceUI(); else renderFailureUI();
-        }
-
-        function onDateFilterChange(type, selectEl) {
-            state[type].filter = selectEl.value;
-            state[type].pages = {};
-            if (type === 'maintenance') renderMaintenanceUI(); else renderFailureUI();
-        }
-
-        function exportMaintenanceCSV() {
-            const st = state.maintenance;
-            if (!st.rows.length) return;
-            const meta = st.meta;
-            const DATE_COL = 1;
-            const filtered = filterRowsByDateRange(st.rows, DATE_COL, st.filter);
-            const sorted = sortRowsByDateDesc(filtered, DATE_COL);
-
-            const headers = ["SL","Station","Group","Sub-Group","Asset Name","Date of Maintenance","Due Date","Attended By","Status","Remarks"];
-            const csvRows = sorted.map((row, idx) => [
-                idx + 1, meta.station, meta.group, meta.subGroup, meta.equipmentName,
-                row[1] || "", row[2] || "", row[3] || "", row[4] || "", row[5] || ""
-            ]);
-            downloadCSV(`Maintenance_${meta.equipmentName || 'Asset'}_${Date.now()}.csv`, headers, csvRows);
-        }
-
-        function exportFailureCSV() {
-            const st = state.failure;
-            if (!st.rows.length) return;
-            const meta = st.meta;
-            const DATE_COL = 1;
-            const filtered = filterRowsByDateRange(st.rows, DATE_COL, st.filter);
-            const sorted = sortRowsByDateDesc(filtered, DATE_COL);
-
-            const headers = ["SL","Station","Group","Sub-Group","Asset Name","Date of Failure","Time of Failure","Date of Restoration","Time of Restoration","Description","Action Taken","Attended By","Status","Time"];
-            const csvRows = sorted.map((row, idx) => [
-                idx + 1, meta.station, meta.group, meta.subGroup, meta.equipmentName,
-                row[1] || "", row[2] || "", row[3] || "", row[4] || "", row[5] || "", row[6] || "", row[7] || "", row[8] || "", row[9] || ""
-            ]);
-            downloadCSV(`Failure_${meta.equipmentName || 'Asset'}_${Date.now()}.csv`, headers, csvRows);
-        }
-
-        async function fetchActualSheetTitles() {
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?key=${API_KEY}&fields=sheets.properties.title`;
-            const res = await fetch(url);
-            const data = await res.json();
-            if (!res.ok) return { error: data.error ? data.error.message : "Unknown metadata error" };
-            return { titles: (data.sheets || []).map(s => s.properties.title) };
-        }
-
-        function buildDiagnosticHtml(expectedNames, actualTitlesResult, rawErrorMessage) {
-            let html = `<div class="alert-error" style="margin-top:10px; text-align:left;">
-                <strong>❌ Sync failed — Diagnostic Report</strong><br><br>
-                <strong>Raw API error:</strong> ${rawErrorMessage || "N/A"}<br><br>
-                <strong>Sheets this Asset ID needs:</strong><br>
-                &nbsp;&nbsp;• ${expectedNames.maintenance}<br>
-                &nbsp;&nbsp;• ${expectedNames.failure}<br>
-                &nbsp;&nbsp;• ${expectedNames.specifications}<br><br>`;
-
-            if (actualTitlesResult.error) {
-                html += `<strong>Could not read your spreadsheet's tab list:</strong> ${actualTitlesResult.error}<br>
-                    (Check that the Sheet is shared as "Anyone with the link can view" and API key is valid/unrestricted for this domain.)`;
-            } else {
-                const actual = actualTitlesResult.titles;
-                html += `<strong>Tabs that actually exist in your spreadsheet:</strong><br>&nbsp;&nbsp;${actual.join("<br>&nbsp;&nbsp;")}<br><br>`;
-                const missing = [expectedNames.maintenance, expectedNames.failure, expectedNames.specifications]
-                    .filter(n => !actual.includes(n));
-                if (missing.length > 0) {
-                    html += `<strong style="color:#b91c1c;">⚠️ Missing or mismatched tab(s):</strong><br>&nbsp;&nbsp;${missing.join("<br>&nbsp;&nbsp;")}<br><br>
-                        Create these exact tab names (case-sensitive, no trailing spaces) in your spreadsheet.`;
-                } else {
-                    html += `All 3 expected tabs exist with matching names. The issue may be a temporary network error — please try again.`;
-                }
-            }
-            html += `</div>`;
-            return html;
-        }
-
-        function qSheet(name) { return `'${name}'`; }
-
-        async function fetchColumnAOnly(sheetNames) {
-            const ranges = [
-                `${qSheet(sheetNames.maintenance)}!A2:A`,
-                `${qSheet(sheetNames.failure)}!A2:A`,
-                `${qSheet(sheetNames.specifications)}!A2:A`
-            ];
-            const rangesQuery = ranges.map(r => `ranges=${encodeURIComponent(r)}`).join("&");
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${rangesQuery}&key=${API_KEY}`;
-
-            const response = await fetch(url);
-            const payload = await response.json();
-            if (!response.ok) {
-                const msg = payload.error ? payload.error.message : `HTTP ${response.status}`;
-                throw new Error(msg);
-            }
-            return payload.valueRanges || [];
-        }
-
-        function findExactMatchRows(columnAValueRange, targetId) {
-            if (!columnAValueRange || !columnAValueRange.values) return [];
-            const rows = [];
-            columnAValueRange.values.forEach((rowArr, idx) => {
-                const cell = rowArr[0] ? rowArr[0].toString().trim() : "";
-                if (cell === targetId) rows.push(idx + 2);
-            });
-            return rows;
-        }
-
-        function findSpecHeaderRow(columnAValueRange, targetId7) {
-            if (!columnAValueRange || !columnAValueRange.values) return null;
-            for (let idx = 0; idx < columnAValueRange.values.length; idx++) {
-                const cell = columnAValueRange.values[idx][0];
-                if (cell && cell.toString().trim().substring(0, 7) === targetId7) {
-                    return idx + 2;
-                }
-            }
-            return null;
-        }
-
-        function buildRowRanges(sheetName, rowNumbers, colStart, colEnd) {
-            return rowNumbers.map(r => `${qSheet(sheetName)}!${colStart}${r}:${colEnd}${r}`);
-        }
-
-        async function fetchTargetedRows(sheetNames, maintRows, failRows, specHeaderRow) {
-            let ranges = [];
-            let sections = { maint: 0, fail: 0, spec: 0 };
-
-            if (maintRows.length > 0) {
-                ranges.push(...buildRowRanges(sheetNames.maintenance, maintRows, "A", "F"));
-                sections.maint = maintRows.length;
-            }
-            if (failRows.length > 0) {
-                ranges.push(...buildRowRanges(sheetNames.failure, failRows, "A", "J"));
-                sections.fail = failRows.length;
-            }
-            if (specHeaderRow !== null) {
-                ranges.push(`${qSheet(sheetNames.specifications)}!A${specHeaderRow}:Z${specHeaderRow}`);
-                ranges.push(`${qSheet(sheetNames.specifications)}!A${specHeaderRow + 1}:Z${specHeaderRow + 1}`);
-                sections.spec = 1;
-            }
-
-            if (ranges.length === 0) {
-                return { maintenance: [], failure: [], specifications: null };
-            }
-
-            const rangesQuery = ranges.map(r => `ranges=${encodeURIComponent(r)}`).join("&");
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${rangesQuery}&key=${API_KEY}`;
-
-            const response = await fetch(url);
-            const payload = await response.json();
-            if (!response.ok) {
-                const msg = payload.error ? payload.error.message : `HTTP ${response.status}`;
-                throw new Error(msg);
-            }
-            const valueRanges = payload.valueRanges || [];
-
-            let cursor = 0;
-            const maintenance = [];
-            for (let i = 0; i < sections.maint; i++) {
-                const vr = valueRanges[cursor++];
-                maintenance.push(vr && vr.values ? vr.values[0] : []);
-            }
-            const failure = [];
-            for (let i = 0; i < sections.fail; i++) {
-                const vr = valueRanges[cursor++];
-                failure.push(vr && vr.values ? vr.values[0] : []);
-            }
-            let specifications = null;
-            if (sections.spec) {
-                const headerVR = valueRanges[cursor++];
-                const valueVR = valueRanges[cursor++];
-                specifications = {
-                    headers: headerVR && headerVR.values ? headerVR.values[0] : [],
-                    values: valueVR && valueVR.values ? valueVR.values[0] : []
-                };
-            }
-            return { maintenance, failure, specifications };
-        }
-
-        async function processAssetPipelines(assetId) {
-            const loadingEl = document.getElementById('loadingStatus');
-            const loadingText = document.getElementById('loadingText');
-            loadingEl.style.display = "flex";
-            loadingText.innerText = "Decoding asset identity...";
-
-            const isValid = runLocalDecoder(assetId);
-            if (!isValid) {
-                loadingEl.style.display = "none";
-                document.getElementById('tabMenu').style.display = "none";
-                document.getElementById('Page2').style.display = "none";
-                document.getElementById('Page3').style.display = "none";
-                document.getElementById('Page4').style.display = "none";
-                return;
-            }
-
-            const sheetNames = getSheetNamesForAsset(assetId);
-            if (!sheetNames) {
-                loadingEl.style.display = "none";
-                document.getElementById('decodedData').innerHTML += `
-                    <div class="alert-error" style="margin-top:10px;">
-                        <strong>No data sheets mapped for this equipment Group code.</strong><br>
-                        Please add an entry in <code>groupSheetSuffixMap</code>.
-                    </div>`;
-                document.getElementById('tabMenu').style.display = "none";
-                return;
-            }
-
-            try {
-                loadingText.innerText = "Scanning...";
-                const columnAResults = await fetchColumnAOnly(sheetNames);
-
-                const maintRows = findExactMatchRows(columnAResults[0], assetId);
-                const failRows  = findExactMatchRows(columnAResults[1], assetId);
-                const specHeaderRow = findSpecHeaderRow(columnAResults[2], assetId.substring(0, 7));
-
-                loadingText.innerText = "Just a second...";
-                const detailed = await fetchTargetedRows(sheetNames, maintRows, failRows, specHeaderRow);
-
-                loadingEl.style.display = "none";
-                document.getElementById('tabMenu').style.display = "flex";
-                document.getElementById('Page1').style.display = "block";
-
-                const meta = getAssetMetadata(assetId);
-
-                if (detailed.maintenance.length > 0) {
-                    const sortedMaint = sortRowsByDateDesc(detailed.maintenance, 1);
-                    const topRow = sortedMaint[0];
-                    const dueDateVal = topRow[2] || "";
-                    const statusVal = topRow[4] || "";
-                    document.getElementById('lastMaintField').innerText = topRow[1] || "Not Tracked";
-
-                    const overdueNow = isOverdue(dueDateVal, statusVal);
-                    document.getElementById('nextMaintField').innerHTML = 
-                        (dueDateVal || "Not Tracked") + (overdueNow ? `<span class="overdue-badge">OVERDUE</span>` : "");
-                    if (overdueNow) document.getElementById('nextMaintField').classList.add('overdue-text');
-                } else {
-                    document.getElementById('lastMaintField').innerText = "No Records Available";
-                    document.getElementById('nextMaintField').innerText = "No Records Available";
-                }
-
-                initMaintenanceUI(detailed.maintenance, meta);
-                initFailureUI(detailed.failure, meta);
-
-                renderSpecificationsOutput(detailed.specifications, 'specData');
-
-            } catch (err) {
-                console.error(err);
-                loadingText.innerText = "Running diagnostics...";
-                const actualTitlesResult = await fetchActualSheetTitles();
-                document.getElementById('loadingStatus').style.display = "none";
-                document.getElementById('decodedData').innerHTML += buildDiagnosticHtml(sheetNames, actualTitlesResult, err.message);
-            }
-        }
-
-        function initMaintenanceUI(rows, meta) {
-            state.maintenance.rows = rows;
-            state.maintenance.meta = meta;
-            state.maintenance.filter = 'all';
-            state.maintenance.pages = {};
-            state.maintenance.expandedYears = null;
-            renderMaintenanceUI();
-        }
-
-        function renderMaintenanceUI() {
-            const container = document.getElementById('maintData');
-            const st = state.maintenance;
-            const meta = st.meta;
-
-            if (!st.rows || st.rows.length === 0) {
-                container.innerHTML = "<p style='color:#666; font-style: italic;'>No matching records in Maintenance registry.</p>";
-                return;
-            }
-
-            const DATE_COL = 1, DUE_COL = 2, STATUS_COL = 4;
-
-            const overdueCount = st.rows.filter(r => isOverdue(r[DUE_COL], r[STATUS_COL])).length;
-            const totalCount = st.rows.length;
-
-            const filtered = filterRowsByDateRange(st.rows, DATE_COL, st.filter);
-            const sorted = sortRowsByDateDesc(filtered, DATE_COL);
-            const showingCount = sorted.length;
-
-            const yearGroups = groupRowsByYear(sorted, DATE_COL);
-            const yearKeys = getSortedYearKeys(yearGroups);
-
-            if (st.expandedYears === null) {
-                st.expandedYears = {};
-                yearKeys.forEach((y, idx) => { st.expandedYears[y] = idx === 0; });
-            } else {
-                yearKeys.forEach(y => { if (!(y in st.expandedYears)) st.expandedYears[y] = false; });
-            }
-
-            let html = `
-                <div class="records-toolbar">
-                    <div class="record-counters">
-                        <span class="counter-badge total">Total: <strong>${totalCount}</strong></span>
-                        <span class="counter-badge overdue-counter">Overdue: <strong>${overdueCount}</strong></span>
-                        <span class="counter-badge showing">Showing: <strong>${showingCount}</strong></span>
-                    </div>
-                    <div class="toolbar-actions">
-                        <select class="date-filter-select" onchange="onDateFilterChange('maintenance', this)">
-                            <option value="all" ${st.filter === 'all' ? 'selected' : ''}>All Time</option>
-                            <option value="30days" ${st.filter === '30days' ? 'selected' : ''}>Last 30 Days</option>
-                            <option value="thisyear" ${st.filter === 'thisyear' ? 'selected' : ''}>This Year</option>
-                        </select>
-                        <button class="export-btn maint-btn" onclick="exportMaintenanceCSV()">⬇ Export CSV</button>
-                    </div>
-                </div>
-            `;
-
-            if (sorted.length === 0) {
-                html += `<p style='color:#666; font-style: italic; margin-top:14px;'>No records match the selected date range.</p>`;
-                container.innerHTML = html;
-                return;
-            }
-
-            yearKeys.forEach(year => {
-                const yearRows = yearGroups[year];
-                const isExpanded = st.expandedYears[year];
-                const page = st.pages[year] || 1;
-                const totalPages = Math.max(1, Math.ceil(yearRows.length / ROWS_PER_PAGE));
-                const pageRows = paginateArray(yearRows, page, ROWS_PER_PAGE);
-
-                html += `
-                    <div class="year-group">
-                        <div class="year-header maint-year-header" onclick="toggleYearGroup('maintenance', '${year}')">
-                            <span class="year-toggle-icon ${isExpanded ? 'expanded' : ''}">▶</span>
-                            <span class="year-label">${year}</span>
-                            <span class="year-count">(${yearRows.length} record${yearRows.length !== 1 ? 's' : ''})</span>
-                        </div>
-                        <div class="year-body ${isExpanded ? '' : 'collapsed'}">
-                            <table class="maint-table responsive-table">
-                                <thead>
-                                    <tr>
-                                        <th>SL.</th><th>STATION</th><th>GROUP</th><th>SUB-GROUP</th><th>ASSET NAME</th>
-                                        <th>DATE OF MAINTENANCE</th><th>DUE DATE</th><th>ATTENDED BY</th><th>STATUS</th><th>REMARKS</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                `;
-
-                pageRows.forEach((row, idx) => {
-                    const slNo = (page - 1) * ROWS_PER_PAGE + idx + 1;
-                    const dateOfMaintenance = row[1] || "";
-                    const dueDate = row[2] || "";
-                    const attendedBy = row[3] || "";
-                    const status = row[4] || "";
-                    const remarks = row[5] || "";
-                    const overdueFlag = isOverdue(dueDate, status);
-
-                    html += `
-                        <tr class="${overdueFlag ? 'overdue-row responsive-row' : ''}">
-                            <td data-label="SL.">${slNo}</td>
-                            <td data-label="Station">${meta.station}</td>
-                            <td data-label="Group">${meta.group}</td>
-                            <td data-label="Sub-Group">${meta.subGroup}</td>
-                            <td data-label="Asset Name">${meta.equipmentName}</td>
-                            <td data-label="Date of Maintenance">${dateOfMaintenance}</td>
-                            <td data-label="Due Date">${dueDate}${overdueFlag ? '<span class="overdue-badge">OVERDUE</span>' : ''}</td>
-                            <td data-label="Attended By">${attendedBy}</td>
-                            <td data-label="Status">${statusBadge(status)}</td>
-                            <td data-label="Remarks">${remarks}</td>
-                        </tr>
-                    `;
-                });
-
-                html += `
-                                </tbody>
-                            </table>
-                `;
-
-                if (totalPages > 1) {
-                    html += `
-                        <div class="pagination-controls">
-                            <button class="page-btn" onclick="changeYearPage('maintenance','${year}',-1)" ${page <= 1 ? 'disabled' : ''}>‹ Prev</button>
-                            <span class="page-info">Page ${page} of ${totalPages}</span>
-                            <button class="page-btn" onclick="changeYearPage('maintenance','${year}',1)" ${page >= totalPages ? 'disabled' : ''}>Next ›</button>
-                        </div>
-                    `;
-                }
-
-                html += `
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        function initFailureUI(rows, meta) {
-            state.failure.rows = rows;
-            state.failure.meta = meta;
-            state.failure.filter = 'all';
-            state.failure.pages = {};
-            state.failure.expandedYears = null;
-            renderFailureUI();
-        }
-
-        function renderFailureUI() {
-            const container = document.getElementById('failData');
-            const st = state.failure;
-            const meta = st.meta;
-
-            if (!st.rows || st.rows.length === 0) {
-                container.innerHTML = "<p style='color:#666; font-style: italic;'>No matching records in Failure registry.</p>";
-                return;
-            }
-
-            const DATE_COL = 1, STATUS_COL = 8;
-
-            const unresolvedCount = st.rows.filter(r => isUnresolvedFailure(r[STATUS_COL])).length;
-            const totalCount = st.rows.length;
-
-            const filtered = filterRowsByDateRange(st.rows, DATE_COL, st.filter);
-            const sorted = sortRowsByDateDesc(filtered, DATE_COL);
-            const showingCount = sorted.length;
-
-            const yearGroups = groupRowsByYear(sorted, DATE_COL);
-            const yearKeys = getSortedYearKeys(yearGroups);
-
-            if (st.expandedYears === null) {
-                st.expandedYears = {};
-                yearKeys.forEach((y, idx) => { st.expandedYears[y] = idx === 0; });
-            } else {
-                yearKeys.forEach(y => { if (!(y in st.expandedYears)) st.expandedYears[y] = false; });
-            }
-
-            let html = `
-                <div class="records-toolbar">
-                    <div class="record-counters">
-                        <span class="counter-badge total">Total: <strong>${totalCount}</strong></span>
-                        <span class="counter-badge overdue-counter">Open/Unresolved: <strong>${unresolvedCount}</strong></span>
-                        <span class="counter-badge showing">Showing: <strong>${showingCount}</strong></span>
-                    </div>
-                    <div class="toolbar-actions">
-                        <select class="date-filter-select" onchange="onDateFilterChange('failure', this)">
-                            <option value="all" ${st.filter === 'all' ? 'selected' : ''}>All Time</option>
-                            <option value="30days" ${st.filter === '30days' ? 'selected' : ''}>Last 30 Days</option>
-                            <option value="thisyear" ${st.filter === 'thisyear' ? 'selected' : ''}>This Year</option>
-                        </select>
-                        <button class="export-btn fail-btn" onclick="exportFailureCSV()">⬇ Export CSV</button>
-                    </div>
-                </div>
-            `;
-
-            if (sorted.length === 0) {
-                html += `<p style='color:#666; font-style: italic; margin-top:14px;'>No records match the selected date range.</p>`;
-                container.innerHTML = html;
-                return;
-            }
-
-            yearKeys.forEach(year => {
-                const yearRows = yearGroups[year];
-                const isExpanded = st.expandedYears[year];
-                const page = st.pages[year] || 1;
-                const totalPages = Math.max(1, Math.ceil(yearRows.length / ROWS_PER_PAGE));
-                const pageRows = paginateArray(yearRows, page, ROWS_PER_PAGE);
-
-                html += `
-                    <div class="year-group">
-                        <div class="year-header fail-year-header" onclick="toggleYearGroup('failure', '${year}')">
-                            <span class="year-toggle-icon ${isExpanded ? 'expanded' : ''}">▶</span>
-                            <span class="year-label">${year}</span>
-                            <span class="year-count">(${yearRows.length} record${yearRows.length !== 1 ? 's' : ''})</span>
-                        </div>
-                        <div class="year-body ${isExpanded ? '' : 'collapsed'}">
-                            <table class="fail-table responsive-table">
-                                <thead>
-                                    <tr>
-                                        <th>SL.</th><th>STATION</th><th>GROUP</th><th>SUB-GROUP</th><th>ASSET NAME</th>
-                                        <th>DATE OF FAILURE</th><th>TIME OF FAILURE</th><th>DATE OF RESTORATION</th>
-                                        <th>TIME OF RESTORATION</th><th>DESCRIPTION</th><th>ACTION TAKEN</th>
-                                        <th>ATTENDED BY</th><th>STATUS</th><th>TIME</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                `;
-
-                pageRows.forEach((row, idx) => {
-                    const slNo = (page - 1) * ROWS_PER_PAGE + idx + 1;
-                    const dateOfFailure     = row[1] || "";
-                    const timeOfFailure     = row[2] || "";
-                    const dateOfRestoration = row[3] || "";
-                    const timeOfRestoration = row[4] || "";
-                    const description       = row[5] || "";
-                    const actionTaken       = row[6] || "";
-                    const attendedBy        = row[7] || "";
-                    const status            = row[8] || "";
-                    const totalTime         = row[9] || "";
-
-                    html += `
-                        <tr>
-                            <td data-label="SL.">${slNo}</td>
-                            <td data-label="Station">${meta.station}</td>
-                            <td data-label="Group">${meta.group}</td>
-                            <td data-label="Sub-Group">${meta.subGroup}</td>
-                            <td data-label="Asset Name">${meta.equipmentName}</td>
-                            <td data-label="Date of Failure">${dateOfFailure}</td>
-                            <td data-label="Time of Failure">${timeOfFailure}</td>
-                            <td data-label="Date of Restoration">${dateOfRestoration}</td>
-                            <td data-label="Time of Restoration">${timeOfRestoration}</td>
-                            <td data-label="Description">${description}</td>
-                            <td data-label="Action Taken">${actionTaken}</td>
-                            <td data-label="Attended By">${attendedBy}</td>
-                            <td data-label="Status">${statusBadge(status)}</td>
-                            <td data-label="Time">${totalTime}</td>
-                        </tr>
-                    `;
-                });
-
-                html += `
-                                </tbody>
-                            </table>
-                `;
-
-                if (totalPages > 1) {
-                    html += `
-                        <div class="pagination-controls">
-                            <button class="page-btn" onclick="changeYearPage('failure','${year}',-1)" ${page <= 1 ? 'disabled' : ''}>‹ Prev</button>
-                            <span class="page-info">Page ${page} of ${totalPages}</span>
-                            <button class="page-btn" onclick="changeYearPage('failure','${year}',1)" ${page >= totalPages ? 'disabled' : ''}>Next ›</button>
-                        </div>
-                    `;
-                }
-
-                html += `
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        function runLocalDecoder(id) {
-            document.getElementById('Page1').style.display = "block";
-            const meta = getAssetMetadata(id);
-
-            if (!meta.station || !meta.group || !meta.subGroup || !meta.equipmentName) {
-                let errorHtml = `
-                    <div class="data-card" style="border-left-color: #d93025; background-color: #fce8e6;">
-                        <p style="color: #d93025; font-weight: bold; font-size: 18px; text-align: center; margin: 10px 0; display:block;">
-                            Asset ID not matched
-                        </p>
-                    </div>
-                `;
-                document.getElementById('decodedData').innerHTML = errorHtml;
-                return false; 
-            }
-
-            const sheetInfo = getSheetNamesForAsset(id);
-            const categoryTag = sheetInfo ? sheetInfo.suffix : "Unmapped";
-
-            let mappedHtml = `
-                <div class="data-card">
-                    <p><span class="label">Asset ID :</span> <strong>${id}</strong></p>
-                    <p><span class="label">Station :</span> <strong> ${meta.station}</p>
-                    <p><span class="label">Group :</span> <strong> ${meta.group}</p>
-                    <p><span class="label">Sub-Group :</span> <strong> ${meta.subGroup}</p>
-                    <p><span class="label">Equipment Name :</span> <strong>${meta.equipmentName}</strong></p>
-                    <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 12px 0;">
-                    <p><span class="label">Last Maintenance:</span> <span id="lastMaintField" style="font-weight:600; color:var(--primary-color)">wait...</span></p>
-                    <p><span class="label">Next Maintenance:</span> <span id="nextMaintField" style="font-weight:600; color:var(--primary-color)">wait...</span></p>
-                </div>
-            `;
-            document.getElementById('decodedData').innerHTML = mappedHtml;
-            return true; 
-        }
-
-        function renderSpecificationsOutput(specMatchedData, containerTargetId) {
-            let frame = document.getElementById(containerTargetId);
-            if (!specMatchedData || !specMatchedData.headers || !specMatchedData.values) {
-                frame.innerHTML = "<p style='color:#666; font-style: italic;'>No matching specification details registered.</p>";
-                return;
-            }
-
-            const headingCols = specMatchedData.headers;
-            const valueCols = specMatchedData.values;
-
-            let tableHtml = `<table class="spec-table"><tbody>`;
-
-            for (let c = 1; c < headingCols.length; c++) {
-                const headText = headingCols[c] ? headingCols[c].toString().trim() : "";
-                if (headText !== "") {
-                    const cellVal = valueCols[c] !== undefined ? valueCols[c].toString().trim() : "-";
-                    tableHtml += `
-                        <tr>
-                            <td class="spec-label">${headText}</td>
-                            <td>${cellVal}</td>
-                        </tr>
-                    `;
-                }
-            }
-
-            tableHtml += `</tbody></table>`;
-            frame.innerHTML = tableHtml;
-        }
-
-        function switchTab(clickEvent, targetPanelName) {
-            let individualPanels = document.getElementsByClassName("tabcontent");
-            for (let x = 0; x < individualPanels.length; x++) individualPanels[x].style.display = "none";
-            let operationalTabs = document.getElementsByClassName("tablinks");
-            for (let y = 0; y < operationalTabs.length; y++) operationalTabs[y].className = operationalTabs[y].className.replace(" active", "");
-            document.getElementById(targetPanelName).style.display = "block";
-            clickEvent.currentTarget.className += " active";
-        }
-    </script>
+    <button type="button" class="clearFieldsBtn" id="btnClearFields">↺ Clear Fields</button>
+  </div>
+
+  <div class="infoBox">
+    <div class="infoRow"><span class="k">Asset Id:</span><span class="v" id="infoAssetId">-</span></div>
+    <div class="infoRow"><span class="k">Station:</span><span class="v" id="infoStation">-</span></div>
+    <div class="infoRow"><span class="k">Group:</span><span class="v" id="infoGroup">-</span></div>
+    <div class="infoRow"><span class="k">Sub-Group:</span><span class="v" id="infoSubGroup">-</span></div>
+    <div class="infoRow"><span class="k">Equipment Name:</span><span class="v" id="infoEquipment">-</span></div>
+  </div>
+  <hr class="sep">
+
+  <div class="formGroup">
+    <label>Date Of Maintenance *</label>
+    <input type="date" id="dateOfMaintenance">
+    <div class="fieldErr" id="dateErr"></div>
+  </div>
+
+  <div class="formGroup">
+    <label>Type Of Maintenance *</label>
+    <select id="typeOfMaintenance">
+      <option value="">Select Type</option>
+      <option value="YEARLY">Yearly</option>
+      <option value="HALF-YEARLY">Half-yearly</option>
+      <option value="QUARTERLY">Quarterly</option>
+      <option value="MONTHLY">Monthly</option>
+      <option value="FORTNIGHTLY">Fortnightly</option>
+      <option value="WEEKLY">Weekly</option>
+    </select>
+    <div class="fieldErr" id="typeErr"></div>
+  </div>
+
+  <div class="formGroup">
+    <label>Attended By *</label>
+    <div id="attendedByContainer"></div>
+    <button id="btnAddStaff" type="button">+ Add More</button>
+    <div class="fieldErr" id="staffErr"></div>
+  </div>
+
+  <div class="formGroup">
+    <label>Remarks *</label>
+    <div id="remarksContainer"></div>
+    <button id="btnAddRemark" type="button">+ Add More</button>
+    <div class="fieldErr" id="remarksErr"></div>
+  </div>
+
+  <div id="formError" class="error" style="text-align:center;"></div>
+  <button id="btnSubmit" class="submitBtn" type="button">Submit</button>
+  <button id="btnBack" class="backBtn" type="button">← Back</button>
+  <div id="submitStatus"></div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const CONFIG = {
+  SHEET_ID: "136Fq_Pchc_kPJwEoBUgfRKzDqnYUs730w3vMhnSO9HI",
+  API_KEY: "AIzaSyAjBceUqA-G1ueMCsqevOiPEhb2Nk-pOhI",
+  SHEET_NAME: "Maintenance_Log",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzluFhsV2Ib6I-BK5OdFacx7hjK8nTZSRLlisBedPCr1-nGD5L6MDp85iJhv075odfa/exec"
+};
+
+/* ============================================================
+   MASTER DATA / MAPPING
+   ============================================================ */
+const stationMap = {
+  "200":"KKSO DEPOT", "201":"KKSO", "202":"KSJR", "203":"KJNN", "204":"KKSK",
+  "205":"KHMD", "206":"KVIB", "207":"KRWT", "208":"KBST", "209":"KBGA"
+};
+
+const groupMap = {
+  "01": "HT", "02": "LT", "03": "Pump", "04": "DG",
+  "05": "Third_rail", "06": "Lift_&_Escalator", "07": "Fire", "08": "Split_&_HVAC"
+};
+
+const subGroupMap = {
+  "01": {
+    "01":"33KV GIS SWITCHGEAR", "02":"RECTIFIER TRANSFORMER", "03":"DIODE RECTIFIER",
+    "04":"AUXILIARY TRANSFORMER", "05":"HSCB", "06":"BCP", "07":"MOTORISED ISOLATOR",
+    "08":"TRACK DISCONNECTOR", "09":"THIRD RAIL EARTHING", "10":"NEGATIVE RETURN PANEL",
+    "11":"OVPD", "12":"ETS", "13":"ACDB", "14":"DCDB", "15":"BATTERY CHARGER",
+    "16":"NI-CD BATTERY BANK"
+  },
+  "02": {}, "03": {}, "04": {}, "05": {}, "06": {}, "07": {}, "08": {}
+};
+
+const equipmentMap = {
+  "01": {
+    "01": {
+      "01":"HB01","02":"HB02","03":"HB03","04":"HB04","05":"HB05","06":"HB06",
+      "07":"HB07","08":"HB08","09":"HB09","10":"HB10","11":"HB11","12":"HB12",
+      "13":"HB13","14":"HB14","15":"HB15","16":"HB16","17":"HB17","18":"HB18",
+      "19":"HB19","20":"HB20","21":"BRP01","22":"BRP02"
+    },
+    "02": { "01":"TT01","02":"TT02","03":"TT03" },
+    "03": { "01":"SR01","02":"SR02","03":"SR03" },
+    "04": { "01":"AT01","02":"AT02","03":"AT03" },
+    "05": {
+      "01":"DB 01","02":"DB 02","03":"DB 03","04":"DB 04","05":"DB 05","06":"DB 06",
+      "07":"DB 07","08":"DB 08","09":"DB 09","10":"DB 10","11":"DB 11"
+    },
+    "06": { "01":"BCP01","02":"BCP02" },
+    "07": { "01":"IM 01","02":"IM 02","03":"IM 03","04":"IM 04","05":"IM 05","09":"IM 09","10":"IM 10" },
+    "08": {
+      "01":"TD 01","02":"TD 02","03":"TD 03","04":"TD 04","05":"TD 05","06":"TD 06",
+      "07":"TD 07","08":"TD 07A","09":"TD 07B","10":"TD 08","11":"TD 09A","12":"TD 09B",
+      "13":"TD 10A","14":"TD 10B","15":"TD 13","16":"TD 23","17":"TD 76","18":"TD 45"
+    },
+    "09": { "01":"TRE01","02":"TRE02" },
+    "10": { "01":"IM06","02":"IM07","03":"IM08" },
+    "11": { "01":"OVPD01" },
+    "12": {
+      "01":"ETS01","02":"ETS01A","03":"ETS02","04":"ETS02A","05":"ETS03","06":"ETS03A",
+      "07":"ETS04","08":"ETS04A","09":"ETS05","10":"ETS06","11":"ETS07","12":"ETS08",
+      "13":"ETS09","14":"ETS10"
+    },
+    "13": { "01":"ACDB01","02":"ACDB02" },
+    "14": { "01":"DCDB01" },
+    "15": { "01":"BC01","02":"BC02","03":"BC03" },
+    "16": { "01":"BB01","02":"BB02" }
+  },
+  "02": {}, "03": {}, "04": {}, "05": {}, "06": {}, "07": {}, "08": {}
+};
+
+const validAssetIdsByGroup = {
+  "01": new Set([
+"200010101","200010102","200010103","200010104","200010105","200010106","200010107","200010108","200010109","200010110","200010111","200010121",
+"201010101","201010102","201010103","201010104","201010105","201010106","201010107","201010108","201010109","201010110","201010111","201010112","201010113","201010114","201010121","201010122",
+"202010101","202010102","202010103","202010104","202010105","202010106","202010107","202010108","202010109","202010110","202010111","202010112","202010113","202010114","202010115","202010116","202010117","202010118","202010119","202010120","202010121","202010122",
+"203010101","203010102","203010103","203010104","203010105","203010106","203010107","203010108","203010109","203010110","203010111","203010121",
+"204010101","204010102","204010103","204010104","204010105","204010106","204010107","204010108","204010109","204010110","204010111","204010121",
+"205010101","205010102","205010103","205010104","205010105","205010106","205010107","205010108","205010109","205010110","205010111","205010112","205010113","205010114","205010115","205010116","205010117","205010118","205010119","205010120","205010121","205010122",
+"206010101","206010102","206010103","206010104","206010105","206010106","206010107","206010108","206010109","206010110","206010111","206010121",
+"207010101","207010102","207010103","207010104","207010105","207010106","207010107","207010108","207010109","207010110","207010111","207010121",
+"208010101","208010102","208010103","208010104","208010105","208010106","208010107","208010108","208010109","208010110","208010111","208010121",
+"209010101","209010102","209010103","209010104","209010105","209010106","209010107","209010108","209010109","209010110","209010111","209010121",
+"200010201","200010202",
+"201010201","201010202","201010203",
+"202010201","202010202",
+"203010201","203010202",
+"204010201","204010202",
+"205010201","205010202",
+"206010201","206010202",
+"207010201","207010202",
+"208010201","208010202",
+"209010201","209010202",
+"200010301","200010302",
+"201010301","201010302","201010303",
+"202010301","202010302",
+"203010301","203010302",
+"204010301","204010302",
+"205010301","205010302",
+"206010301","206010302",
+"207010301","207010302",
+"208010301","208010302",
+"209010301","209010302",
+"200010401","200010402","200010403",
+"201010401","201010402","201010403",
+"202010401","202010402",
+"203010401","203010402",
+"204010401","204010402",
+"205010401","205010402",
+"206010401","206010402",
+"207010401","207010402",
+"208010401","208010402",
+"209010401","209010402",
+"200010501","200010502","200010503","200010504","200010505","200010506","200010507","200010509","200010510","200010511",
+"201010501","201010502","201010503","201010505","201010506","201010507","201010508",
+"202010501","202010502","202010503","202010504","202010505","202010506","202010507",
+"203010501","203010502","203010503","203010504","203010505","203010506","203010507",
+"204010501","204010502","204010503","204010504","204010505","204010506","204010507",
+"205010501","205010502","205010503","205010504","205010505","205010506","205010507",
+"206010501","206010502","206010503","206010504","206010505","206010506","206010507",
+"207010501","207010502","207010503","207010504","207010505","207010506","207010507",
+"208010501","208010502","208010503","208010504","208010505","208010506","208010507",
+"209010501","209010502","209010503","209010504","209010505","209010506","209010507",
+"201010601",
+"202010601","202010602",
+"203010601","203010602",
+"204010601","204010602",
+"205010601","205010602",
+"206010601","206010602",
+"207010601","207010602",
+"208010601","208010602",
+"209010601","209010602",
+"200010701","200010702","200010703","200010704","200010705","200010709","200010710",
+"201010701","201010702","201010703",
+"202010701","202010702","202010703","202010704",
+"203010701","203010702","203010703","203010704",
+"204010701","204010702","204010703","204010704",
+"205010701","205010702","205010703","205010704",
+"206010701","206010702","206010703","206010704",
+"207010701","207010702","207010703","207010704",
+"208010701","208010702","208010703","208010704",
+"209010701","209010702","209010703","209010704",
+"200010801","200010802","200010803","200010804","200010805","200010806","200010807","200010808","200010809","200010810","200010811","200010812","200010813","200010814","200010815","200010816","200010817","200010818",
+"200010901","200010902",
+"201010901","201010902",
+"202010901","202010902",
+"203010901","203010902",
+"204010901","204010902",
+"205010901","205010902",
+"206010901","206010902",
+"207010901","207010902",
+"208010901","208010902",
+"209010901","209010902",
+"200011001","200011002",
+"201011001","201011002","201011003",
+"202011001","202011002",
+"203011001","203011002",
+"204011001","204011002",
+"205011001","205011002",
+"206011001","206011002",
+"207011001","207011002",
+"208011001","208011002",
+"209011001","209011002",
+"201011101",
+"202011101",
+"203011101",
+"204011101",
+"205011101",
+"206011101",
+"207011101",
+"208011101",
+"209011101",
+"200011201","200011203","200011205","200011206","200011207","200011209","200011210","200011211","200011212","200011213","200011214",
+"201011201","201011202","201011203","201011204","201011205","201011206","201011207","201011208","201011209","201011210","201011211",
+"202011201","202011203","202011205","202011207","202011209","202011210","202011211",
+"203011201","203011203","203011205","203011207","203011209","203011210","203011211",
+"204011201","204011203","204011205","204011207","204011209","204011210","204011211",
+"205011201","205011203","205011205","205011207","205011209","205011210","205011211",
+"206011201","206011203","206011205","206011207","206011209","206011210","206011211",
+"207011201","207011203","207011205","207011207","207011209","207011210","207011211",
+"208011201","208011203","208011205","208011207","208011209","208011210","208011211",
+"209011201","209011203","209011205","209011207","209011209","209011210","209011211",
+"200011301","200011302",
+"201011301",
+"202011301","202011302",
+"203011301",
+"204011301",
+"205011301","205011302",
+"206011301",
+"207011301",
+"208011301",
+"209011301",
+"200011401",
+"201011401",
+"202011401",
+"203011401",
+"204011401",
+"205011401",
+"206011401",
+"207011401",
+"208011401",
+"209011401",
+"200011501","200011502","200011503",
+"201011501","201011502","201011503",
+"202011501","202011502","202011503",
+"203011501","203011502","203011503",
+"204011501","204011502","204011503",
+"205011501","205011502","205011503",
+"206011501","206011502","206011503",
+"207011501","207011502","207011503",
+"208011501","208011502","208011503",
+"209011501","209011502","209011503",
+"200011601","200011602",
+"201011601","201011602",
+"202011601","202011602",
+"203011601","203011602",
+"204011601","204011602",
+"205011601","205011602",
+"206011601","206011602",
+"207011601","207011602",
+"208011601","208011602",
+"209011601","209011602"
+  ]),
+  "02": new Set(), "03": new Set(), "04": new Set(),
+  "05": new Set(), "06": new Set(), "07": new Set(), "08": new Set()
+};
+
+const staffList = [
+"NARENDRA EKKA-SSE","RAJA MANDAL-SSE","SUMESH KUMAR-JE","KISHOR KUMAR-JE","MD.AMIR ANSARI-JE",
+"ARPAN MONDAL-JE","RAVI KUMAR MALHOTRA-Tech-I","NITISH KUMAR-Tech-I","SAMBHU DAS-TECH-II",
+"SURAJ THAKUR-TECH-II","NITISH KUMAR CHOUDHARY-TECH-II","SUMAN KUMAR-TECH-II","SHIVAM KUMAR-HELPER",
+"SUMAN THAKUR-HELPER","SUBRATA DAS-HELPER","BIKESH SINGH-HELPER","RAUSHAN KUMAR JOSHI-HELPER",
+"ANIL SINGH-HELPER","AMAN BHADURIA-HELPER","SURAJ KUMAR-HELPER","SUMAN KRISHNA ROY-HELPER",
+"DHARMENDRA KUMAR-HELPER","RAVI RANJAN KUMAR-HELPER","MANISH KUMAR-HELPER"
+];
+
+/* ============================================================
+   HELPER FUNCTIONS
+   ============================================================ */
+function decodeAssetId(id) {
+  const stationCode = id.slice(0,3);
+  const groupCode = id.slice(3,5);
+  const subGroupCode = id.slice(5,7);
+  const equipCode = id.slice(7,9);
+  return {
+    stationCode, groupCode, subGroupCode, equipCode,
+    station: stationMap[stationCode] || "Unknown",
+    group: (groupMap[groupCode] || "Unknown").replace(/_/g," "),
+    subGroup: (subGroupMap[groupCode] && subGroupMap[groupCode][subGroupCode]) || "Unknown",
+    equipment: (equipmentMap[groupCode] && equipmentMap[groupCode][subGroupCode] &&
+                equipmentMap[groupCode][subGroupCode][equipCode]) || "Unknown"
+  };
+}
+
+function isValidAssetId(id) {
+  if (!/^\d{9}$/.test(id)) return false;
+  const groupCode = id.slice(3,5);
+  const set = validAssetIdsByGroup[groupCode];
+  return set ? set.has(id) : false;
+}
+
+function getValidSubGroupCodes(stationCode, groupCode) {
+  const set = validAssetIdsByGroup[groupCode] || new Set();
+  const prefix = stationCode + groupCode;
+  const result = new Set();
+  set.forEach(id => { if (id.startsWith(prefix)) result.add(id.slice(5,7)); });
+  return result;
+}
+
+function getValidEquipmentCodes(stationCode, groupCode, subGroupCode) {
+  const set = validAssetIdsByGroup[groupCode] || new Set();
+  const prefix = stationCode + groupCode + subGroupCode;
+  const result = new Set();
+  set.forEach(id => { if (id.startsWith(prefix)) result.add(id.slice(7,9)); });
+  return result;
+}
+
+function toDDMMYY(isoDate) {
+  const [y,m,d] = isoDate.split('-');
+  return `${d}-${m}-${y.slice(2)}`;
+}
+
+function markInvalid(el) { el.classList.add('invalid'); }
+function clearInvalid(el) { el.classList.remove('invalid'); }
+
+/* ============================================================
+   LOCK / MULTI-ENTRY STATE
+   ============================================================ */
+let lockMode = false;
+let savedFormState = null; // { date, type, staff:[], remarks:[] }
+let sessionSubmitCount = 0;
+
+const lockToggle = document.getElementById('lockToggle');
+const lockLabelText = document.getElementById('lockLabelText');
+const sessionChipWrap = document.getElementById('sessionChipWrap');
+const sessionBadge = document.getElementById('sessionBadge');
+const lockBanner = document.getElementById('lockBanner');
+const lockBannerTitle = document.getElementById('lockBannerTitle');
+const lockBannerText = document.getElementById('lockBannerText');
+const btnClearFields = document.getElementById('btnClearFields');
+const entryLockBanner = document.getElementById('entryLockBanner');
+const btnClearEntrySelections = document.getElementById('btnClearEntrySelections');
+
+function clearEntryPageSelections() {
+  assetIdInput.value = '';
+  assetIdError.textContent = '';
+  ddStation.value = ''; ddGroup.value = '';
+  ddGroup.disabled = true;
+  ddSubGroup.innerHTML = '<option value="">Select Sub-Group</option>';
+  ddSubGroup.disabled = true;
+  ddEquipment.innerHTML = '<option value="">Select Equipment</option>';
+  ddEquipment.disabled = true;
+  dropdownError.textContent = '';
+}
+
+function updateEntryLockBanner() {
+  entryLockBanner.classList.toggle('show', lockMode);
+}
+
+btnClearEntrySelections.addEventListener('click', clearEntryPageSelections);
+
+lockToggle.addEventListener('change', () => {
+  lockMode = lockToggle.checked;
+  if (!lockMode) {
+    savedFormState = null;
+    sessionSubmitCount = 0;
+    clearEntryPageSelections(); // reset entry page fields when unlocking
+  }
+  lockLabelText.textContent = lockMode ? '🔒 Locked' : '🔓 Unlocked';
+  sessionChipWrap.style.display = lockMode ? 'flex' : 'none';
+  updateSessionBadge();
+  updateEntryLockBanner();
+});
+
+function updateSessionBadge() {
+  sessionBadge.textContent = `✅ ${sessionSubmitCount} entries submitted`;
+}
+
+btnClearFields.addEventListener('click', () => {
+  savedFormState = null;
+  resetFormFields(true); // force blank fields, keep asset info
+});
+
+function captureFormState() {
+  return {
+    date: dateInput.value,
+    type: typeSelect.value,
+    staff: Array.from(document.querySelectorAll('.staffSelect')).map(s => s.value).filter(v => v),
+    remarks: Array.from(document.querySelectorAll('.remarkText')).map(t => t.value)
+  };
+}
+
+/* ============================================================
+   ENTRY PAGE LOGIC
+   ============================================================ */
+const ddStation = document.getElementById('ddStation');
+const ddGroup = document.getElementById('ddGroup');
+const ddSubGroup = document.getElementById('ddSubGroup');
+const ddEquipment = document.getElementById('ddEquipment');
+const dropdownError = document.getElementById('dropdownError');
+const assetIdInput = document.getElementById('assetIdInput');
+const assetIdError = document.getElementById('assetIdError');
+
+function populateStationDropdown() {
+  ddStation.innerHTML = '<option value="">Select Station</option>';
+  Object.entries(stationMap).forEach(([code,name]) => {
+    const opt = document.createElement('option');
+    opt.value = code; opt.textContent = `${name} (${code})`;
+    ddStation.appendChild(opt);
+  });
+}
+
+function populateGroupDropdown() {
+  ddGroup.innerHTML = '<option value="">Select Group</option>';
+  Object.entries(groupMap).forEach(([code,name]) => {
+    const opt = document.createElement('option');
+    opt.value = code; opt.textContent = name.replace(/_/g,' ');
+    ddGroup.appendChild(opt);
+  });
+}
+
+function populateSubGroupDropdown(stationCode, groupCode) {
+  ddSubGroup.innerHTML = '<option value="">Select Sub-Group</option>';
+  const allSubGroups = subGroupMap[groupCode] || {};
+  const validCodes = getValidSubGroupCodes(stationCode, groupCode);
+  const codes = Object.keys(allSubGroups).filter(c => validCodes.has(c));
+
+  if (codes.length === 0) {
+    const opt = document.createElement('option');
+    opt.value = ''; opt.textContent = 'No data available for this Station/Group'; opt.disabled = true;
+    ddSubGroup.appendChild(opt);
+    return;
+  }
+  codes.forEach(code => {
+    const opt = document.createElement('option');
+    opt.value = code; opt.textContent = allSubGroups[code];
+    ddSubGroup.appendChild(opt);
+  });
+}
+
+function populateEquipmentDropdown(stationCode, groupCode, subGroupCode) {
+  ddEquipment.innerHTML = '<option value="">Select Equipment</option>';
+  const allEquip = (equipmentMap[groupCode] && equipmentMap[groupCode][subGroupCode]) || {};
+  const validCodes = getValidEquipmentCodes(stationCode, groupCode, subGroupCode);
+  const codes = Object.keys(allEquip).filter(c => validCodes.has(c));
+
+  if (codes.length === 0) {
+    const opt = document.createElement('option');
+    opt.value = ''; opt.textContent = 'No data available'; opt.disabled = true;
+    ddEquipment.appendChild(opt);
+    return;
+  }
+  codes.forEach(code => {
+    const opt = document.createElement('option');
+    opt.value = code; opt.textContent = allEquip[code];
+    ddEquipment.appendChild(opt);
+  });
+}
+
+populateStationDropdown();
+populateGroupDropdown();
+
+ddStation.addEventListener('change', () => {
+  ddGroup.value = '';
+  ddSubGroup.innerHTML = '<option value="">Select Sub-Group</option>';
+  ddEquipment.innerHTML = '<option value="">Select Equipment</option>';
+  ddGroup.disabled = !ddStation.value;
+  ddSubGroup.disabled = true;
+  ddEquipment.disabled = true;
+  dropdownError.textContent = '';
+});
+
+ddGroup.addEventListener('change', () => {
+  ddSubGroup.innerHTML = '<option value="">Select Sub-Group</option>';
+  ddEquipment.innerHTML = '<option value="">Select Equipment</option>';
+  ddEquipment.disabled = true;
+
+  if (ddStation.value && ddGroup.value) {
+    populateSubGroupDropdown(ddStation.value, ddGroup.value);
+    ddSubGroup.disabled = false;
+  } else {
+    ddSubGroup.disabled = true;
+  }
+  dropdownError.textContent = '';
+});
+
+ddSubGroup.addEventListener('change', () => {
+  ddEquipment.innerHTML = '<option value="">Select Equipment</option>';
+  if (ddStation.value && ddGroup.value && ddSubGroup.value) {
+    populateEquipmentDropdown(ddStation.value, ddGroup.value, ddSubGroup.value);
+    ddEquipment.disabled = false;
+  } else {
+    ddEquipment.disabled = true;
+  }
+  dropdownError.textContent = '';
+});
+
+document.getElementById('btnGetFormByDropdown').addEventListener('click', () => {
+  const s = ddStation.value, g = ddGroup.value, sg = ddSubGroup.value, e = ddEquipment.value;
+  dropdownError.textContent = '';
+  if (!s || !g || !sg || !e) {
+    dropdownError.textContent = 'Please select all fields (Station, Group, Sub-Group, Equipment).';
+    return;
+  }
+  const assetId = s + g + sg + e;
+  if (!isValidAssetId(assetId)) {
+    dropdownError.textContent = 'Invalid combination. Asset Id not found in master list.';
+    return;
+  }
+  showForm(assetId);
+});
+
+/* --- Asset Id manual entry --- */
+assetIdInput.addEventListener('input', (e) => {
+  e.target.value = e.target.value.replace(/\D/g,'').slice(0,9);
+  assetIdError.textContent = '';
+});
+
+document.getElementById('btnGetFormById').addEventListener('click', () => {
+  const id = assetIdInput.value.trim();
+  assetIdError.textContent = '';
+  if (!/^\d{9}$/.test(id)) {
+    assetIdError.textContent = 'Please enter a valid 9-digit Asset Id.';
+    return;
+  }
+  if (!isValidAssetId(id)) {
+    assetIdError.textContent = 'Asset Id not found in master list.';
+    return;
+  }
+  showForm(id);
+});
+
+/* --- QR Scan --- */
+const btnScanQr = document.getElementById('btnScanQr');
+const qrReaderContainer = document.getElementById('qrReaderContainer');
+const qrVideo = document.getElementById('qrVideo');
+const qrCanvas = document.getElementById('qrCanvas');
+const qrCtx = qrCanvas.getContext('2d');
+const qrResult = document.getElementById('qrResult');
+const qrError = document.getElementById('qrError');
+let qrStream = null;
+let qrScanning = false;
+
+btnScanQr.addEventListener('click', startQrScan);
+document.getElementById('btnCancelScan').addEventListener('click', stopQrScan);
+
+async function startQrScan() {
+  qrError.textContent = '';
+  qrResult.textContent = '';
+
+  if (!window.isSecureContext) {
+    qrError.textContent = 'Camera requires a secure connection (HTTPS or localhost). Please open this page via https://';
+    return;
+  }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    qrError.textContent = 'Camera API not supported in this browser.';
+    return;
+  }
+
+  const constraintsList = [
+    { video: { facingMode: { exact: "environment" } } },
+    { video: { facingMode: "environment" } },
+    { video: true }
+  ];
+
+  let lastErr = null;
+  qrStream = null;
+  for (const constraints of constraintsList) {
+    try {
+      qrStream = await navigator.mediaDevices.getUserMedia(constraints);
+      if (qrStream) break;
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+
+  if (!qrStream) {
+    let msg = 'Camera access denied or not available.';
+    if (lastErr && lastErr.name) {
+      if (lastErr.name === 'NotAllowedError') msg = 'Camera permission denied. Please allow camera access in browser settings.';
+      else if (lastErr.name === 'NotFoundError') msg = 'No camera found on this device.';
+      else if (lastErr.name === 'NotReadableError') msg = 'Camera is already in use by another app.';
+      else msg = 'Camera error: ' + lastErr.name;
+    }
+    qrError.textContent = msg;
+    return;
+  }
+
+  qrVideo.srcObject = qrStream;
+  qrVideo.setAttribute('playsinline', 'true');
+  qrVideo.muted = true;
+
+  try {
+    await qrVideo.play();
+  } catch (err) {
+    qrError.textContent = 'Unable to start camera preview. Please try again.';
+    stopQrScan();
+    return;
+  }
+
+  qrReaderContainer.style.display = 'block';
+  qrScanning = true;
+  requestAnimationFrame(scanLoop);
+}
+
+function stopQrScan() {
+  qrScanning = false;
+  if (qrStream) {
+    qrStream.getTracks().forEach(t => t.stop());
+    qrStream = null;
+  }
+  qrReaderContainer.style.display = 'none';
+}
+
+function scanLoop() {
+  if (!qrScanning) return;
+  if (qrVideo.readyState === qrVideo.HAVE_ENOUGH_DATA) {
+    qrCanvas.width = qrVideo.videoWidth;
+    qrCanvas.height = qrVideo.videoHeight;
+    qrCtx.drawImage(qrVideo, 0, 0, qrCanvas.width, qrCanvas.height);
+    const imageData = qrCtx.getImageData(0, 0, qrCanvas.width, qrCanvas.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height);
+    if (code && code.data) {
+      handleQrResult(code.data);
+      return;
+    }
+  }
+  requestAnimationFrame(scanLoop);
+}
+
+function handleQrResult(text) {
+  const digitsOnly = text.replace(/\D/g, '');
+  const assetId = digitsOnly.slice(-9);
+  stopQrScan();
+  if (!/^\d{9}$/.test(assetId) || !isValidAssetId(assetId)) {
+    qrError.textContent = 'Scanned QR does not contain a valid Asset Id.';
+    return;
+  }
+  qrResult.textContent = 'QR scanned successfully!';
+  showForm(assetId);
+}
+
+/* ============================================================
+   FORM PAGE LOGIC
+   ============================================================ */
+const entryPage = document.getElementById('entryPage');
+const formPage = document.getElementById('formPage');
+let currentAssetId = null;
+let currentDecoded = null;
+
+function showForm(assetId) {
+  currentAssetId = assetId;
+  currentDecoded = decodeAssetId(assetId);
+
+  document.getElementById('infoAssetId').textContent = assetId;
+  document.getElementById('infoStation').textContent = currentDecoded.station;
+  document.getElementById('infoGroup').textContent = currentDecoded.group;
+  document.getElementById('infoSubGroup').textContent = currentDecoded.subGroup;
+  document.getElementById('infoEquipment').textContent = currentDecoded.equipment;
+
+  resetFormFields();
+  updateLockBanner();
+
+  entryPage.classList.remove('active');
+  formPage.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showEntry() {
+  formPage.classList.remove('active');
+  entryPage.classList.add('active');
+
+  // QR result/error ALWAYS reset — fresh scan required every time, regardless of lock
+  qrResult.textContent = '';
+  qrError.textContent = '';
+
+  if (!lockMode) {
+    // Unlocked: full clear of Entry Page fields (old behavior)
+    clearEntryPageSelections();
+  } else {
+    // Locked: KEEP Asset Id input & Dropdown selections; just clear transient error text
+    assetIdError.textContent = '';
+    dropdownError.textContent = '';
+  }
+
+  updateEntryLockBanner();
+
+  document.getElementById('submitStatus').textContent = '';
+  document.getElementById('submitStatus').className = '';
+  window.scrollTo(0,0);
+}
+
+document.getElementById('btnBack').addEventListener('click', showEntry);
+
+function updateLockBanner() {
+  if (lockMode) {
+    lockBanner.classList.add('show');
+    if (savedFormState) {
+      lockBannerTitle.textContent = '🔒 Lock Mode Active';
+      lockBannerText.textContent = 'Fields auto-filled from previous entry. Review & Submit.';
+    } else {
+      lockBannerTitle.textContent = '🔒 Lock Mode Active';
+      lockBannerText.textContent = 'This is your first entry — future scans will retain these values.';
+    }
+  } else {
+    lockBanner.classList.remove('show');
+  }
+}
+
+/* --- Date / Type --- */
+const dateInput = document.getElementById('dateOfMaintenance');
+const typeSelect = document.getElementById('typeOfMaintenance');
+const dateErr = document.getElementById('dateErr');
+const typeErr = document.getElementById('typeErr');
+
+dateInput.addEventListener('change', () => { clearInvalid(dateInput); dateErr.textContent=''; });
+typeSelect.addEventListener('change', () => {
+  clearInvalid(typeSelect); typeErr.textContent='';
+  const firstRemark = document.querySelector('.remarkText');
+  if (firstRemark && typeSelect.value) {
+    firstRemark.value = `${typeSelect.value} MAINTENANCE DONE`;
+    clearInvalid(firstRemark);
+    document.getElementById('remarksErr').textContent = '';
+  }
+});
+
+/* --- Attended By (dynamic, no repeat) --- */
+const attendedByContainer = document.getElementById('attendedByContainer');
+const staffErr = document.getElementById('staffErr');
+
+function getSelectedStaffValues() {
+  return Array.from(document.querySelectorAll('.staffSelect')).map(s => s.value).filter(v => v);
+}
+
+function renderStaffOptions(select) {
+  const currentVal = select.value;
+  const used = getSelectedStaffValues();
+  select.innerHTML = '<option value="">Select Staff</option>';
+  staffList.forEach(name => {
+    if (used.includes(name) && name !== currentVal) return;
+    const opt = document.createElement('option');
+    opt.value = name; opt.textContent = name;
+    if (name === currentVal) opt.selected = true;
+    select.appendChild(opt);
+  });
+}
+
+function refreshAllStaffOptions() {
+  document.querySelectorAll('.staffSelect').forEach(renderStaffOptions);
+}
+
+function updateStaffDeleteVisibility() {
+  const rows = document.querySelectorAll('.staffRow');
+  rows.forEach(r => {
+    const btn = r.querySelector('.delBtn');
+    btn.style.display = rows.length > 1 ? 'inline-block' : 'none';
+  });
+}
+
+function addStaffRow(presetValue) {
+  const row = document.createElement('div');
+  row.className = 'staffRow';
+
+  const select = document.createElement('select');
+  select.className = 'staffSelect';
+  select.addEventListener('change', () => {
+    clearInvalid(select);
+    staffErr.textContent = '';
+    refreshAllStaffOptions();
+  });
+
+  const delBtn = document.createElement('button');
+  delBtn.type = 'button';
+  delBtn.className = 'delBtn';
+  delBtn.textContent = '🗑';
+  delBtn.setAttribute('aria-label', 'Delete');
+  delBtn.title = 'Delete';
+  delBtn.addEventListener('click', () => {
+    row.remove();
+    refreshAllStaffOptions();
+    updateStaffDeleteVisibility();
+  });
+
+  row.appendChild(select);
+  row.appendChild(delBtn);
+  attendedByContainer.appendChild(row);
+
+  renderStaffOptions(select);
+  if (presetValue) {
+    select.value = presetValue;
+  }
+  updateStaffDeleteVisibility();
+}
+
+document.getElementById('btnAddStaff').addEventListener('click', () => addStaffRow());
+
+/* --- Remarks (max 2 boxes: readonly auto + 1 editable) --- */
+const remarksContainer = document.getElementById('remarksContainer');
+const btnAddRemark = document.getElementById('btnAddRemark');
+const remarksErr = document.getElementById('remarksErr');
+
+function addRemarkRow(prefill = '', readonly = false) {
+  const rows = document.querySelectorAll('.remarkRow');
+  if (rows.length >= 2) return;
+
+  const row = document.createElement('div');
+  row.className = 'remarkRow';
+
+  const textarea = document.createElement('textarea');
+  textarea.className = 'remarkText';
+  textarea.value = prefill;
+
+  if (readonly) {
+    textarea.readOnly = true;
+    textarea.rows = 3;
+    textarea.classList.add('readonlyRemark');
+  } else {
+    textarea.rows = 7;
+    textarea.classList.add('addedRemark');
+    textarea.addEventListener('input', () => {
+      clearInvalid(textarea);
+      remarksErr.textContent = '';
+    });
+  }
+  row.appendChild(textarea);
+
+  if (rows.length >= 1) {
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'delBtn';
+    delBtn.textContent = '🗑';
+    delBtn.setAttribute('aria-label', 'Delete');
+    delBtn.title = 'Delete';
+    delBtn.addEventListener('click', () => {
+      row.remove();
+      updateRemarkAddVisibility();
+    });
+    row.appendChild(delBtn);
+  }
+
+  remarksContainer.appendChild(row);
+  updateRemarkAddVisibility();
+}
+
+function updateRemarkAddVisibility() {
+  const rows = document.querySelectorAll('.remarkRow');
+  btnAddRemark.style.display = rows.length >= 2 ? 'none' : 'inline-block';
+}
+
+btnAddRemark.addEventListener('click', () => addRemarkRow(''));
+
+/* --- Reset / Restore form fields when opening form --- */
+function resetFormFields(forceBlank) {
+  dateErr.textContent = ''; typeErr.textContent = ''; staffErr.textContent = ''; remarksErr.textContent = '';
+  clearInvalid(dateInput); clearInvalid(typeSelect);
+
+  const useSaved = !forceBlank && lockMode && savedFormState;
+
+  if (useSaved) {
+    dateInput.value = savedFormState.date || '';
+    typeSelect.value = savedFormState.type || '';
+
+    attendedByContainer.innerHTML = '';
+    if (savedFormState.staff.length === 0) {
+      addStaffRow();
+    } else {
+      savedFormState.staff.forEach(name => addStaffRow(name));
+    }
+
+    remarksContainer.innerHTML = '';
+    if (savedFormState.remarks.length === 0) {
+      addRemarkRow('', true);
+    } else {
+      savedFormState.remarks.forEach((text, idx) => addRemarkRow(text, idx === 0));
+    }
+  } else {
+    dateInput.value = '';
+    typeSelect.value = '';
+
+    attendedByContainer.innerHTML = '';
+    addStaffRow();
+
+    remarksContainer.innerHTML = '';
+    addRemarkRow('', true);
+  }
+
+  document.getElementById('formError').textContent = '';
+  document.getElementById('submitStatus').textContent = '';
+  document.getElementById('submitStatus').className = '';
+}
+
+/* ============================================================
+   SUBMIT with full validation
+   ============================================================ */
+document.getElementById('btnSubmit').addEventListener('click', async () => {
+  const formError = document.getElementById('formError');
+  const submitStatus = document.getElementById('submitStatus');
+  formError.textContent = '';
+  submitStatus.textContent = '';
+  submitStatus.className = '';
+  dateErr.textContent = ''; typeErr.textContent = ''; staffErr.textContent = ''; remarksErr.textContent = '';
+  clearInvalid(dateInput); clearInvalid(typeSelect);
+
+  let hasError = false;
+
+  if (!dateInput.value) {
+    dateErr.textContent = 'Date Of Maintenance is required.';
+    markInvalid(dateInput);
+    hasError = true;
+  }
+
+  if (!typeSelect.value) {
+    typeErr.textContent = 'Type Of Maintenance is required.';
+    markInvalid(typeSelect);
+    hasError = true;
+  }
+
+  const staffSelects = Array.from(document.querySelectorAll('.staffSelect'));
+  let staffBlank = false;
+  staffSelects.forEach(s => {
+    if (!s.value) { markInvalid(s); staffBlank = true; }
+    else clearInvalid(s);
+  });
+  if (staffSelects.length === 0 || staffBlank) {
+    staffErr.textContent = 'Attended By: at least one staff required and no box can be left blank.';
+    hasError = true;
+  }
+
+  const remarkTextareas = Array.from(document.querySelectorAll('.remarkText'));
+  let remarkBlank = false;
+  remarkTextareas.forEach(t => {
+    if (!t.value.trim()) { markInvalid(t); remarkBlank = true; }
+    else clearInvalid(t);
+  });
+  if (remarkTextareas.length === 0 || remarkBlank) {
+    remarksErr.textContent = 'Remarks cannot be blank.';
+    hasError = true;
+  }
+
+  if (hasError) {
+    formError.textContent = 'Please fix the highlighted fields before submitting.';
+    return;
+  }
+
+  const attendedBy = staffSelects.map(s => s.value);
+  const remarks = remarkTextareas.map(t => t.value.trim());
+
+  const payload = {
+    sheetName: CONFIG.SHEET_NAME,
+    assetId: currentAssetId,
+    station: currentDecoded.station,
+    group: currentDecoded.group,
+    subGroup: currentDecoded.subGroup,
+    equipmentName: currentDecoded.equipment,
+    dateOfMaintenance: toDDMMYY(dateInput.value),
+    typeOfMaintenance: typeSelect.value,
+    attendedBy: attendedBy.join(', '),
+    remarks: remarks.join(' | '),
+    timestamp: new Date().toISOString()
+  };
+
+  const btnSubmit = document.getElementById('btnSubmit');
+  btnSubmit.disabled = true;
+  submitStatus.className = 'loading';
+  submitStatus.textContent = '⏳ Submitting...';
+
+  try {
+    await fetch(CONFIG.APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+
+    submitStatus.className = 'ok';
+    submitStatus.textContent = '✅ Data submitted successfully!';
+
+    // Save state for lock mode & increment counter
+    if (lockMode) {
+      savedFormState = captureFormState();
+      sessionSubmitCount++;
+      updateSessionBadge();
+    }
+
+    setTimeout(() => { showEntry(); }, 1400);
+  } catch (err) {
+    submitStatus.className = 'err';
+    submitStatus.textContent = '❌ Submission failed. Please try again.';
+  } finally {
+    btnSubmit.disabled = false;
+  }
+});
+</script>
 </body>
-</html>
+ </html>
