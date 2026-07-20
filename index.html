@@ -2,436 +2,772 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Maintenance Entry</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#6d28d9">
+<title>Asset Tracker & Diagnostic Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+</script>
 <style>
-  :root{
-    --primary:#4f46e5;
-    --primary-dark:#3730a3;
-    --secondary:#06b6d4;
-    --success:#10b981;
-    --success-dark:#059669;
-    --danger:#ef4444;
-    --danger-dark:#dc2626;
-    --warning:#f59e0b;
-    --bg:#eef1f8;
-    --card-bg:#ffffff;
-    --text-main:#1e293b;
-    --text-muted:#64748b;
-    --border:#e2e8f0;
-    --radius:16px;
-    --radius-sm:10px;
-    --shadow-sm:0 1px 4px rgba(15,23,42,0.06);
-    --shadow-md:0 6px 18px rgba(15,23,42,0.08);
-    --shadow-lg:0 14px 34px rgba(15,23,42,0.14);
-  }
-  *{ box-sizing:border-box; }
-  body{
-    font-family:'Poppins', sans-serif;
-    background:var(--bg);
-    margin:0;
-    color:var(--text-main);
-    -webkit-tap-highlight-color: transparent;
-  }
+:root {
+  --primary-color: #1a73e8;
+  --primary-dark: #174ea6;
+  --primary-light: #4c9aff;
+  --secondary-color: #f8f9fa;
+  --border-color: #dadce0;
+  --text-dark: #202124;
+  --accent-blue: #e8f0fe;
+  --table-header-bg: #f1f3f4;
+  --table-row-hover: #f2f7ff;
+  --success-color: #1e8e3e;
+  --danger-color: #d93025;
 
-  /* ===== Sticky App Header ===== */
-  .appHeader{
-    position:sticky; top:0; z-index:200;
-    background:linear-gradient(135deg, var(--primary), var(--secondary));
-    box-shadow:var(--shadow-md);
-    padding:12px 16px;
-  }
-  .appHeaderInner{
-    max-width:480px; margin:0 auto;
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-  }
-  .appTitle{ color:#fff; font-weight:700; font-size:1.05rem; display:flex; align-items:center; gap:8px; }
-  .lockToggleWrap{ display:flex; align-items:center; gap:8px; }
-  .lockLabel{ color:#fff; font-size:0.78rem; font-weight:600; white-space:nowrap; }
+  --maint-color: #0f766e;
+  --maint-light: #14b8a6;
+  --fail-color: #b91c1c;
+  --fail-light: #f97316;
+  --spec-color: #6d28d9;
+  --spec-light: #a78bfa;
 
-  .switch{ position:relative; display:inline-block; width:48px; height:26px; flex-shrink:0; }
-  .switch input{ opacity:0; width:0; height:0; }
-  .slider{
-    position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0;
-    background-color:rgba(255,255,255,0.35);
-    transition:.3s; border-radius:34px;
-  }
-  .slider:before{
-    position:absolute; content:""; height:20px; width:20px; left:3px; bottom:3px;
-    background-color:#fff; transition:.3s; border-radius:50%;
-    box-shadow:0 2px 5px rgba(0,0,0,0.25);
-  }
-  input:checked + .slider{ background-color:#10b981; }
-  input:checked + .slider:before{ transform:translateX(22px); }
+  --header-frame-1: #c9b6f0;
+  --header-frame-2: #a487e6;
+  --clock-bar-1: #3b0764;
+  --clock-bar-2: #6d28d9;
+  --hero-bg-1: #2c0b52;
+  --hero-bg-2: #4c1d95;
+  --hero-green-1: #22c55e;
+  --hero-green-2: #86efac;
 
-  .sessionChip{
-    max-width:480px; margin:8px auto 0; padding:0 16px;
-    display:flex; justify-content:flex-end;
-  }
-  .sessionBadge{
-    background:rgba(255,255,255,0.25); color:#fff; font-size:0.72rem; font-weight:600;
-    padding:3px 10px; border-radius:20px; backdrop-filter: blur(4px);
-  }
+  --pdf-color-1: #374151;
+  --pdf-color-2: #6b7280;
 
-  /* ===== Page Container ===== */
-  .page{
-    max-width:480px;
-    margin:0 auto;
-    background:transparent;
-    min-height:calc(100vh - 60px);
-    padding:18px 16px 50px;
-    animation: fadeIn .35s ease;
-  }
-  @keyframes fadeIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
-  .page:not(.active){ display:none; }
+  /* NEW: Checksheet & More tab colors */
+  --checksheet-color: #0891b2;
+  --checksheet-light: #22d3ee;
+  --more-color: #ca8a04;
+  --more-light: #facc15;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding: 12px 12px 40px 12px;
+  max-width: 1050px;
+  margin: auto;
+  color: var(--text-dark);
+  line-height: 1.6;
+  background: linear-gradient(135deg, #eef4ff 0%, #f7f9fc 45%, #eef7f2 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.header-frame {
+  background: linear-gradient(160deg, var(--header-frame-1), var(--header-frame-2));
+  border-radius: 18px;
+  padding: 8px;
+  margin-bottom: 14px;
+  box-shadow: 0 6px 18px rgba(109, 40, 217, 0.22);
+}
+.header-top-bar {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.header-logo-left, .header-logo-right {
+  height: clamp(34px, 7vw, 46px);
+  width: clamp(34px, 7vw, 46px);
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.header-logo-left {
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px var(--primary-color);
+}
+.header-title-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 6px;
+  min-width: 0;
+}
+.header-title-img {
+  max-height: clamp(34px, 8vw, 50px);
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+.header-clock-bar {
+  background: linear-gradient(90deg, var(--clock-bar-1), var(--clock-bar-2));
+  border-radius: 30px;
+  padding: 6px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+}
+.clock-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: clamp(11px, 3vw, 14px);
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.2px;
+}
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6);
+  animation: liveDotPulse 1.6s infinite;
+  flex-shrink: 0;
+}
+@keyframes liveDotPulse {
+  0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6); }
+  70% { box-shadow: 0 0 0 7px rgba(74, 222, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+#liveClockText { font-variant-numeric: tabular-nums; }
+.header-hero {
+  background: linear-gradient(135deg, var(--hero-bg-1), var(--hero-bg-2));
+  border-radius: 14px;
+  padding: 10px 14px;
+  text-align: center;
+}
+.hero-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 900;
+  font-size: clamp(1rem, 4.2vw, 1.6rem);
+  letter-spacing: -0.4px;
+  margin: 0;
+  line-height: 1.15;
+  background: linear-gradient(90deg, var(--hero-green-1), var(--hero-green-2), var(--hero-green-1));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 24px rgba(74, 222, 128, 0.12);
+}
+.hero-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: clamp(0.68rem, 2.6vw, 0.88rem);
+  color: var(--hero-green-2);
+  margin: 3px 0 0 0;
+  line-height: 1.25;
+  letter-spacing: 0.1px;
+}
+.input-selection-container {
+  display: none;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(26, 115, 232, 0.08), 0 1px 3px rgba(0,0,0,0.05);
+  animation: fadeSlideIn 0.5s ease;
+}
+.input-selection-container label {
+  font-size: 14.5px;
+  color: #3c4043;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+.input-selection-container label::before { content: "🔎"; font-size: 18px; }
+.input-group { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+input[type="text"] {
+  flex: 1;
+  min-width: 180px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  background-color: #fbfcfe;
+  -webkit-appearance: none;
+}
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.12);
+  background-color: #ffffff;
+}
+button.action-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  font-size: 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 3px 10px rgba(26, 115, 232, 0.35);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.2s ease;
+  white-space: nowrap;
+  touch-action: manipulation;
+  min-height: 48px;
+  flex-shrink: 0;
+}
+button.action-btn:hover {
+  background: linear-gradient(135deg, var(--primary-dark), #123a7a);
+  box-shadow: 0 5px 16px rgba(26, 115, 232, 0.45);
+  transform: translateY(-2px);
+}
+button.action-btn:active { transform: translateY(0) scale(0.98); }
+#loadingStatus {
+  color: var(--primary-dark); font-weight: 600; text-align: center; margin: 18px 0;
+  padding: 14px; background: var(--accent-blue); border-radius: 10px; border: 1px solid #c9dcfb;
+  display: none; align-items: center; justify-content: center; gap: 12px; font-size: 14px;
+}
+.spinner {
+  width: 18px; height: 18px; border: 3px solid rgba(26,115,232,0.25);
+  border-top-color: var(--primary-color); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.tab-bar {
+  border-bottom: none;
+  background-color: transparent;
+  display: none;
+  margin-top: 6px;
+  margin-bottom: 4px;
+  border-radius: 0;
+  padding: 4px 2px;
+  box-shadow: none;
+  white-space: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: 8px;
+}
+.tab-bar::-webkit-scrollbar { height: 4px; }
+.tab-bar button {
+  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+  border: 1.5px solid #c4b5fd;
+  outline: none;
+  cursor: pointer;
+  padding: 10px 16px;
+  transition: 0.25s ease;
+  font-size: 12.5px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  color: #5b21b6;
+  border-radius: 30px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+  box-shadow: 0 2px 6px rgba(109,40,217,0.12);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.tab-bar button:hover {
+  background: linear-gradient(135deg, #ddd6fe, #c4b5fd);
+  transform: translateY(-1px);
+}
+.tab-bar button.active {
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  transform: translateY(-1px);
+}
+.general-tab.active { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); }
+.maint-tab.active { background: linear-gradient(135deg, var(--maint-color), var(--maint-light)); }
+.fail-tab.active { background: linear-gradient(135deg, var(--fail-color), var(--fail-light)); }
+.spec-tab.active { background: linear-gradient(135deg, var(--spec-color), var(--spec-light)); }
+/* NEW tab active colors */
+.checksheet-tab.active { background: linear-gradient(135deg, var(--checksheet-color), var(--checksheet-light)); }
+.more-tab.active { background: linear-gradient(135deg, var(--more-color), var(--more-light)); }
+.tabcontent {
+  display: none; padding: 22px 16px; border: 1px solid var(--border-color); border-top: none;
+  background: #ffffff; border-radius: 0 0 14px 14px; overflow-x: auto;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.05); animation: fadeIn 0.35s ease;
+  margin-top: -2px;
+}
+#tabMenu + .tabcontent, .tabcontent { border-radius: 14px; }
+.tabcontent h4 {
+  margin-top:0; padding-bottom: 12px; border-bottom: 1px solid #eef1f4; margin-bottom: 18px;
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'Poppins', sans-serif; font-weight: 700; letter-spacing: 0.2px;
+  font-size: clamp(0.95rem, 3vw, 1.1rem);
+}
+#Page1 h4 { color: var(--primary-color); }
+#Page2 h4 { color: var(--maint-color); }
+#Page3 h4 { color: var(--fail-color); }
+#Page4 h4 { color: var(--spec-color); }
+#Page5 h4 { color: var(--checksheet-color); }
+#Page6 h4 { color: var(--more-color); }
+.data-card {
+  background: linear-gradient(180deg, #ffffff, #fbfcfe); padding: 20px 18px; margin-bottom: 12px;
+  border-left: 5px solid var(--primary-color); border-top: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);
+  border-radius: 4px 14px 14px 4px; box-shadow: 0 3px 14px rgba(26,115,232,0.06);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.data-card:hover { box-shadow: 0 6px 22px rgba(26,115,232,0.12); }
+.data-card p { margin: 10px 0; font-size: 14.5px; display: flex; flex-wrap: wrap; gap: 4px; }
+.label { font-weight: 700; color: #5f6368; display: inline-block; min-width: 170px; }
+.alert-error {
+  color: var(--danger-color); background-color: #fce8e6; border: 1px solid #f6c6c1;
+  padding: 14px 16px; border-radius: 10px; line-height: 1.6; font-size: 14px;
+}
+.status-pill {
+  display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11.5px;
+  font-weight: 800; letter-spacing: 0.3px; text-transform: capitalize; white-space: nowrap;
+}
+.status-good { background: #e6f4ea; color: #1e8e3e; }
+.status-warn { background: #fef7e0; color: #b06000; }
+.status-bad { background: #fce8e6; color: #c5221f; }
+.status-neutral { background: #eef1f4; color: #5f6368; }
+.overdue-badge {
+  background: var(--danger-color); color: #fff; font-size: 10px; padding: 3px 9px;
+  border-radius: 10px; margin-left: 6px; font-weight: 800; letter-spacing: 0.4px;
+  display: inline-block; animation: pulseWarn 1.6s infinite;
+}
+@keyframes pulseWarn {
+  0%,100% { box-shadow: 0 0 0 0 rgba(217,48,37,0.4); }
+  50% { box-shadow: 0 0 0 5px rgba(217,48,37,0); }
+}
+.overdue-row { background-color: #fff2f0 !important; }
+.overdue-row td { border-color: #f5c6c0 !important; }
+.overdue-text { color: var(--danger-color); font-weight: 800; }
+table {
+  width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px;
+  font-size: 13.5px; text-align: left; border-radius: 10px; overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+th {
+  color: #ffffff; font-weight: 700; padding: 13px 12px; border: 1px solid rgba(255,255,255,0.15);
+  white-space: nowrap; text-transform: uppercase; font-size: 11.5px; letter-spacing: 0.4px;
+}
+td { padding: 12px 12px; border: 1px solid var(--border-color); color: var(--text-dark); word-break: break-word; }
+tr:nth-child(even) { background-color: #fafbfd; }
+.maint-table thead th { background: linear-gradient(135deg, var(--maint-color), var(--maint-light)); }
+.maint-table tbody tr:hover { background-color: #e6fbf7; }
+.fail-table thead th { background: linear-gradient(135deg, var(--fail-color), var(--fail-light)); }
+.fail-table tbody tr:hover { background-color: #fff1ee; }
+.spec-table td.spec-label {
+  background: linear-gradient(135deg, var(--spec-color), var(--spec-light));
+  color: #fff; font-weight: 700; width: 40%;
+}
+.spec-table tbody tr:hover { background-color: #f5f0ff; }
+/* NEW: Specification heading rows (multi-header) with alternating colors */
+.spec-table td.spec-heading {
+  font-weight: 800; text-align: left; padding: 10px 14px; text-transform: uppercase;
+  letter-spacing: 0.5px; font-size: 12.5px; border-radius: 4px;
+}
+.spec-table td.spec-heading-a { background: linear-gradient(135deg, var(--spec-color), var(--spec-light)); color: #fff; }
+.spec-table td.spec-heading-b { background: #ede9fe; color: var(--spec-color); }
+::-webkit-scrollbar { height: 8px; width: 8px; }
+::-webkit-scrollbar-thumb { background: #c3d3ee; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary-light); }
+.records-toolbar {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  gap: 12px; margin-bottom: 18px; padding: 12px 14px; background: #f8fafc;
+  border: 1px solid var(--border-color); border-radius: 10px;
+}
+.record-counters { display: flex; flex-wrap: wrap; gap: 8px; }
+.counter-badge {
+  font-size: 12.5px; font-weight: 700; padding: 6px 12px; border-radius: 20px;
+  background: #eef2f7; color: #3c4043; white-space: nowrap;
+}
+.counter-badge.total { background: var(--accent-blue); color: var(--primary-dark); }
+.counter-badge.overdue-counter { background: #fce8e6; color: var(--danger-color); }
+.counter-badge.showing { background: #e6f4ea; color: var(--success-color); }
+.toolbar-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.date-filter-select {
+  padding: 9px 12px; border-radius: 8px; border: 1.5px solid var(--border-color);
+  font-size: 13px; font-weight: 600; background: #fff; cursor: pointer;
+}
+.export-btn {
+  color: #fff; border:none; padding: 9px 16px; font-size: 13px; font-weight: 700;
+  border-radius: 8px; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+}
+.export-btn:hover { transform: translateY(-1px); }
+.export-btn.maint-btn { background: linear-gradient(135deg, var(--maint-color), var(--maint-light)); box-shadow: 0 2px 8px rgba(15,118,110,0.3); }
+.export-btn.fail-btn { background: linear-gradient(135deg, var(--fail-color), var(--fail-light)); box-shadow: 0 2px 8px rgba(185,28,28,0.3); }
+.export-btn.pdf-btn { background: linear-gradient(135deg, var(--pdf-color-1), var(--pdf-color-2)); box-shadow: 0 2px 8px rgba(55,65,81,0.3); }
+.year-group { margin-bottom: 16px; border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; }
+.year-header {
+  display: flex; align-items: center; gap: 10px; padding: 12px 16px; cursor: pointer;
+  background: linear-gradient(135deg,#eef2f7,#f8fafc); font-weight: 700; font-size: 14px;
+  user-select: none; transition: background 0.2s ease;
+}
+.year-header:hover { background: #e4ecf7; }
+.fail-year-header { background: linear-gradient(135deg,#fdf0ee,#fff8f6); }
+.fail-year-header:hover { background: #fbe4e0; }
+.fail-year-header .year-toggle-icon { color: var(--fail-color); }
+.maint-year-header .year-toggle-icon { color: var(--maint-color); }
+.year-toggle-icon { display: inline-block; transition: transform 0.25s ease; font-size: 11px; }
+.year-toggle-icon.expanded { transform: rotate(90deg); }
+.year-label { color: var(--text-dark); }
+.year-count { color: #5f6368; font-weight: 600; font-size: 12.5px; }
+.year-body { padding: 14px; animation: fadeIn 0.3s ease; }
+.year-body.collapsed { display: none; }
+.pagination-controls { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 14px; }
+.page-btn {
+  padding: 8px 16px; border-radius: 8px; border: 1.5px solid var(--border-color);
+  background: #fff; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s ease;
+}
+.page-btn:hover:not(:disabled) { background: var(--accent-blue); border-color: var(--primary-color); color: var(--primary-color); }
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.page-info { font-size: 13px; font-weight: 600; color: #5f6368; }
 
-  h1{ font-size:1.3rem; color:var(--primary-dark); text-align:center; margin:4px 0 16px; font-weight:800; }
+/* ============================================================
+   NEW: CHECKSHEET TAB STYLES
+   ============================================================ */
+.checksheet-frame-wrap {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+  background: #f8fafc;
+}
+.checksheet-frame {
+  width: 100%;
+  height: 75vh;
+  min-height: 480px;
+  border: none;
+  display: block;
+}
+.checksheet-note {
+  font-size: 12.5px;
+  color: #888;
+  margin-top: 10px;
+  text-align: center;
+  font-style: italic;
+}
 
-  /* ===== Section Cards ===== */
-  .section{
-    margin-bottom:18px;
-    padding:18px;
-    border-radius:var(--radius);
-    background:var(--card-bg);
-    box-shadow:var(--shadow-sm);
-    border:1px solid var(--border);
-    transition: box-shadow .25s ease;
-  }
-  .section:hover{ box-shadow:var(--shadow-md); }
-  .section > label.title{
-    font-weight:700; display:flex; align-items:center; gap:8px;
-    margin-bottom:12px; color:var(--primary-dark); font-size:1rem;
-  }
-  label.sub{ font-weight:600; display:block; margin:12px 0 6px; color:var(--text-muted); font-size:0.85rem; text-transform:uppercase; letter-spacing:.3px; }
+/* ============================================================
+   NEW: MORE TAB STYLES
+   ============================================================ */
+.more-section { margin-bottom: 26px; }
+.more-section-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 14.5px;
+  margin: 0 0 12px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eef1f4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.more-subtle { font-size: 12px; font-weight: 600; color: #9ca3af; }
+.high-title { color: var(--primary-color); }
+.medium-title { color: var(--more-color); }
+.low-title { color: #9ca3af; }
+.more-empty { color: #666; font-style: italic; font-size: 13.5px; padding: 6px 0 14px 0; }
+.more-chip-list { display: flex; flex-wrap: wrap; gap: 10px; padding: 4px 0 14px 0; }
+.more-chip {
+  padding: 10px 18px;
+  border-radius: 24px;
+  border: 1.5px solid var(--primary-light);
+  background: var(--accent-blue);
+  color: var(--primary-dark);
+  font-weight: 700;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 2px 6px rgba(26,115,232,0.12);
+}
+.more-chip:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(26,115,232,0.22); }
+.more-group {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.more-group-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #fefce8, #fffbeb);
+  font-weight: 700;
+  font-size: 13.5px;
+  user-select: none;
+  transition: background 0.2s ease;
+}
+.more-group-header:hover { background: #fef3c7; }
+.more-toggle-icon {
+  display: inline-block;
+  transition: transform 0.25s ease;
+  font-size: 11px;
+  color: var(--more-color);
+}
+.more-toggle-icon.expanded { transform: rotate(90deg); }
+.more-group-label { color: var(--text-dark); }
+.more-group-count { color: #6b7280; font-weight: 600; font-size: 12px; }
+.more-group-body { padding: 14px; animation: fadeIn 0.3s ease; }
+.more-group-body.collapsed { display: none; }
+.checksheet-frame-wrap {
+  position: relative;
+}
 
-  .divider{
-    text-align:center; color:#a3adc2; margin:14px 0; font-weight:700;
-    font-size:0.72rem; letter-spacing:1.5px; position:relative;
-  }
-  .divider::before, .divider::after{
-    content:""; position:absolute; top:50%; width:38%; height:1px; background:var(--border);
-  }
-  .divider::before{ left:0; } .divider::after{ right:0; }
+.checksheet-frame-wrap {
+  overflow: auto;
+  text-align: center;
+}
+.checksheet-frame {
+  max-width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+.checksheet-pager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.checksheet-pager button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #333;
+  color: #fff;
+  cursor: pointer;
+}
 
-  /* ===== Buttons ===== */
-  button{
-    cursor:pointer; border:none; border-radius:var(--radius-sm);
-    padding:13px 18px; font-size:0.95rem; font-weight:600;
-    font-family:inherit; transition:all .2s ease;
+@media (max-width: 700px) {
+  .responsive-table thead { display: none; }
+  .responsive-table, .responsive-table tbody, .responsive-table tr, .responsive-table td { display: block; width: 100%; }
+  .responsive-table tr {
+    margin-bottom: 14px; border: 1px solid var(--border-color); border-radius: 12px;
+    overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   }
-  button:active{ transform:scale(0.97); }
-  button:disabled{ opacity:0.55; cursor:not-allowed; transform:none !important; }
-
-  #btnScanQr{
-    background:linear-gradient(135deg,#00b09b,#00897b);
-    color:#fff; width:100%; box-shadow:0 4px 14px rgba(0,137,123,0.35);
+  .maint-table.responsive-table tr { border-left: 4px solid var(--maint-color); }
+  .fail-table.responsive-table tr { border-left: 4px solid var(--fail-color); }
+  .overdue-row.responsive-row { border-left: 4px solid var(--danger-color) !important; }
+  .responsive-table td {
+    border: none; border-bottom: 1px solid #f0f0f0; position: relative;
+    padding: 10px 12px 10px 46%; text-align: right; min-height: 20px;
   }
-  #btnScanQr:hover{ box-shadow:0 6px 20px rgba(0,137,123,0.45); transform:translateY(-1px); }
-
-  #btnGetFormById, #btnGetFormByDropdown{
-    background:linear-gradient(135deg, var(--primary), #6366f1);
-    color:#fff; white-space:nowrap; box-shadow:0 4px 14px rgba(79,70,229,0.35);
+  .responsive-table td:last-child { border-bottom: none; }
+  .responsive-table td::before {
+    content: attr(data-label); position: absolute; left: 12px; width: 40%; text-align: left;
+    font-weight: 700; color: #5f6368; font-size: 11.5px; text-transform: uppercase;
+    letter-spacing: 0.3px;
   }
-  #btnGetFormById:hover, #btnGetFormByDropdown:hover{ box-shadow:0 6px 20px rgba(79,70,229,0.45); transform:translateY(-1px); }
-
-  #btnAddStaff, #btnAddRemark{
-    background:linear-gradient(135deg, var(--success), var(--success-dark));
-    color:#fff; box-shadow:0 4px 12px rgba(16,185,129,0.3);
-  }
-  #btnAddStaff:hover, #btnAddRemark:hover{ box-shadow:0 6px 18px rgba(16,185,129,0.4); transform:translateY(-1px); }
-
-  .submitBtn{
-    background:linear-gradient(135deg,#ef4444,#dc2626);
-    color:#fff; width:100%; padding:16px; font-size:1.08rem; margin-top:14px;
-    box-shadow:0 6px 18px rgba(239,68,68,0.4); letter-spacing:.3px;
-  }
-  .submitBtn:hover{ box-shadow:0 8px 24px rgba(239,68,68,0.5); transform:translateY(-1px); }
-
-  .backBtn{
-    background:#fff; color:var(--text-muted); width:100%; padding:13px; margin-top:10px;
-    border:1.5px solid var(--border);
-  }
-  .backBtn:hover{ background:#f8fafc; border-color:#cbd5e1; }
-
-  .clearFieldsBtn{
-    background:#fff7ed; color:#b45309; border:1.5px solid #fdba74;
-    padding:8px 14px; font-size:0.82rem; font-weight:600; white-space:nowrap;
-  }
-  .clearFieldsBtn:hover{ background:#ffedd5; }
-
-  .row{ display:flex; gap:8px; }
-
-  /* ===== Inputs ===== */
-  input[type=text], input[type=date], select, textarea{
-    width:100%;
-    padding:12px 13px;
-    font-size:0.96rem;
-    font-family:inherit;
-    border:1.5px solid var(--border);
-    border-radius:var(--radius-sm);
-    margin-bottom:6px;
-    background:#fbfcfe;
-    color:var(--text-main);
-    transition: border-color .2s ease, box-shadow .2s ease;
-  }
-  input[type=text]:focus, input[type=date]:focus, select:focus, textarea:focus{
-    outline:none; border-color:var(--primary); background:#fff;
-    box-shadow:0 0 0 3px rgba(79,70,229,0.15);
-  }
-  select:disabled{ background:#f1f5f9; color:#94a3b8; cursor:not-allowed; }
-  input.invalid, select.invalid, textarea.invalid{
-    border-color:var(--danger) !important;
-    background:#fff1f1 !important;
-    box-shadow:0 0 0 3px rgba(239,68,68,0.12) !important;
-  }
-  #assetIdInput{ flex:1; }
-
-  .error{ color:var(--danger); font-size:0.82rem; margin-top:2px; min-height:16px; font-weight:500; }
-
-  /* ===== Info box ===== */
-  .infoBox{
-    background:linear-gradient(135deg,#eef2ff,#e0f2fe);
-    padding:16px; border-radius:var(--radius);
-    margin-bottom:14px; border:1px solid #dbeafe;
-  }
-  .infoRow{ display:flex; justify-content:space-between; padding:4px 0; font-size:0.9rem; gap:8px; }
-  .infoRow span.k{ color:var(--text-muted); font-weight:500; }
-  .infoRow span.v{ font-weight:700; text-align:right; color:var(--primary-dark); }
-
-  hr.sep{ border:none; border-top:2px dashed #cbd5e1; margin:16px 0; }
-
-  /* ===== Lock Banner (shared: entry + form) ===== */
-  .lockBanner{
-    display:none;
-    background:linear-gradient(135deg,#ecfdf5,#d1fae5);
-    border:1.5px solid #6ee7b7;
-    border-radius:var(--radius-sm);
-    padding:12px 14px;
-    margin-bottom:16px;
-    font-size:0.85rem;
-    color:#065f46;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-  .lockBanner.show{ display:flex; }
-  .lockBanner b{ display:block; margin-bottom:2px; }
-  .lockBanner span{ line-height:1.4; }
-
-  /* ===== Form Groups ===== */
-  .formGroup{ margin-bottom:22px; }
-  .formGroup > label{ font-weight:700; display:block; margin-bottom:9px; color:var(--primary-dark); font-size:0.95rem; }
-  .fieldErr{ color:var(--danger); font-size:0.78rem; margin-top:-2px; margin-bottom:6px; min-height:14px; font-weight:500; }
-
-  .staffRow, .remarkRow{ display:flex; gap:8px; align-items:flex-start; margin-bottom:9px; }
-  .staffRow select{ flex:1; margin-bottom:0; }
-
-  .remarkRow textarea{
-    flex:1; resize:vertical; font-size:1rem; line-height:1.5; font-family:inherit;
-  }
-  .remarkText.readonlyRemark{
-    background:#eef2f7; color:#334155; cursor:not-allowed; min-height:56px; font-weight:600;
-    border-style:dashed;
-  }
-  .remarkText.addedRemark{
-    min-height:150px; font-size:1.05rem; font-weight:600; color:#111;
-  }
-
-  .delBtn{
-    background:linear-gradient(135deg,#f87171,#ef4444);
-    color:#fff; padding:11px 14px; font-size:1.05rem;
-    align-self:flex-start; line-height:1;
-    box-shadow:0 3px 10px rgba(239,68,68,0.3);
-  }
-  .delBtn:hover{ box-shadow:0 5px 14px rgba(239,68,68,0.4); }
-
-  #submitStatus{
-    text-align:center; margin-top:14px; font-weight:700; min-height:24px;
-    padding:10px; border-radius:var(--radius-sm); font-size:0.92rem;
-  }
-  #submitStatus.ok{ background:#dcfce7; color:#166534; }
-  #submitStatus.err{ background:#fee2e2; color:#991b1b; }
-  #submitStatus.loading{ background:#e0f2fe; color:#075985; }
-
-  /* ===== QR ===== */
-  #qrReaderContainer{ margin-top:12px; text-align:center; }
-  #qrVideo{ width:100%; border-radius:var(--radius-sm); background:#000; box-shadow:var(--shadow-md); }
-  #btnCancelScan{ margin-top:10px; background:#f1f5f9; color:var(--text-muted); width:100%; border:1.5px solid var(--border); }
-  #btnCancelScan:hover{ background:#e2e8f0; }
-  #qrResult{ text-align:center; font-size:0.85rem; color:#00695c; margin-top:8px; font-weight:600; }
-  #qrHint{ text-align:center; font-size:0.75rem; color:#94a3b8; margin-top:8px; }
+}
+@media (max-width: 600px) {
+  body { padding: 10px 8px 30px 8px; }
+  .label { min-width: 130px; font-size: 13px; }
+  .tab-bar button { padding: 9px 13px; font-size: 11.5px; }
+  .input-group { flex-direction: column; }
+  .input-group input, .input-group button { width: 100%; }
+  .data-card { padding: 16px 14px; }
+  .data-card p { font-size: 13.5px; }
+  th, td { font-size: 12.5px; padding: 10px 8px; }
+  .tabcontent { padding: 16px 10px; }
+  .records-toolbar { flex-direction: column; align-items: stretch; }
+  .toolbar-actions { justify-content: space-between; flex-wrap: wrap; }
+  .date-filter-select, .export-btn { flex: 1; min-width: 120px; }
+  .header-top-bar { padding: 7px 10px; }
+  .header-clock-bar { padding: 6px 12px; }
+  .header-hero { padding: 8px 10px; }
+  .checksheet-frame { height: 60vh; }
+}
+@media (max-width: 380px) {
+  .label { min-width: 100%; margin-bottom: 2px; }
+  .data-card p { flex-direction: column; gap: 2px; }
+  .tab-bar { gap: 6px; }
+  .tab-bar button { padding: 8px 12px; font-size: 11px; }
+  .header-logo-left, .header-logo-right { height: 30px; width: 30px; }
+  .header-title-img { max-height: 30px; }
+}
 </style>
 </head>
 <body>
 
-<!-- ============================================================ -->
-<!-- STICKY HEADER (LOCK TOGGLE) -->
-<!-- ============================================================ -->
-<div class="appHeader">
-  <div class="appHeaderInner">
-    <div class="appTitle">🛠️ Maintenance Manager</div>
-    <div class="lockToggleWrap">
-      <span class="lockLabel" id="lockLabelText">🔓 Unlocked</span>
-      <label class="switch">
-        <input type="checkbox" id="lockToggle">
-        <span class="slider"></span>
-      </label>
+<div class="header-frame">
+  <div class="header-top-bar">
+    <img src="https://lh3.googleusercontent.com/d/1oYWlcTQA9fugWbxnbyw9CUaRabmjUzlI" alt="Indian Railways" class="header-logo-left">
+    <div class="header-title-center">
+      <img src="https://lh3.googleusercontent.com/d/1Lq0ri1xMDU4PERzu3QAfuZ3XfkHMnF0b" alt="Metro Railway Kolkata" class="header-title-img">
     </div>
-  </div>
-</div>
-<div class="sessionChip" id="sessionChipWrap" style="display:none;">
-  <span class="sessionBadge" id="sessionBadge">✅ 0 entries submitted</span>
-</div>
-
-<!-- ============================================================ -->
-<!-- PAGE 1: MAINTENANCE ENTRY PAGE -->
-<!-- ============================================================ -->
-<div id="entryPage" class="page active">
-  <h1>Maintenance Entry Page</h1>
-
-  <div class="lockBanner" id="entryLockBanner">
-    <div>
-      <b>🔒 Lock Mode Active</b>
-      <span>Asset Id / Dropdown selections are retained (except QR) for faster repeat entry.</span>
-    </div>
-    <button type="button" class="clearFieldsBtn" id="btnClearEntrySelections">↺ Clear Selections</button>
+    <img src="https://lh3.googleusercontent.com/d/1z57jNNPGjl3jZvXcCoTDcK7cWTeNIt87" alt="Ashok Stambh" class="header-logo-right">
   </div>
 
-  <div class="section">
-    <label class="title">📷 By Scan QR Code</label>
-    <button id="btnScanQr" type="button">Scan QR</button>
-    <div id="qrReaderContainer" style="display:none;">
-      <video id="qrVideo" playsinline autoplay muted></video>
-      <canvas id="qrCanvas" style="display:none;"></canvas>
-      <button id="btnCancelScan" type="button">Cancel</button>
+  <div class="header-clock-bar">
+    <div class="clock-display">
+      <span class="live-dot"></span>
+      <span id="liveClockText">--</span>
     </div>
-    <div id="qrResult"></div>
-    <div id="qrError" class="error"></div>
-    <div id="qrHint">Camera requires HTTPS (or localhost) and permission access.</div>
   </div>
 
-  <div class="divider">OR</div>
-
-  <div class="section">
-    <label class="title">🔢 By Asset Id</label>
-    <div class="row">
-      <input type="text" id="assetIdInput" maxlength="9" placeholder="Enter 9-digit Asset Id" inputmode="numeric">
-      <button id="btnGetFormById" type="button">Get Form</button>
-    </div>
-    <div id="assetIdError" class="error"></div>
-  </div>
-
-  <div class="divider">OR</div>
-
-  <div class="section">
-    <label class="title">📋 By Dropdown Selection</label>
-
-    <label class="sub">Station</label>
-    <select id="ddStation"><option value="">Select Station</option></select>
-
-    <label class="sub">Group</label>
-    <select id="ddGroup" disabled><option value="">Select Group</option></select>
-
-    <label class="sub">Sub-Group</label>
-    <select id="ddSubGroup" disabled><option value="">Select Sub-Group</option></select>
-
-    <label class="sub">Equipment Name</label>
-    <select id="ddEquipment" disabled><option value="">Select Equipment</option></select>
-
-    <button id="btnGetFormByDropdown" type="button" style="width:100%; margin-top:12px;">Get Form</button>
-    <div id="dropdownError" class="error"></div>
+  <div class="header-hero">
+    <h1 class="hero-title">KKSO-KBGA Asset Management</h1>
+    <p class="hero-subtitle">A Cloud Based Asset Management in Orange Line</p>
   </div>
 </div>
 
-<!-- ============================================================ -->
-<!-- PAGE 2: MAINTENANCE ENTRY FORM -->
-<!-- ============================================================ -->
-<div id="formPage" class="page">
-  <h1>Maintenance Entry Form</h1>
-
-  <div class="lockBanner" id="lockBanner">
-    <div>
-      <b id="lockBannerTitle">🔒 Lock Mode Active</b>
-      <span id="lockBannerText">Fields auto-filled from previous entry. Review & Submit.</span>
-    </div>
-    <button type="button" class="clearFieldsBtn" id="btnClearFields">↺ Clear Fields</button>
+<div class="input-selection-container" id="inputContainer">
+  <label>Select Asset Discovery Feature:</label>
+  <div class="input-group">
+    <input type="text" id="manualAssetId" placeholder="Enter 9-Digit ID (e.g., 200010101)" maxlength="9" inputmode="numeric">
+    <button class="action-btn" onclick="handleManualSearch()">Search ID</button>
   </div>
+</div>
 
-  <div class="infoBox">
-    <div class="infoRow"><span class="k">Asset Id:</span><span class="v" id="infoAssetId">-</span></div>
-    <div class="infoRow"><span class="k">Station:</span><span class="v" id="infoStation">-</span></div>
-    <div class="infoRow"><span class="k">Group:</span><span class="v" id="infoGroup">-</span></div>
-    <div class="infoRow"><span class="k">Sub-Group:</span><span class="v" id="infoSubGroup">-</span></div>
-    <div class="infoRow"><span class="k">Equipment Name:</span><span class="v" id="infoEquipment">-</span></div>
-  </div>
-  <hr class="sep">
+<div id="loadingStatus"><span class="spinner"></span> <span id="loadingText">Processing request...</span></div>
 
-  <div class="formGroup">
-    <label>Date Of Maintenance *</label>
-    <input type="date" id="dateOfMaintenance">
-    <div class="fieldErr" id="dateErr"></div>
-  </div>
+<div id="tabMenu" class="tab-bar">
+  <button class="tablinks general-tab active" onclick="switchTab(event, 'Page1')">🧩 General</button>
+  <button class="tablinks maint-tab" onclick="switchTab(event, 'Page2')">🛠 Maintenance</button>
+  <button class="tablinks fail-tab" onclick="switchTab(event, 'Page3')">⚠️ Failure Logs</button>
+  <button class="tablinks spec-tab" onclick="switchTab(event, 'Page4')">📋 Specifications</button>
+  <button class="tablinks checksheet-tab" onclick="switchTab(event, 'Page5')">📝 Checksheet</button>
+  <button class="tablinks more-tab" onclick="switchTab(event, 'Page6')">🔗 More</button>
+</div>
 
-  <div class="formGroup">
-    <label>Type Of Maintenance *</label>
-    <select id="typeOfMaintenance">
-      <option value="">Select Type</option>
-      <option value="YEARLY">Yearly</option>
-      <option value="HALF-YEARLY">Half-yearly</option>
-      <option value="QUARTERLY">Quarterly</option>
-      <option value="MONTHLY">Monthly</option>
-      <option value="FORTNIGHTLY">Fortnightly</option>
-      <option value="WEEKLY">Weekly</option>
-    </select>
-    <div class="fieldErr" id="typeErr"></div>
-  </div>
+<div id="Page1" class="tabcontent">
+  <div id="decodedData"></div>
+</div>
 
-  <div class="formGroup">
-    <label>Attended By *</label>
-    <div id="attendedByContainer"></div>
-    <button id="btnAddStaff" type="button">+ Add More</button>
-    <div class="fieldErr" id="staffErr"></div>
-  </div>
+<div id="Page2" class="tabcontent">
+  <h4>🛠 Historical Maintenance Events</h4>
+  <div id="maintData">No asset actively loaded.</div>
+</div>
 
-  <div class="formGroup">
-    <label>Remarks *</label>
-    <div id="remarksContainer"></div>
-    <button id="btnAddRemark" type="button">+ Add More</button>
-    <div class="fieldErr" id="remarksErr"></div>
-  </div>
+<div id="Page3" class="tabcontent">
+  <h4>⚠️ Past Failure Metrics</h4>
+  <div id="failData">No asset actively loaded.</div>
+</div>
 
-  <div id="formError" class="error" style="text-align:center;"></div>
-  <button id="btnSubmit" class="submitBtn" type="button">Submit</button>
-  <button id="btnBack" class="backBtn" type="button">← Back</button>
-  <div id="submitStatus"></div>
+<div id="Page4" class="tabcontent">
+  <h4>📋 Design Specifications</h4>
+  <div id="specData">No asset actively loaded.</div>
+</div>
+
+<!-- NEW TAB #1: CHECKSHEET -->
+<div id="Page5" class="tabcontent">
+  <h4>📝 Reference Checksheet Format</h4>
+  <div id="checksheetData">No asset actively loaded.</div>
+</div>
+
+<!-- NEW TAB #2: MORE -->
+<div id="Page6" class="tabcontent">
+  <h4>🔗 More — Related / Similar Assets</h4>
+  <div id="moreData">No asset actively loaded.</div>
 </div>
 
 <script>
-/* ============================================================
-   CONFIG
-   ============================================================ */
-const CONFIG = {
-  SHEET_ID: "136Fq_Pchc_kPJwEoBUgfRKzDqnYUs730w3vMhnSO9HI",
-  API_KEY: "AIzaSyAjBceUqA-G1ueMCsqevOiPEhb2Nk-pOhI",
-  SHEET_NAME: "Maintenance_Log",
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzluFhsV2Ib6I-BK5OdFacx7hjK8nTZSRLlisBedPCr1-nGD5L6MDp85iJhv075odfa/exec"
-};
+// ============================================================
+// LIVE CLOCK
+// ============================================================
+(function initLiveClock() {
+  const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const clockEl = document.getElementById('liveClockText');
+  function pad(n) { return n.toString().padStart(2, '0'); }
+  function updateClock() {
+    const now = new Date();
+    const dayStr = dayNames[now.getDay()];
+    const dateStr = pad(now.getDate());
+    const monthStr = monthNames[now.getMonth()];
+    const yearStr = now.getFullYear().toString().slice(-2);
+    const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    if (clockEl) clockEl.innerText = `${dayStr} ${dateStr} ${monthStr} ${yearStr} ${timeStr}`;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+})();
 
-/* ============================================================
-   MASTER DATA / MAPPING
-   ============================================================ */
-const stationMap = {
-  "200":"KKSO DEPOT", "201":"KKSO", "202":"KSJR", "203":"KJNN", "204":"KKSK",
-  "205":"KHMD", "206":"KVIB", "207":"KRWT", "208":"KBST", "209":"KBGA"
-};
+// ============================================================
+// CONFIGURATION
+// ============================================================
+const SPREADSHEET_ID = "1Jid66wBQ1ktKoysqpoCF1sIKengpsHq8CQKW9euMWh0";
+const API_KEY = "AIzaSyAjBceUqA-G1ueMCsqevOiPEhb2Nk-pOhI";
+const ROWS_PER_PAGE = 12;
+const CHECKSHEET_SHEET_NAME = "Checksheet_ALL"; // NEW: single global checksheet index sheet
 
-const groupMap = {
+const groupSheetSuffixMap = {
   "01": "HT", "02": "LT", "03": "Pump", "04": "DG",
   "05": "Third_rail", "06": "Lift_&_Escalator", "07": "Fire", "08": "Split_&_HVAC"
+};
+
+function getSheetNamesForAsset(assetId) {
+  const groupCode = assetId.substring(3, 5);
+  const suffix = groupSheetSuffixMap[groupCode];
+  if (!suffix) return null;
+  return {
+    suffix: suffix,
+    maintenance: `Maintenance_${suffix}`,
+    failure: `Failure_${suffix}`,
+    specifications: `Specifications_${suffix}`
+  };
+}
+
+// ============================================================
+// FREQUENCY OF MAINTENANCE MAP
+// ============================================================
+function getFrequencyOfMaintenance(id) {
+  const group = id.substring(3, 5);
+  const code4 = id.substring(3, 7);
+  const codeNum = parseInt(code4, 10);
+  if (group === "01") { // HT
+    if (codeNum >= 101 && codeNum <= 115) return "Yearly";
+    if (codeNum === 116) return "Monthly";
+  }
+  return "Not Defined";
+}
+
+function addInterval(date, frequency) {
+  const d = new Date(date.getTime());
+  switch (frequency) {
+    case 'Yearly': d.setFullYear(d.getFullYear() + 1); break;
+    case 'Half-Yearly': d.setMonth(d.getMonth() + 6); break;
+    case 'Quarterly': d.setMonth(d.getMonth() + 3); break;
+    case 'Monthly': d.setMonth(d.getMonth() + 1); break;
+    case 'Fortnightly': d.setDate(d.getDate() + 14); break;
+    case 'Weekly': d.setDate(d.getDate() + 7); break;
+    default: return null;
+  }
+  return d;
+}
+
+function formatDateDDMMYY(d) {
+  if (!d) return "";
+  const dd = d.getDate().toString().padStart(2,'0');
+  const mm = (d.getMonth()+1).toString().padStart(2,'0');
+  const yy = d.getFullYear().toString().slice(-2);
+  return `${dd}-${mm}-${yy}`;
+}
+
+const mappingDictionary = {
+  station: { "200":"KKSO DEPOT", "201":"KKSO", "202":"KSJR", "203":"KJNN", "204":"KKSK",
+             "205":"KHMD", "206":"KVIB", "207":"KRWT", "208":"KBST", "209":"KBGA" },
+  group: {
+    "01": "HT", "02": "LT", "03": "PUMP", "04": "DG",
+    "05": "THIRD RAIL", "06": "LIFT & ESCALATOR", "07": "FIRE", "08": "SPLIT & HVAC"
+  }
 };
 
 const subGroupMap = {
@@ -445,44 +781,51 @@ const subGroupMap = {
   "02": {}, "03": {}, "04": {}, "05": {}, "06": {}, "07": {}, "08": {}
 };
 
-const equipmentMap = {
+const equipmentNameMap = {
   "01": {
     "01": {
-      "01":"HB01","02":"HB02","03":"HB03","04":"HB04","05":"HB05","06":"HB06",
-      "07":"HB07","08":"HB08","09":"HB09","10":"HB10","11":"HB11","12":"HB12",
-      "13":"HB13","14":"HB14","15":"HB15","16":"HB16","17":"HB17","18":"HB18",
-      "19":"HB19","20":"HB20","21":"BRP01","22":"BRP02"
+      "01":"HB01", "02":"HB02", "03":"HB03", "04":"HB04", "05":"HB05", "06":"HB06",
+      "07":"HB07", "08":"HB08",
+      "09":"HB09", "10":"HB10", "11":"HB11", "12":"HB12", "13":"HB13", "14":"HB14",
+      "15":"HB15", "16":"HB16",
+      "17":"HB17", "18":"HB18", "19":"HB19", "20":"HB20", "21":"BRP01", "22":"BRP02"
     },
-    "02": { "01":"TT01","02":"TT02","03":"TT03" },
-    "03": { "01":"SR01","02":"SR02","03":"SR03" },
-    "04": { "01":"AT01","02":"AT02","03":"AT03" },
+    "02": { "01":"TT01", "02":"TT02", "03":"TT03" },
+    "03": { "01":"SR01", "02":"SR02", "03":"SR03" },
+    "04": { "01":"AT01", "02":"AT02", "03":"AT03" },
     "05": {
-      "01":"DB 01","02":"DB 02","03":"DB 03","04":"DB 04","05":"DB 05","06":"DB 06",
-      "07":"DB 07","08":"DB 08","09":"DB 09","10":"DB 10","11":"DB 11"
+      "01":"DB 01", "02":"DB 02", "03":"DB 03", "04":"DB 04", "05":"DB 05", "06":"DB 06",
+      "07":"DB 07",
+      "08":"DB 08", "09":"DB 09", "10":"DB 10", "11":"DB 11"
     },
-    "06": { "01":"BCP01","02":"BCP02" },
-    "07": { "01":"IM 01","02":"IM 02","03":"IM 03","04":"IM 04","05":"IM 05","09":"IM 09","10":"IM 10" },
+    "06": { "01":"BCP01", "02":"BCP02" },
+    "07": { "01":"IM 01", "02":"IM 02", "03":"IM 03", "04":"IM 04", "05":"IM 05", "09":"IM 09",
+            "10":"IM 10" },
     "08": {
-      "01":"TD 01","02":"TD 02","03":"TD 03","04":"TD 04","05":"TD 05","06":"TD 06",
-      "07":"TD 07","08":"TD 07A","09":"TD 07B","10":"TD 08","11":"TD 09A","12":"TD 09B",
-      "13":"TD 10A","14":"TD 10B","15":"TD 13","16":"TD 23","17":"TD 76","18":"TD 45"
+      "01":"TD 01", "02":"TD 02", "03":"TD 03", "04":"TD 04", "05":"TD 05", "06":"TD 06",
+      "07":"TD 07",
+      "08":"TD 07A", "09":"TD 07B", "10":"TD 08", "11":"TD 09A", "12":"TD 09B", "13":"TD 10A",
+      "14":"TD 10B", "15":"TD 13", "16":"TD 23", "17":"TD 76", "18":"TD 45"
     },
-    "09": { "01":"TRE01","02":"TRE02" },
-    "10": { "01":"IM06","02":"IM07","03":"IM08" },
+    "09": { "01":"TRE01", "02":"TRE02" },
+    "10": { "01":"IM06", "02":"IM07", "03":"IM08" },
     "11": { "01":"OVPD01" },
     "12": {
-      "01":"ETS01","02":"ETS01A","03":"ETS02","04":"ETS02A","05":"ETS03","06":"ETS03A",
-      "07":"ETS04","08":"ETS04A","09":"ETS05","10":"ETS06","11":"ETS07","12":"ETS08",
-      "13":"ETS09","14":"ETS10"
+      "01":"ETS01", "02":"ETS01A", "03":"ETS02", "04":"ETS02A", "05":"ETS03", "06":"ETS03A",
+      "07":"ETS04", "08":"ETS04A", "09":"ETS05", "10":"ETS06", "11":"ETS07", "12":"ETS08",
+      "13":"ETS09", "14":"ETS10"
     },
-    "13": { "01":"ACDB01","02":"ACDB02" },
+    "13": { "01":"ACDB01", "02":"ACDB02" },
     "14": { "01":"DCDB01" },
-    "15": { "01":"BC01","02":"BC02","03":"BC03" },
-    "16": { "01":"BB01","02":"BB02" }
+    "15": { "01":"BC01", "02":"BC02", "03":"BC03" },
+    "16": { "01":"BB01", "02":"BB02" }
   },
   "02": {}, "03": {}, "04": {}, "05": {}, "06": {}, "07": {}, "08": {}
 };
 
+// ============================================================
+// MASTER WHITELIST OF VALID ASSET IDs (per Group code)
+// ============================================================
 const validAssetIdsByGroup = {
   "01": new Set([
 "200010101","200010102","200010103","200010104","200010105","200010106","200010107","200010108","200010109","200010110","200010111","200010121",
@@ -634,735 +977,1245 @@ const validAssetIdsByGroup = {
 "207011601","207011602",
 "208011601","208011602",
 "209011601","209011602"
-  ]),
-  "02": new Set(), "03": new Set(), "04": new Set(),
-  "05": new Set(), "06": new Set(), "07": new Set(), "08": new Set()
+  ])
 };
 
-const staffList = [
-"NARENDRA EKKA-SSE","RAJA MANDAL-SSE","SUMESH KUMAR-JE","KISHOR KUMAR-JE","MD.AMIR ANSARI-JE",
-"ARPAN MONDAL-JE","RAVI KUMAR MALHOTRA-Tech-I","NITISH KUMAR-Tech-I","SAMBHU DAS-TECH-II",
-"SURAJ THAKUR-TECH-II","NITISH KUMAR CHOUDHARY-TECH-II","SUMAN KUMAR-TECH-II","SHIVAM KUMAR-HELPER",
-"SUMAN THAKUR-HELPER","SUBRATA DAS-HELPER","BIKESH SINGH-HELPER","RAUSHAN KUMAR JOSHI-HELPER",
-"ANIL SINGH-HELPER","AMAN BHADURIA-HELPER","SURAJ KUMAR-HELPER","SUMAN KRISHNA ROY-HELPER",
-"DHARMENDRA KUMAR-HELPER","RAVI RANJAN KUMAR-HELPER","MANISH KUMAR-HELPER"
-];
-
-/* ============================================================
-   HELPER FUNCTIONS
-   ============================================================ */
-function decodeAssetId(id) {
-  const stationCode = id.slice(0,3);
-  const groupCode = id.slice(3,5);
-  const subGroupCode = id.slice(5,7);
-  const equipCode = id.slice(7,9);
-  return {
-    stationCode, groupCode, subGroupCode, equipCode,
-    station: stationMap[stationCode] || "Unknown",
-    group: (groupMap[groupCode] || "Unknown").replace(/_/g," "),
-    subGroup: (subGroupMap[groupCode] && subGroupMap[groupCode][subGroupCode]) || "Unknown",
-    equipment: (equipmentMap[groupCode] && equipmentMap[groupCode][subGroupCode] &&
-                equipmentMap[groupCode][subGroupCode][equipCode]) || "Unknown"
-  };
+function isKnownValidAssetId(id) {
+  const groupCode = id.substring(3, 5);
+  const validSet = validAssetIdsByGroup[groupCode];
+  if (!validSet) return true;
+  return validSet.has(id);
 }
 
-function isValidAssetId(id) {
-  if (!/^\d{9}$/.test(id)) return false;
-  const groupCode = id.slice(3,5);
-  const set = validAssetIdsByGroup[groupCode];
-  return set ? set.has(id) : false;
-}
+const state = {
+  maintenance: { rows: [], meta: null, filter: 'all', pages: {}, expandedYears: null },
+  failure: { rows: [], meta: null, filter: 'all', pages: {}, expandedYears: null }
+};
 
-function getValidSubGroupCodes(stationCode, groupCode) {
-  const set = validAssetIdsByGroup[groupCode] || new Set();
-  const prefix = stationCode + groupCode;
-  const result = new Set();
-  set.forEach(id => { if (id.startsWith(prefix)) result.add(id.slice(5,7)); });
-  return result;
-}
-
-function getValidEquipmentCodes(stationCode, groupCode, subGroupCode) {
-  const set = validAssetIdsByGroup[groupCode] || new Set();
-  const prefix = stationCode + groupCode + subGroupCode;
-  const result = new Set();
-  set.forEach(id => { if (id.startsWith(prefix)) result.add(id.slice(7,9)); });
-  return result;
-}
-
-function toDDMMYY(isoDate) {
-  const [y,m,d] = isoDate.split('-');
-  return `${d}-${m}-${y.slice(2)}`;
-}
-
-function markInvalid(el) { el.classList.add('invalid'); }
-function clearInvalid(el) { el.classList.remove('invalid'); }
-
-/* ============================================================
-   LOCK / MULTI-ENTRY STATE
-   ============================================================ */
-let lockMode = false;
-let savedFormState = null; // { date, type, staff:[], remarks:[] }
-let sessionSubmitCount = 0;
-
-const lockToggle = document.getElementById('lockToggle');
-const lockLabelText = document.getElementById('lockLabelText');
-const sessionChipWrap = document.getElementById('sessionChipWrap');
-const sessionBadge = document.getElementById('sessionBadge');
-const lockBanner = document.getElementById('lockBanner');
-const lockBannerTitle = document.getElementById('lockBannerTitle');
-const lockBannerText = document.getElementById('lockBannerText');
-const btnClearFields = document.getElementById('btnClearFields');
-const entryLockBanner = document.getElementById('entryLockBanner');
-const btnClearEntrySelections = document.getElementById('btnClearEntrySelections');
-
-function clearEntryPageSelections() {
-  assetIdInput.value = '';
-  assetIdError.textContent = '';
-  ddStation.value = ''; ddGroup.value = '';
-  ddGroup.disabled = true;
-  ddSubGroup.innerHTML = '<option value="">Select Sub-Group</option>';
-  ddSubGroup.disabled = true;
-  ddEquipment.innerHTML = '<option value="">Select Equipment</option>';
-  ddEquipment.disabled = true;
-  dropdownError.textContent = '';
-}
-
-function updateEntryLockBanner() {
-  entryLockBanner.classList.toggle('show', lockMode);
-}
-
-btnClearEntrySelections.addEventListener('click', clearEntryPageSelections);
-
-lockToggle.addEventListener('change', () => {
-  lockMode = lockToggle.checked;
-  if (!lockMode) {
-    savedFormState = null;
-    sessionSubmitCount = 0;
-    clearEntryPageSelections(); // reset entry page fields when unlocking
-  }
-  lockLabelText.textContent = lockMode ? '🔒 Locked' : '🔓 Unlocked';
-  sessionChipWrap.style.display = lockMode ? 'flex' : 'none';
-  updateSessionBadge();
-  updateEntryLockBanner();
-});
-
-function updateSessionBadge() {
-  sessionBadge.textContent = `✅ ${sessionSubmitCount} entries submitted`;
-}
-
-btnClearFields.addEventListener('click', () => {
-  savedFormState = null;
-  resetFormFields(true); // force blank fields, keep asset info
-});
-
-function captureFormState() {
-  return {
-    date: dateInput.value,
-    type: typeSelect.value,
-    staff: Array.from(document.querySelectorAll('.staffSelect')).map(s => s.value).filter(v => v),
-    remarks: Array.from(document.querySelectorAll('.remarkText')).map(t => t.value)
-  };
-}
-
-/* ============================================================
-   ENTRY PAGE LOGIC
-   ============================================================ */
-const ddStation = document.getElementById('ddStation');
-const ddGroup = document.getElementById('ddGroup');
-const ddSubGroup = document.getElementById('ddSubGroup');
-const ddEquipment = document.getElementById('ddEquipment');
-const dropdownError = document.getElementById('dropdownError');
-const assetIdInput = document.getElementById('assetIdInput');
-const assetIdError = document.getElementById('assetIdError');
-
-function populateStationDropdown() {
-  ddStation.innerHTML = '<option value="">Select Station</option>';
-  Object.entries(stationMap).forEach(([code,name]) => {
-    const opt = document.createElement('option');
-    opt.value = code; opt.textContent = `${name} (${code})`;
-    ddStation.appendChild(opt);
-  });
-}
-
-function populateGroupDropdown() {
-  ddGroup.innerHTML = '<option value="">Select Group</option>';
-  Object.entries(groupMap).forEach(([code,name]) => {
-    const opt = document.createElement('option');
-    opt.value = code; opt.textContent = name.replace(/_/g,' ');
-    ddGroup.appendChild(opt);
-  });
-}
-
-function populateSubGroupDropdown(stationCode, groupCode) {
-  ddSubGroup.innerHTML = '<option value="">Select Sub-Group</option>';
-  const allSubGroups = subGroupMap[groupCode] || {};
-  const validCodes = getValidSubGroupCodes(stationCode, groupCode);
-  const codes = Object.keys(allSubGroups).filter(c => validCodes.has(c));
-
-  if (codes.length === 0) {
-    const opt = document.createElement('option');
-    opt.value = ''; opt.textContent = 'No data available for this Station/Group'; opt.disabled = true;
-    ddSubGroup.appendChild(opt);
-    return;
-  }
-  codes.forEach(code => {
-    const opt = document.createElement('option');
-    opt.value = code; opt.textContent = allSubGroups[code];
-    ddSubGroup.appendChild(opt);
-  });
-}
-
-function populateEquipmentDropdown(stationCode, groupCode, subGroupCode) {
-  ddEquipment.innerHTML = '<option value="">Select Equipment</option>';
-  const allEquip = (equipmentMap[groupCode] && equipmentMap[groupCode][subGroupCode]) || {};
-  const validCodes = getValidEquipmentCodes(stationCode, groupCode, subGroupCode);
-  const codes = Object.keys(allEquip).filter(c => validCodes.has(c));
-
-  if (codes.length === 0) {
-    const opt = document.createElement('option');
-    opt.value = ''; opt.textContent = 'No data available'; opt.disabled = true;
-    ddEquipment.appendChild(opt);
-    return;
-  }
-  codes.forEach(code => {
-    const opt = document.createElement('option');
-    opt.value = code; opt.textContent = allEquip[code];
-    ddEquipment.appendChild(opt);
-  });
-}
-
-populateStationDropdown();
-populateGroupDropdown();
-
-ddStation.addEventListener('change', () => {
-  ddGroup.value = '';
-  ddSubGroup.innerHTML = '<option value="">Select Sub-Group</option>';
-  ddEquipment.innerHTML = '<option value="">Select Equipment</option>';
-  ddGroup.disabled = !ddStation.value;
-  ddSubGroup.disabled = true;
-  ddEquipment.disabled = true;
-  dropdownError.textContent = '';
-});
-
-ddGroup.addEventListener('change', () => {
-  ddSubGroup.innerHTML = '<option value="">Select Sub-Group</option>';
-  ddEquipment.innerHTML = '<option value="">Select Equipment</option>';
-  ddEquipment.disabled = true;
-
-  if (ddStation.value && ddGroup.value) {
-    populateSubGroupDropdown(ddStation.value, ddGroup.value);
-    ddSubGroup.disabled = false;
-  } else {
-    ddSubGroup.disabled = true;
-  }
-  dropdownError.textContent = '';
-});
-
-ddSubGroup.addEventListener('change', () => {
-  ddEquipment.innerHTML = '<option value="">Select Equipment</option>';
-  if (ddStation.value && ddGroup.value && ddSubGroup.value) {
-    populateEquipmentDropdown(ddStation.value, ddGroup.value, ddSubGroup.value);
-    ddEquipment.disabled = false;
-  } else {
-    ddEquipment.disabled = true;
-  }
-  dropdownError.textContent = '';
-});
-
-document.getElementById('btnGetFormByDropdown').addEventListener('click', () => {
-  const s = ddStation.value, g = ddGroup.value, sg = ddSubGroup.value, e = ddEquipment.value;
-  dropdownError.textContent = '';
-  if (!s || !g || !sg || !e) {
-    dropdownError.textContent = 'Please select all fields (Station, Group, Sub-Group, Equipment).';
-    return;
-  }
-  const assetId = s + g + sg + e;
-  if (!isValidAssetId(assetId)) {
-    dropdownError.textContent = 'Invalid combination. Asset Id not found in master list.';
-    return;
-  }
-  showForm(assetId);
-});
-
-/* --- Asset Id manual entry --- */
-assetIdInput.addEventListener('input', (e) => {
-  e.target.value = e.target.value.replace(/\D/g,'').slice(0,9);
-  assetIdError.textContent = '';
-});
-
-document.getElementById('btnGetFormById').addEventListener('click', () => {
-  const id = assetIdInput.value.trim();
-  assetIdError.textContent = '';
-  if (!/^\d{9}$/.test(id)) {
-    assetIdError.textContent = 'Please enter a valid 9-digit Asset Id.';
-    return;
-  }
-  if (!isValidAssetId(id)) {
-    assetIdError.textContent = 'Asset Id not found in master list.';
-    return;
-  }
-  showForm(id);
-});
-
-/* --- QR Scan --- */
-const btnScanQr = document.getElementById('btnScanQr');
-const qrReaderContainer = document.getElementById('qrReaderContainer');
-const qrVideo = document.getElementById('qrVideo');
-const qrCanvas = document.getElementById('qrCanvas');
-const qrCtx = qrCanvas.getContext('2d');
-const qrResult = document.getElementById('qrResult');
-const qrError = document.getElementById('qrError');
-let qrStream = null;
-let qrScanning = false;
-
-btnScanQr.addEventListener('click', startQrScan);
-document.getElementById('btnCancelScan').addEventListener('click', stopQrScan);
-
-async function startQrScan() {
-  qrError.textContent = '';
-  qrResult.textContent = '';
-
-  if (!window.isSecureContext) {
-    qrError.textContent = 'Camera requires a secure connection (HTTPS or localhost). Please open this page via https://';
-    return;
-  }
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    qrError.textContent = 'Camera API not supported in this browser.';
-    return;
-  }
-
-  const constraintsList = [
-    { video: { facingMode: { exact: "environment" } } },
-    { video: { facingMode: "environment" } },
-    { video: true }
-  ];
-
-  let lastErr = null;
-  qrStream = null;
-  for (const constraints of constraintsList) {
-    try {
-      qrStream = await navigator.mediaDevices.getUserMedia(constraints);
-      if (qrStream) break;
-    } catch (err) {
-      lastErr = err;
-    }
-  }
-
-  if (!qrStream) {
-    let msg = 'Camera access denied or not available.';
-    if (lastErr && lastErr.name) {
-      if (lastErr.name === 'NotAllowedError') msg = 'Camera permission denied. Please allow camera access in browser settings.';
-      else if (lastErr.name === 'NotFoundError') msg = 'No camera found on this device.';
-      else if (lastErr.name === 'NotReadableError') msg = 'Camera is already in use by another app.';
-      else msg = 'Camera error: ' + lastErr.name;
-    }
-    qrError.textContent = msg;
-    return;
-  }
-
-  qrVideo.srcObject = qrStream;
-  qrVideo.setAttribute('playsinline', 'true');
-  qrVideo.muted = true;
-
-  try {
-    await qrVideo.play();
-  } catch (err) {
-    qrError.textContent = 'Unable to start camera preview. Please try again.';
-    stopQrScan();
-    return;
-  }
-
-  qrReaderContainer.style.display = 'block';
-  qrScanning = true;
-  requestAnimationFrame(scanLoop);
-}
-
-function stopQrScan() {
-  qrScanning = false;
-  if (qrStream) {
-    qrStream.getTracks().forEach(t => t.stop());
-    qrStream = null;
-  }
-  qrReaderContainer.style.display = 'none';
-}
-
-function scanLoop() {
-  if (!qrScanning) return;
-  if (qrVideo.readyState === qrVideo.HAVE_ENOUGH_DATA) {
-    qrCanvas.width = qrVideo.videoWidth;
-    qrCanvas.height = qrVideo.videoHeight;
-    qrCtx.drawImage(qrVideo, 0, 0, qrCanvas.width, qrCanvas.height);
-    const imageData = qrCtx.getImageData(0, 0, qrCanvas.width, qrCanvas.height);
-    const code = jsQR(imageData.data, imageData.width, imageData.height);
-    if (code && code.data) {
-      handleQrResult(code.data);
-      return;
-    }
-  }
-  requestAnimationFrame(scanLoop);
-}
-
-function handleQrResult(text) {
-  const digitsOnly = text.replace(/\D/g, '');
-  const assetId = digitsOnly.slice(-9);
-  stopQrScan();
-  if (!/^\d{9}$/.test(assetId) || !isValidAssetId(assetId)) {
-    qrError.textContent = 'Scanned QR does not contain a valid Asset Id.';
-    return;
-  }
-  qrResult.textContent = 'QR scanned successfully!';
-  showForm(assetId);
-}
-
-/* ============================================================
-   FORM PAGE LOGIC
-   ============================================================ */
-const entryPage = document.getElementById('entryPage');
-const formPage = document.getElementById('formPage');
+// NEW: track currently loaded asset + More-tab expand state
 let currentAssetId = null;
-let currentDecoded = null;
+const moreState = { medium: {}, low: {} };
 
-function showForm(assetId) {
-  currentAssetId = assetId;
-  currentDecoded = decodeAssetId(assetId);
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const idFromUrl = urlParams.get('id');
 
-  document.getElementById('infoAssetId').textContent = assetId;
-  document.getElementById('infoStation').textContent = currentDecoded.station;
-  document.getElementById('infoGroup').textContent = currentDecoded.group;
-  document.getElementById('infoSubGroup').textContent = currentDecoded.subGroup;
-  document.getElementById('infoEquipment').textContent = currentDecoded.equipment;
-
-  resetFormFields();
-  updateLockBanner();
-
-  entryPage.classList.remove('active');
-  formPage.classList.add('active');
-  window.scrollTo(0,0);
-}
-
-function showEntry() {
-  formPage.classList.remove('active');
-  entryPage.classList.add('active');
-
-  // QR result/error ALWAYS reset — fresh scan required every time, regardless of lock
-  qrResult.textContent = '';
-  qrError.textContent = '';
-
-  if (!lockMode) {
-    // Unlocked: full clear of Entry Page fields (old behavior)
-    clearEntryPageSelections();
+  if (idFromUrl && idFromUrl.length === 9 && !isNaN(idFromUrl)) {
+    document.getElementById('inputContainer').style.display = "none";
+    document.getElementById('manualAssetId').value = idFromUrl;
+    processAssetPipelines(idFromUrl);
   } else {
-    // Locked: KEEP Asset Id input & Dropdown selections; just clear transient error text
-    assetIdError.textContent = '';
-    dropdownError.textContent = '';
-  }
-
-  updateEntryLockBanner();
-
-  document.getElementById('submitStatus').textContent = '';
-  document.getElementById('submitStatus').className = '';
-  window.scrollTo(0,0);
-}
-
-document.getElementById('btnBack').addEventListener('click', showEntry);
-
-function updateLockBanner() {
-  if (lockMode) {
-    lockBanner.classList.add('show');
-    if (savedFormState) {
-      lockBannerTitle.textContent = '🔒 Lock Mode Active';
-      lockBannerText.textContent = 'Fields auto-filled from previous entry. Review & Submit.';
-    } else {
-      lockBannerTitle.textContent = '🔒 Lock Mode Active';
-      lockBannerText.textContent = 'This is your first entry — future scans will retain these values.';
-    }
-  } else {
-    lockBanner.classList.remove('show');
-  }
-}
-
-/* --- Date / Type --- */
-const dateInput = document.getElementById('dateOfMaintenance');
-const typeSelect = document.getElementById('typeOfMaintenance');
-const dateErr = document.getElementById('dateErr');
-const typeErr = document.getElementById('typeErr');
-
-dateInput.addEventListener('change', () => { clearInvalid(dateInput); dateErr.textContent=''; });
-typeSelect.addEventListener('change', () => {
-  clearInvalid(typeSelect); typeErr.textContent='';
-  const firstRemark = document.querySelector('.remarkText');
-  if (firstRemark && typeSelect.value) {
-    firstRemark.value = `${typeSelect.value} MAINTENANCE DONE`;
-    clearInvalid(firstRemark);
-    document.getElementById('remarksErr').textContent = '';
+    document.getElementById('inputContainer').style.display = "block";
   }
 });
 
-/* --- Attended By (dynamic, no repeat) --- */
-const attendedByContainer = document.getElementById('attendedByContainer');
-const staffErr = document.getElementById('staffErr');
-
-function getSelectedStaffValues() {
-  return Array.from(document.querySelectorAll('.staffSelect')).map(s => s.value).filter(v => v);
+function handleManualSearch() {
+  let enteredId = document.getElementById('manualAssetId').value.trim();
+  if(enteredId.length !== 9 || isNaN(enteredId)) {
+    alert("Invalid format. Please enter a valid 9-digit asset ID.");
+    return;
+  }
+  document.getElementById('inputContainer').style.display = "none";
+  processAssetPipelines(enteredId);
 }
 
-function renderStaffOptions(select) {
-  const currentVal = select.value;
-  const used = getSelectedStaffValues();
-  select.innerHTML = '<option value="">Select Staff</option>';
-  staffList.forEach(name => {
-    if (used.includes(name) && name !== currentVal) return;
-    const opt = document.createElement('option');
-    opt.value = name; opt.textContent = name;
-    if (name === currentVal) opt.selected = true;
-    select.appendChild(opt);
+function getAssetMetadata(id) {
+  let parsedStation = id.substring(0,3);
+  let parsedGroup = id.substring(3,5);
+  let parsedSubGroup = id.substring(5,7);
+  let parsedAssetNo = id.substring(7,9);
+
+  let stationName = mappingDictionary.station[parsedStation] || null;
+  let groupName = mappingDictionary.group[parsedGroup] || null;
+
+  let subGroupName = null;
+  if (subGroupMap[parsedGroup]) {
+    subGroupName = subGroupMap[parsedGroup][parsedSubGroup] || null;
+  }
+
+  let equipmentName = null;
+  if (equipmentNameMap[parsedGroup] && equipmentNameMap[parsedGroup][parsedSubGroup]) {
+    equipmentName = equipmentNameMap[parsedGroup][parsedSubGroup][parsedAssetNo] || null;
+  }
+
+  return { station: stationName, group: groupName, subGroup: subGroupName, equipmentName: equipmentName };
+}
+
+function parseDDMMYY(dateStr) {
+  if (!dateStr) return null;
+  const cleaned = dateStr.toString().trim();
+  const parts = cleaned.split(/[-\/]/);
+  if (parts.length !== 3) return null;
+  let [dd, mm, yy] = parts;
+  dd = parseInt(dd, 10);
+  mm = parseInt(mm, 10);
+  yy = parseInt(yy, 10);
+  if (isNaN(dd) || isNaN(mm) || isNaN(yy)) return null;
+  yy = yy < 100 ? 2000 + yy : yy;
+  const dateObj = new Date(yy, mm - 1, dd);
+  return isNaN(dateObj.getTime()) ? null : dateObj;
+}
+
+function isOverdue(dueDateStr, status) {
+  const dueDate = parseDDMMYY(dueDateStr);
+  if (!dueDate) return false;
+  const statusLower = (status || "").toString().trim().toLowerCase();
+  if (["completed","complete","done","closed","ok","resolved"].includes(statusLower)) return false;
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  return dueDate < today;
+}
+
+function isUnresolvedFailure(rectDate) {
+  return !(rectDate && rectDate.toString().trim() !== "");
+}
+
+function statusBadge(status) {
+  if (!status) return "-";
+  const clean = status.toString().trim();
+  const lower = clean.toLowerCase();
+  let cls = "status-neutral";
+  if (["completed","complete","resolved","closed","done","ok","normal","healthy","restored"].includes(lower)) cls = "status-good";
+  else if (["pending","in progress","ongoing","scheduled","due","under observation"].includes(lower)) cls = "status-warn";
+  else if (["failed","failure","critical","open","overdue","not ok","tripped"].includes(lower)) cls = "status-bad";
+  return `<span class="status-pill ${cls}">${clean}</span>`;
+}
+
+function filterRowsByDateRange(rows, dateColIndex, rangeValue) {
+  if (rangeValue === 'all' || !rangeValue) return rows;
+  const today = new Date(); today.setHours(0,0,0,0);
+  return rows.filter(row => {
+    const d = parseDDMMYY(row[dateColIndex]);
+    if (!d) return false;
+    if (rangeValue === '30days') {
+      const diffDays = (today - d) / 86400000;
+      return diffDays >= 0 && diffDays <= 30;
+    }
+    if (rangeValue === 'thisyear') return d.getFullYear() === today.getFullYear();
+    return true;
   });
 }
 
-function refreshAllStaffOptions() {
-  document.querySelectorAll('.staffSelect').forEach(renderStaffOptions);
+function sortRowsByDateDesc(rows, dateColIndex) {
+  return [...rows].sort((a, b) => {
+    const da = parseDDMMYY(a[dateColIndex]);
+    const db = parseDDMMYY(b[dateColIndex]);
+    if (!da && !db) return 0;
+    if (!da) return 1;
+    if (!db) return -1;
+    return db - da;
+  });
 }
 
-function updateStaffDeleteVisibility() {
-  const rows = document.querySelectorAll('.staffRow');
+function groupRowsByYear(rows, dateColIndex) {
+  const groups = {};
+  rows.forEach(row => {
+    const d = parseDDMMYY(row[dateColIndex]);
+    const year = d ? d.getFullYear().toString() : 'Unknown';
+    if (!groups[year]) groups[year] = [];
+    groups[year].push(row);
+  });
+  return groups;
+}
+
+function getSortedYearKeys(groups) {
+  return Object.keys(groups).sort((a, b) => {
+    if (a === 'Unknown') return 1;
+    if (b === 'Unknown') return -1;
+    return parseInt(b) - parseInt(a);
+  });
+}
+
+function paginateArray(arr, page, perPage) {
+  const start = (page - 1) * perPage;
+  return arr.slice(start, start + perPage);
+}
+
+function downloadCSV(filename, headers, rows) {
+  let csvContent = headers.join(",") + "\n";
   rows.forEach(r => {
-    const btn = r.querySelector('.delBtn');
-    btn.style.display = rows.length > 1 ? 'inline-block' : 'none';
-  });
-}
-
-function addStaffRow(presetValue) {
-  const row = document.createElement('div');
-  row.className = 'staffRow';
-
-  const select = document.createElement('select');
-  select.className = 'staffSelect';
-  select.addEventListener('change', () => {
-    clearInvalid(select);
-    staffErr.textContent = '';
-    refreshAllStaffOptions();
-  });
-
-  const delBtn = document.createElement('button');
-  delBtn.type = 'button';
-  delBtn.className = 'delBtn';
-  delBtn.textContent = '🗑';
-  delBtn.setAttribute('aria-label', 'Delete');
-  delBtn.title = 'Delete';
-  delBtn.addEventListener('click', () => {
-    row.remove();
-    refreshAllStaffOptions();
-    updateStaffDeleteVisibility();
-  });
-
-  row.appendChild(select);
-  row.appendChild(delBtn);
-  attendedByContainer.appendChild(row);
-
-  renderStaffOptions(select);
-  if (presetValue) {
-    select.value = presetValue;
-  }
-  updateStaffDeleteVisibility();
-}
-
-document.getElementById('btnAddStaff').addEventListener('click', () => addStaffRow());
-
-/* --- Remarks (max 2 boxes: readonly auto + 1 editable) --- */
-const remarksContainer = document.getElementById('remarksContainer');
-const btnAddRemark = document.getElementById('btnAddRemark');
-const remarksErr = document.getElementById('remarksErr');
-
-function addRemarkRow(prefill = '', readonly = false) {
-  const rows = document.querySelectorAll('.remarkRow');
-  if (rows.length >= 2) return;
-
-  const row = document.createElement('div');
-  row.className = 'remarkRow';
-
-  const textarea = document.createElement('textarea');
-  textarea.className = 'remarkText';
-  textarea.value = prefill;
-
-  if (readonly) {
-    textarea.readOnly = true;
-    textarea.rows = 3;
-    textarea.classList.add('readonlyRemark');
-  } else {
-    textarea.rows = 7;
-    textarea.classList.add('addedRemark');
-    textarea.addEventListener('input', () => {
-      clearInvalid(textarea);
-      remarksErr.textContent = '';
+    const escaped = r.map(val => {
+      let v = (val === undefined || val === null) ? "" : val.toString();
+      v = v.replace(/"/g, '""');
+      if (/[",\n]/.test(v)) v = `"${v}"`;
+      return v;
     });
-  }
-  row.appendChild(textarea);
-
-  if (rows.length >= 1) {
-    const delBtn = document.createElement('button');
-    delBtn.type = 'button';
-    delBtn.className = 'delBtn';
-    delBtn.textContent = '🗑';
-    delBtn.setAttribute('aria-label', 'Delete');
-    delBtn.title = 'Delete';
-    delBtn.addEventListener('click', () => {
-      row.remove();
-      updateRemarkAddVisibility();
-    });
-    row.appendChild(delBtn);
-  }
-
-  remarksContainer.appendChild(row);
-  updateRemarkAddVisibility();
+    csvContent += escaped.join(",") + "\n";
+  });
+  const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
-function updateRemarkAddVisibility() {
-  const rows = document.querySelectorAll('.remarkRow');
-  btnAddRemark.style.display = rows.length >= 2 ? 'none' : 'inline-block';
+function openPrintableWindow(title, tableHeadHtml, tableBodyHtml) {
+  const win = window.open('', '_blank');
+  win.document.write(`
+    <html>
+    <head>
+    <title>${title}</title>
+    <style>
+      body { font-family: Arial, sans-serif; padding: 20px; }
+      h3 { margin-bottom: 14px; }
+      table { border-collapse: collapse; width: 100%; font-size: 12px; }
+      th, td { border: 1px solid #444; padding: 6px 8px; text-align: left; }
+      th { background: #0f766e; color: #fff; text-transform: uppercase; font-size: 10.5px; }
+      tr:nth-child(even) { background: #f5f5f5; }
+      a { color: #1a73e8; }
+    </style>
+    </head>
+    <body>
+      <h3>${title}</h3>
+      <table>
+        <thead><tr>${tableHeadHtml}</tr></thead>
+        <tbody>${tableBodyHtml}</tbody>
+      </table>
+    </body>
+    </html>
+  `);
+  win.document.close();
+  win.focus();
+  setTimeout(() => { win.print(); }, 400);
 }
 
-btnAddRemark.addEventListener('click', () => addRemarkRow(''));
+function toggleYearGroup(type, year) {
+  const st = state[type];
+  st.expandedYears[year] = !st.expandedYears[year];
+  if (type === 'maintenance') renderMaintenanceUI(); else renderFailureUI();
+}
 
-/* --- Reset / Restore form fields when opening form --- */
-function resetFormFields(forceBlank) {
-  dateErr.textContent = ''; typeErr.textContent = ''; staffErr.textContent = ''; remarksErr.textContent = '';
-  clearInvalid(dateInput); clearInvalid(typeSelect);
+function changeYearPage(type, year, direction) {
+  const st = state[type];
+  const current = st.pages[year] || 1;
+  st.pages[year] = Math.max(1, current + direction);
+  if (type === 'maintenance') renderMaintenanceUI(); else renderFailureUI();
+}
 
-  const useSaved = !forceBlank && lockMode && savedFormState;
+function onDateFilterChange(type, selectEl) {
+  state[type].filter = selectEl.value;
+  state[type].pages = {};
+  if (type === 'maintenance') renderMaintenanceUI(); else renderFailureUI();
+}
 
-  if (useSaved) {
-    dateInput.value = savedFormState.date || '';
-    typeSelect.value = savedFormState.type || '';
+// ============================================================
+// MAINTENANCE EXPORTS (CSV + PDF)
+// ============================================================
+function exportMaintenanceCSV() {
+  const st = state.maintenance;
+  if (!st.rows.length) return;
+  const meta = st.meta;
+  const DATE_COL = 1;
+  const filtered = filterRowsByDateRange(st.rows, DATE_COL, st.filter);
+  const sorted = sortRowsByDateDesc(filtered, DATE_COL);
 
-    attendedByContainer.innerHTML = '';
-    if (savedFormState.staff.length === 0) {
-      addStaffRow();
-    } else {
-      savedFormState.staff.forEach(name => addStaffRow(name));
-    }
+  const headers = ["SL","Station","Group","Sub Equipment","Asset Name","Date of Maintenance","Type of Maintenance","Attended By","Checksheet","Remarks"];
+  const csvRows = sorted.map((row, idx) => [
+    idx + 1, meta.station, meta.group, meta.subGroup, meta.equipmentName,
+    row[1] || "", row[2] || "", row[3] || "", row[4] || "", row[5] || ""
+  ]);
+  downloadCSV(`Maintenance_${meta.equipmentName || 'Asset'}_${Date.now()}.csv`, headers, csvRows);
+}
 
-    remarksContainer.innerHTML = '';
-    if (savedFormState.remarks.length === 0) {
-      addRemarkRow('', true);
-    } else {
-      savedFormState.remarks.forEach((text, idx) => addRemarkRow(text, idx === 0));
-    }
+function exportMaintenancePDF() {
+  const st = state.maintenance;
+  if (!st.rows.length) return;
+  const meta = st.meta;
+  const DATE_COL = 1;
+  const filtered = filterRowsByDateRange(st.rows, DATE_COL, st.filter);
+  const sorted = sortRowsByDateDesc(filtered, DATE_COL);
+
+  const headHtml = `<th>SL</th><th>Station</th><th>Group</th><th>Sub Equipment</th><th>Asset Name</th>
+    <th>Date of Maintenance</th><th>Type of Maintenance</th><th>Attended By</th><th>Checksheet</th><th>Remarks</th>`;
+
+  const bodyHtml = sorted.map((row, idx) => {
+    const checksheet = row[4] ? `<a href="${row[4]}" target="_blank">CHECKSHEET</a>` : "-";
+    return `<tr>
+      <td>${idx+1}</td><td>${meta.station}</td><td>${meta.group}</td><td>${meta.subGroup}</td><td>${meta.equipmentName}</td>
+      <td>${row[1]||""}</td><td>${row[2]||""}</td><td>${row[3]||""}</td><td>${checksheet}</td><td>${row[5]||""}</td>
+    </tr>`;
+  }).join("");
+
+  openPrintableWindow(`Maintenance Records - ${meta.equipmentName || 'Asset'} (${meta.station})`, headHtml, bodyHtml);
+}
+
+// ============================================================
+// FAILURE EXPORTS (CSV + PDF)
+// ============================================================
+function exportFailureCSV() {
+  const st = state.failure;
+  if (!st.rows.length) return;
+  const meta = st.meta;
+  const DATE_COL = 1;
+  const filtered = filterRowsByDateRange(st.rows, DATE_COL, st.filter);
+  const sorted = sortRowsByDateDesc(filtered, DATE_COL);
+
+  const headers = ["SL","Station","Group","Sub Equipment","Asset Name","Date of Failure","Fault","Reported By","Repercussion","Cause of Failure","Action Taken","Attended By","Rectification Date"];
+  const csvRows = sorted.map((row, idx) => [
+    idx + 1, meta.station, meta.group, meta.subGroup, meta.equipmentName,
+    row[1] || "", row[2] || "", row[3] || "", row[4] || "", row[5] || "", row[6] || "", row[7] || "", row[8] || ""
+  ]);
+  downloadCSV(`Failure_${meta.equipmentName || 'Asset'}_${Date.now()}.csv`, headers, csvRows);
+}
+
+function exportFailurePDF() {
+  const st = state.failure;
+  if (!st.rows.length) return;
+  const meta = st.meta;
+  const DATE_COL = 1;
+  const filtered = filterRowsByDateRange(st.rows, DATE_COL, st.filter);
+  const sorted = sortRowsByDateDesc(filtered, DATE_COL);
+
+  const headHtml = `<th>SL</th><th>Station</th><th>Group</th><th>Sub Equipment</th><th>Asset Name</th>
+    <th>Date of Failure</th><th>Fault</th><th>Reported By</th><th>Repercussion</th><th>Cause of Failure</th>
+    <th>Action Taken</th><th>Attended By</th><th>Rectification Date</th>`;
+
+  const bodyHtml = sorted.map((row, idx) => `<tr>
+    <td>${idx+1}</td><td>${meta.station}</td><td>${meta.group}</td><td>${meta.subGroup}</td><td>${meta.equipmentName}</td>
+    <td>${row[1]||""}</td><td>${row[2]||""}</td><td>${row[3]||""}</td><td>${row[4]||""}</td><td>${row[5]||""}</td>
+    <td>${row[6]||""}</td><td>${row[7]||""}</td><td>${row[8]||""}</td>
+  </tr>`).join("");
+
+  openPrintableWindow(`Failure Records - ${meta.equipmentName || 'Asset'} (${meta.station})`, headHtml, bodyHtml);
+}
+
+async function fetchActualSheetTitles() {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?key=${API_KEY}&fields=sheets.properties.title`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (!res.ok) return { error: data.error ? data.error.message : "Unknown metadata error" };
+  return { titles: (data.sheets || []).map(s => s.properties.title) };
+}
+
+function buildDiagnosticHtml(expectedNames, actualTitlesResult, rawErrorMessage) {
+  let html = `<div class="alert-error" style="margin-top:10px; text-align:left;">
+    <strong>❌ Sync failed — Diagnostic Report</strong><br><br>
+    <strong>Raw API error:</strong> ${rawErrorMessage || "N/A"}<br><br>
+    <strong>Sheets this Asset ID needs:</strong><br>
+    &nbsp;&nbsp;• ${expectedNames.maintenance}<br>
+    &nbsp;&nbsp;• ${expectedNames.failure}<br>
+    &nbsp;&nbsp;• ${expectedNames.specifications}<br><br>`;
+
+  if (actualTitlesResult.error) {
+    html += `<strong>Could not read your spreadsheet's tab list:</strong> ${actualTitlesResult.error}<br>
+    (Check that the Sheet is shared as "Anyone with the link can view" and API key is valid/unrestricted for this domain.)`;
   } else {
-    dateInput.value = '';
-    typeSelect.value = '';
-
-    attendedByContainer.innerHTML = '';
-    addStaffRow();
-
-    remarksContainer.innerHTML = '';
-    addRemarkRow('', true);
+    const actual = actualTitlesResult.titles;
+    html += `<strong>Tabs that actually exist in your spreadsheet:</strong><br>&nbsp;&nbsp;${actual.join("<br>&nbsp;&nbsp;")}<br><br>`;
+    const missing = [expectedNames.maintenance, expectedNames.failure, expectedNames.specifications]
+      .filter(n => !actual.includes(n));
+    if (missing.length > 0) {
+      html += `<strong style="color:#b91c1c;">⚠ Missing or mismatched tab(s):</strong><br>&nbsp;&nbsp;${missing.join("<br>&nbsp;&nbsp;")}<br><br>
+      Create these exact tab names (case-sensitive, no trailing spaces) in your spreadsheet.`;
+    } else {
+      html += `All 3 expected tabs exist with matching names. The issue may be a temporary network error — please try again.`;
+    }
   }
-
-  document.getElementById('formError').textContent = '';
-  document.getElementById('submitStatus').textContent = '';
-  document.getElementById('submitStatus').className = '';
+  html += `</div>`;
+  return html;
 }
 
-/* ============================================================
-   SUBMIT with full validation
-   ============================================================ */
-document.getElementById('btnSubmit').addEventListener('click', async () => {
-  const formError = document.getElementById('formError');
-  const submitStatus = document.getElementById('submitStatus');
-  formError.textContent = '';
-  submitStatus.textContent = '';
-  submitStatus.className = '';
-  dateErr.textContent = ''; typeErr.textContent = ''; staffErr.textContent = ''; remarksErr.textContent = '';
-  clearInvalid(dateInput); clearInvalid(typeSelect);
+function qSheet(name) { return `'${name}'`; }
 
-  let hasError = false;
-
-  if (!dateInput.value) {
-    dateErr.textContent = 'Date Of Maintenance is required.';
-    markInvalid(dateInput);
-    hasError = true;
+async function fetchColumnAOnly(sheetNames) {
+  const ranges = [
+    `${qSheet(sheetNames.maintenance)}!A2:A`,
+    `${qSheet(sheetNames.failure)}!A2:A`,
+    `${qSheet(sheetNames.specifications)}!A2:A`
+  ];
+  const rangesQuery = ranges.map(r => `ranges=${encodeURIComponent(r)}`).join("&");
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${rangesQuery}&key=${API_KEY}`;
+  const response = await fetch(url);
+  const payload = await response.json();
+  if (!response.ok) {
+    const msg = payload.error ? payload.error.message : `HTTP ${response.status}`;
+    throw new Error(msg);
   }
+  return payload.valueRanges || [];
+}
 
-  if (!typeSelect.value) {
-    typeErr.textContent = 'Type Of Maintenance is required.';
-    markInvalid(typeSelect);
-    hasError = true;
-  }
-
-  const staffSelects = Array.from(document.querySelectorAll('.staffSelect'));
-  let staffBlank = false;
-  staffSelects.forEach(s => {
-    if (!s.value) { markInvalid(s); staffBlank = true; }
-    else clearInvalid(s);
+function findExactMatchRows(columnAValueRange, targetId) {
+  if (!columnAValueRange || !columnAValueRange.values) return [];
+  const rows = [];
+  columnAValueRange.values.forEach((rowArr, idx) => {
+    const cell = rowArr[0] ? rowArr[0].toString().trim() : "";
+    if (cell === targetId) rows.push(idx + 2);
   });
-  if (staffSelects.length === 0 || staffBlank) {
-    staffErr.textContent = 'Attended By: at least one staff required and no box can be left blank.';
-    hasError = true;
+  return rows;
+}
+
+function findSpecHeaderRow(columnAValueRange, targetId7) {
+  if (!columnAValueRange || !columnAValueRange.values) return null;
+  for (let idx = 0; idx < columnAValueRange.values.length; idx++) {
+    const cell = columnAValueRange.values[idx][0];
+    if (cell && cell.toString().trim().substring(0, 7) === targetId7) {
+      return idx + 2;
+    }
+  }
+  return null;
+}
+
+function buildRowRanges(sheetName, rowNumbers, colStart, colEnd) {
+  return rowNumbers.map(r => `${qSheet(sheetName)}!${colStart}${r}:${colEnd}${r}`);
+}
+
+async function fetchTargetedRows(sheetNames, maintRows, failRows, specHeaderRow) {
+  let ranges = [];
+  let sections = { maint: 0, fail: 0, spec: 0 };
+
+  if (maintRows.length > 0) {
+    ranges.push(...buildRowRanges(sheetNames.maintenance, maintRows, "A", "F"));
+    sections.maint = maintRows.length;
+  }
+  if (failRows.length > 0) {
+    ranges.push(...buildRowRanges(sheetNames.failure, failRows, "A", "I"));
+    sections.fail = failRows.length;
+  }
+  if (specHeaderRow !== null) {
+    ranges.push(`${qSheet(sheetNames.specifications)}!A${specHeaderRow}:Z${specHeaderRow}`);
+    ranges.push(`${qSheet(sheetNames.specifications)}!A${specHeaderRow + 1}:Z${specHeaderRow + 1}`);
+    sections.spec = 1;
   }
 
-  const remarkTextareas = Array.from(document.querySelectorAll('.remarkText'));
-  let remarkBlank = false;
-  remarkTextareas.forEach(t => {
-    if (!t.value.trim()) { markInvalid(t); remarkBlank = true; }
-    else clearInvalid(t);
-  });
-  if (remarkTextareas.length === 0 || remarkBlank) {
-    remarksErr.textContent = 'Remarks cannot be blank.';
-    hasError = true;
+  if (ranges.length === 0) {
+    return { maintenance: [], failure: [], specifications: null };
   }
 
-  if (hasError) {
-    formError.textContent = 'Please fix the highlighted fields before submitting.';
+  const rangesQuery = ranges.map(r => `ranges=${encodeURIComponent(r)}`).join("&");
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${rangesQuery}&key=${API_KEY}`;
+  const response = await fetch(url);
+  const payload = await response.json();
+  if (!response.ok) {
+    const msg = payload.error ? payload.error.message : `HTTP ${response.status}`;
+    throw new Error(msg);
+  }
+  const valueRanges = payload.valueRanges || [];
+
+  let cursor = 0;
+  const maintenance = [];
+  for (let i = 0; i < sections.maint; i++) {
+    const vr = valueRanges[cursor++];
+    maintenance.push(vr && vr.values ? vr.values[0] : []);
+  }
+  const failure = [];
+  for (let i = 0; i < sections.fail; i++) {
+    const vr = valueRanges[cursor++];
+    failure.push(vr && vr.values ? vr.values[0] : []);
+  }
+  let specifications = null;
+  if (sections.spec) {
+    const headerVR = valueRanges[cursor++];
+    const valueVR = valueRanges[cursor++];
+    specifications = {
+      headers: headerVR && headerVR.values ? headerVR.values[0] : [],
+      values: valueVR && valueVR.values ? valueVR.values[0] : []
+    };
+  }
+  return { maintenance, failure, specifications };
+}
+
+// ============================================================
+// NEW: CHECKSHEET TAB — fetch reference PDF link from Checksheet_ALL
+// Column A = 4-digit Group+SubGroup code (digits 4-7 of Asset ID)
+// Column B = Google Drive shareable link to the PDF format
+// ============================================================
+async function fetchChecksheetRows() {
+  const range = `${qSheet(CHECKSHEET_SHEET_NAME)}!A2:B`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (!res.ok) {
+    const msg = data.error ? data.error.message : `HTTP ${res.status}`;
+    throw new Error(msg);
+  }
+  return data.values || [];
+}
+
+function findChecksheetLink(rows, code4) {
+  for (let i = 0; i < rows.length; i++) {
+    const cell = rows[i][0] ? rows[i][0].toString().trim() : "";
+    if (cell === code4) {
+      return rows[i][1] ? rows[i][1].toString().trim() : "";
+    }
+  }
+  return "";
+}
+
+function extractDriveFileId(url) {
+  if (!url) return null;
+  const patterns = [
+    /\/file\/d\/([a-zA-Z0-9_-]+)/,
+    /\/d\/([a-zA-Z0-9_-]+)/,
+    /[?&]id=([a-zA-Z0-9_-]+)/
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m && m[1]) return m[1];
+  }
+  return null;
+}
+
+function buildDrivePreviewUrl(rawUrl) {
+  const fileId = extractDriveFileId(rawUrl);
+  if (!fileId) return rawUrl;
+  return `https://drive.google.com/file/d/${fileId}/preview`;
+}
+
+function buildDriveMediaUrl(fileId) {
+  // Requires the file to be shared "Anyone with the link"
+  // AND the Drive API enabled for your API key's project.
+  return `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${API_KEY}`;
+}
+
+async function fetchPdfArrayBuffer(fileId) {
+  const url = buildDriveMediaUrl(fileId);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch PDF (HTTP ${res.status})`);
+  return await res.arrayBuffer();
+}
+
+async function renderChecksheetTab(link, errorMsg) {
+  const container = document.getElementById('checksheetData');
+  if (!container) return;
+
+  if (errorMsg) {
+    container.innerHTML = `<div class="alert-error">⚠ Could not load reference checksheet: ${errorMsg}</div>`;
+    return;
+  }
+  if (!link) {
+    container.innerHTML = `<p style="color:#666; font-style: italic;">No reference checksheet format registered yet for this equipment type (Group + Sub-Group code). Please add a row in "Checksheet_ALL" sheet (Col A = 4-digit code, Col B = Google Drive link).</p>`;
     return;
   }
 
-  const attendedBy = staffSelects.map(s => s.value);
-  const remarks = remarkTextareas.map(t => t.value.trim());
+  const fileId = extractDriveFileId(link);
+  if (!fileId) {
+    container.innerHTML = `<div class="alert-error">⚠ Invalid Google Drive link.</div>`;
+    return;
+  }
 
-  const payload = {
-    sheetName: CONFIG.SHEET_NAME,
-    assetId: currentAssetId,
-    station: currentDecoded.station,
-    group: currentDecoded.group,
-    subGroup: currentDecoded.subGroup,
-    equipmentName: currentDecoded.equipment,
-    dateOfMaintenance: toDDMMYY(dateInput.value),
-    typeOfMaintenance: typeSelect.value,
-    attendedBy: attendedBy.join(', '),
-    remarks: remarks.join(' | '),
-    timestamp: new Date().toISOString()
-  };
-
-  const btnSubmit = document.getElementById('btnSubmit');
-  btnSubmit.disabled = true;
-  submitStatus.className = 'loading';
-  submitStatus.textContent = '⏳ Submitting...';
+  container.innerHTML = `<p style="color:#666;">Loading checksheet...</p>`;
 
   try {
-    await fetch(CONFIG.APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    });
+    const arrayBuffer = await fetchPdfArrayBuffer(fileId);
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
-    submitStatus.className = 'ok';
-    submitStatus.textContent = '✅ Data submitted successfully!';
+    let currentPage = 1;
+    const totalPages = pdf.numPages;
 
-    // Save state for lock mode & increment counter
-    if (lockMode) {
-      savedFormState = captureFormState();
-      sessionSubmitCount++;
-      updateSessionBadge();
+    container.innerHTML = `
+      <div class="checksheet-frame-wrap">
+        <canvas id="checksheetCanvas" class="checksheet-frame"></canvas>
+      </div>
+      <div class="checksheet-pager">
+        <button id="csPrevBtn">‹ Prev</button>
+        <span>Page <span id="csPageNum">1</span> / ${totalPages}</span>
+        <button id="csNextBtn">Next ›</button>
+      </div>
+      <p class="checksheet-note">📄 Reference Checksheet Format — View Only</p>
+    `;
+
+    const canvas = document.getElementById('checksheetCanvas');
+    const ctx = canvas.getContext('2d');
+
+    async function renderPage(num) {
+      const page = await pdf.getPage(num);
+      const viewport = page.getViewport({ scale: 1.5 });
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      document.getElementById('csPageNum').textContent = num;
     }
 
-    setTimeout(() => { showEntry(); }, 1400);
+    document.getElementById('csPrevBtn').addEventListener('click', () => {
+      if (currentPage > 1) { currentPage--; renderPage(currentPage); }
+    });
+    document.getElementById('csNextBtn').addEventListener('click', () => {
+      if (currentPage < totalPages) { currentPage++; renderPage(currentPage); }
+    });
+
+    await renderPage(currentPage);
+
   } catch (err) {
-    submitStatus.className = 'err';
-    submitStatus.textContent = '❌ Submission failed. Please try again.';
-  } finally {
-    btnSubmit.disabled = false;
+    container.innerHTML = `<div class="alert-error">⚠ Could not render checksheet: ${err.message}</div>`;
   }
-});
+}
+
+// ============================================================
+// NEW: MORE TAB — High / Medium / Low identical similar assets
+// ============================================================
+function jumpToAsset(id) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('id', id);
+  window.location.href = url.toString();
+}
+
+function getHighMatchAssets(assetId) {
+  // Same Station + Group + Sub-Group, different last 2 digits (Asset No)
+  const group = assetId.substring(3, 5);
+  const prefix7 = assetId.substring(0, 7);
+  const validSet = validAssetIdsByGroup[group];
+  if (!validSet) return [];
+  const list = [];
+  validSet.forEach(id => {
+    if (id !== assetId && id.substring(0, 7) === prefix7) list.push(id);
+  });
+  return list.sort();
+}
+
+function getMediumMatchGroups(assetId) {
+  // Same Station + Group, different Sub-Group — grouped by Sub-Group
+  const station = assetId.substring(0, 3);
+  const group = assetId.substring(3, 5);
+  const currentSubGroup = assetId.substring(5, 7);
+  const validSet = validAssetIdsByGroup[group];
+  const grouped = {};
+  if (!validSet) return grouped;
+  validSet.forEach(id => {
+    if (id.substring(0, 3) === station && id.substring(5, 7) !== currentSubGroup) {
+      const sg = id.substring(5, 7);
+      if (!grouped[sg]) grouped[sg] = [];
+      grouped[sg].push(id);
+    }
+  });
+  return grouped;
+}
+
+function getLowMatchGroups(assetId) {
+  // Same Station, different Group entirely — grouped by Group (future expansion)
+  const station = assetId.substring(0, 3);
+  const currentGroup = assetId.substring(3, 5);
+  const grouped = {};
+  Object.keys(validAssetIdsByGroup).forEach(group => {
+    if (group === currentGroup) return;
+    const validSet = validAssetIdsByGroup[group];
+    validSet.forEach(id => {
+      if (id.substring(0, 3) === station) {
+        if (!grouped[group]) grouped[group] = [];
+        grouped[group].push(id);
+      }
+    });
+  });
+  return grouped;
+}
+
+function renderMoreChip(id) {
+  const m = getAssetMetadata(id);
+  const label = m.equipmentName || id;
+  return `<button class="more-chip" onclick="jumpToAsset('${id}')" title="${id}">${label}</button>`;
+}
+
+function toggleMoreGroup(type, key) {
+  moreState[type][key] = !moreState[type][key];
+  if (currentAssetId) renderMoreTab(currentAssetId);
+}
+
+function renderMoreTab(assetId) {
+  const container = document.getElementById('moreData');
+  if (!container) return;
+  const meta = getAssetMetadata(assetId);
+  const group = assetId.substring(3, 5);
+
+  let html = "";
+
+  // ---- HIGH MATCH (flat chip list, not expandable) ----
+  const highList = getHighMatchAssets(assetId);
+  html += `
+    <div class="more-section">
+      <h4 class="more-section-title high-title">🎯 Same Equipment — Other Units <span class="more-subtle">(${meta.subGroup || '-'})</span></h4>
+      ${highList.length === 0
+        ? `<p class="more-empty">No other identical units found for this equipment type at ${meta.station || 'this station'}.</p>`
+        : `<div class="more-chip-list">${highList.map(renderMoreChip).join('')}</div>`
+      }
+    </div>
+  `;
+
+  // ---- MEDIUM MATCH (expandable per Sub-Group) ----
+  const mediumGroups = getMediumMatchGroups(assetId);
+  const mediumKeys = Object.keys(mediumGroups).sort();
+  html += `<div class="more-section">
+    <h4 class="more-section-title medium-title">🧭 Other Equipment Types — Same Group <span class="more-subtle">(${meta.group || '-'})</span></h4>`;
+  if (mediumKeys.length === 0) {
+    html += `<p class="more-empty">No other equipment types registered under this group at ${meta.station || 'this station'} yet.</p>`;
+  } else {
+    mediumKeys.forEach(sg => {
+      const sgName = (subGroupMap[group] && subGroupMap[group][sg]) || `Sub-Group ${sg}`;
+      const ids = mediumGroups[sg].sort();
+      const isExpanded = !!moreState.medium[sg];
+      html += `
+        <div class="more-group">
+          <div class="more-group-header" onclick="toggleMoreGroup('medium','${sg}')">
+            <span class="more-toggle-icon ${isExpanded ? 'expanded' : ''}">►</span>
+            <span class="more-group-label">${sgName}</span>
+            <span class="more-group-count">(${ids.length} unit${ids.length !== 1 ? 's' : ''})</span>
+          </div>
+          <div class="more-group-body ${isExpanded ? '' : 'collapsed'}">
+            <div class="more-chip-list">${ids.map(renderMoreChip).join('')}</div>
+          </div>
+        </div>
+      `;
+    });
+  }
+  html += `</div>`;
+
+  // ---- LOW MATCH (expandable per Group — future) ----
+  const lowGroups = getLowMatchGroups(assetId);
+  const lowKeys = Object.keys(lowGroups).sort();
+  html += `<div class="more-section">
+    <h4 class="more-section-title low-title">🔮 Other Equipment Groups — Same Station <span class="more-subtle">(Future)</span></h4>`;
+  if (lowKeys.length === 0) {
+    html += `<p class="more-empty">Coming soon — other equipment groups (LT, Pump, DG, Third Rail, Lift &amp; Escalator, Fire, Split &amp; HVAC) will appear here once added to the Master Whitelist.</p>`;
+  } else {
+    lowKeys.forEach(g => {
+      const gName = mappingDictionary.group[g] || `Group ${g}`;
+      const ids = lowGroups[g].sort();
+      const isExpanded = !!moreState.low[g];
+      html += `
+        <div class="more-group">
+          <div class="more-group-header" onclick="toggleMoreGroup('low','${g}')">
+            <span class="more-toggle-icon ${isExpanded ? 'expanded' : ''}">►</span>
+            <span class="more-group-label">${gName}</span>
+            <span class="more-group-count">(${ids.length} unit${ids.length !== 1 ? 's' : ''})</span>
+          </div>
+          <div class="more-group-body ${isExpanded ? '' : 'collapsed'}">
+            <div class="more-chip-list">${ids.map(renderMoreChip).join('')}</div>
+          </div>
+        </div>
+      `;
+    });
+  }
+  html += `</div>`;
+
+  container.innerHTML = html;
+}
+
+async function processAssetPipelines(assetId) {
+  const loadingEl = document.getElementById('loadingStatus');
+  const loadingText = document.getElementById('loadingText');
+  loadingEl.style.display = "flex";
+  loadingText.innerText = "Decoding asset identity...";
+
+  // reset More-tab state for new lookup
+  moreState.medium = {};
+  moreState.low = {};
+  currentAssetId = null;
+
+  const isValid = runLocalDecoder(assetId);
+  if (!isValid) {
+    loadingEl.style.display = "none";
+    document.getElementById('tabMenu').style.display = "none";
+    document.getElementById('Page2').style.display = "none";
+    document.getElementById('Page3').style.display = "none";
+    document.getElementById('Page4').style.display = "none";
+    document.getElementById('Page5').style.display = "none";
+    document.getElementById('Page6').style.display = "none";
+    return;
+  }
+
+  const sheetNames = getSheetNamesForAsset(assetId);
+  if (!sheetNames) {
+    loadingEl.style.display = "none";
+    document.getElementById('decodedData').innerHTML += `
+      <div class="alert-error" style="margin-top:10px;">
+        <strong>No data sheets mapped for this equipment Group code.</strong><br>
+        Please add an entry in <code>groupSheetSuffixMap</code>.
+      </div>`;
+    document.getElementById('tabMenu').style.display = "none";
+    return;
+  }
+
+  try {
+    loadingText.innerText = "Scanning index (Column A)...";
+    const columnAResults = await fetchColumnAOnly(sheetNames);
+
+    const maintRows = findExactMatchRows(columnAResults[0], assetId);
+    const failRows  = findExactMatchRows(columnAResults[1], assetId);
+    const specHeaderRow = findSpecHeaderRow(columnAResults[2], assetId.substring(0, 7));
+
+    loadingText.innerText = "Fetching matched records...";
+    const detailed = await fetchTargetedRows(sheetNames, maintRows, failRows, specHeaderRow);
+
+    loadingEl.style.display = "none";
+    document.getElementById('tabMenu').style.display = "flex";
+    document.getElementById('Page1').style.display = "block";
+
+    const meta = getAssetMetadata(assetId);
+    const frequency = getFrequencyOfMaintenance(assetId);
+
+    if (detailed.maintenance.length > 0) {
+      const sortedMaint = sortRowsByDateDesc(detailed.maintenance, 1);
+      const topRow = sortedMaint[0];
+      const lastDateVal = topRow[1] || "";
+      document.getElementById('lastMaintField').innerText = lastDateVal || "Not Tracked";
+
+      const lastDateObj = parseDDMMYY(lastDateVal);
+      const nextDateObj = (lastDateObj && frequency !== "Not Defined") ? addInterval(lastDateObj, frequency) : null;
+
+      if (nextDateObj) {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const overdueNow = nextDateObj < today;
+        document.getElementById('nextMaintField').innerHTML =
+          formatDateDDMMYY(nextDateObj) + (overdueNow ? `<span class="overdue-badge">OVERDUE</span>` : "");
+        if (overdueNow) document.getElementById('nextMaintField').classList.add('overdue-text');
+      } else {
+        document.getElementById('nextMaintField').innerText = "Not Tracked";
+      }
+    } else {
+      document.getElementById('lastMaintField').innerText = "No Records Available";
+      document.getElementById('nextMaintField').innerText = "No Records Available";
+    }
+
+    // This Year / Total counters
+    const currentYear = new Date().getFullYear();
+    const totalMaint = detailed.maintenance.length;
+    const thisYearMaint = detailed.maintenance.filter(r => {
+      const d = parseDDMMYY(r[1]);
+      return d && d.getFullYear() === currentYear;
+    }).length;
+    const totalFail = detailed.failure.length;
+    const thisYearFail = detailed.failure.filter(r => {
+      const d = parseDDMMYY(r[1]);
+      return d && d.getFullYear() === currentYear;
+    }).length;
+
+    const yearMaintEl = document.getElementById('yearMaintField');
+    if (yearMaintEl) yearMaintEl.innerText = `${thisYearMaint} / ${totalMaint}`;
+    const yearFailEl = document.getElementById('yearFailField');
+    if (yearFailEl) yearFailEl.innerText = `${thisYearFail} / ${totalFail}`;
+
+    initMaintenanceUI(detailed.maintenance, meta);
+    initFailureUI(detailed.failure, meta);
+    renderSpecificationsOutput(detailed.specifications, 'specData');
+
+    // NEW: More tab (instant, local whitelist based — no extra API call needed)
+    currentAssetId = assetId;
+    renderMoreTab(assetId);
+
+    // NEW: Checksheet tab (separate try/catch so it never blocks the main flow)
+    try {
+      const checksheetRows = await fetchChecksheetRows();
+      const code4 = assetId.substring(3, 7);
+      const link = findChecksheetLink(checksheetRows, code4);
+      renderChecksheetTab(link, null);
+    } catch (csErr) {
+      console.error(csErr);
+      renderChecksheetTab(null, csErr.message);
+    }
+
+  } catch (err) {
+    console.error(err);
+    loadingText.innerText = "Running diagnostics...";
+    const actualTitlesResult = await fetchActualSheetTitles();
+    document.getElementById('loadingStatus').style.display = "none";
+    document.getElementById('decodedData').innerHTML += buildDiagnosticHtml(sheetNames, actualTitlesResult, err.message);
+  }
+}
+
+// ============================================================
+// MAINTENANCE UI
+// ============================================================
+function initMaintenanceUI(rows, meta) {
+  state.maintenance.rows = rows;
+  state.maintenance.meta = meta;
+  state.maintenance.filter = 'all';
+  state.maintenance.pages = {};
+  state.maintenance.expandedYears = null;
+  renderMaintenanceUI();
+}
+
+function renderMaintenanceUI() {
+  const container = document.getElementById('maintData');
+  const st = state.maintenance;
+  const meta = st.meta;
+
+  if (!st.rows || st.rows.length === 0) {
+    container.innerHTML = "<p style='color:#666; font-style: italic;'>No matching records in Maintenance registry.</p>";
+    return;
+  }
+
+  const DATE_COL = 1;
+  const totalCount = st.rows.length;
+  const overdueCount = 0;
+
+  const filtered = filterRowsByDateRange(st.rows, DATE_COL, st.filter);
+  const sorted = sortRowsByDateDesc(filtered, DATE_COL);
+  const showingCount = sorted.length;
+
+  const yearGroups = groupRowsByYear(sorted, DATE_COL);
+  const yearKeys = getSortedYearKeys(yearGroups);
+
+  if (st.expandedYears === null) {
+    st.expandedYears = {};
+    yearKeys.forEach((y, idx) => { st.expandedYears[y] = idx === 0; });
+  } else {
+    yearKeys.forEach(y => { if (!(y in st.expandedYears)) st.expandedYears[y] = false; });
+  }
+
+  let html = `
+    <div class="records-toolbar">
+      <div class="record-counters">
+        <span class="counter-badge total">Total: <strong>${totalCount}</strong></span>
+        <span class="counter-badge overdue-counter">Overdue: <strong>${overdueCount}</strong></span>
+        <span class="counter-badge showing">Showing: <strong>${showingCount}</strong></span>
+      </div>
+      <div class="toolbar-actions">
+        <select class="date-filter-select" onchange="onDateFilterChange('maintenance', this)">
+          <option value="all" ${st.filter === 'all' ? 'selected' : ''}>All Time</option>
+          <option value="30days" ${st.filter === '30days' ? 'selected' : ''}>Last 30 Days</option>
+          <option value="thisyear" ${st.filter === 'thisyear' ? 'selected' : ''}>This Year</option>
+        </select>
+        <button class="export-btn maint-btn" onclick="exportMaintenanceCSV()">⬇ Export CSV</button>
+        <button class="export-btn pdf-btn" onclick="exportMaintenancePDF()">🖨 Export PDF</button>
+      </div>
+    </div>
+  `;
+
+  if (sorted.length === 0) {
+    html += `<p style='color:#666; font-style: italic; margin-top:14px;'>No records match the selected date range.</p>`;
+    container.innerHTML = html;
+    return;
+  }
+
+  yearKeys.forEach(year => {
+    const yearRows = yearGroups[year];
+    const isExpanded = st.expandedYears[year];
+    const page = st.pages[year] || 1;
+    const totalPages = Math.max(1, Math.ceil(yearRows.length / ROWS_PER_PAGE));
+    const pageRows = paginateArray(yearRows, page, ROWS_PER_PAGE);
+
+    html += `
+      <div class="year-group">
+        <div class="year-header maint-year-header" onclick="toggleYearGroup('maintenance', '${year}')">
+          <span class="year-toggle-icon ${isExpanded ? 'expanded' : ''}">▶</span>
+          <span class="year-label">${year}</span>
+          <span class="year-count">(${yearRows.length} record${yearRows.length !== 1 ? 's' : ''})</span>
+        </div>
+        <div class="year-body ${isExpanded ? '' : 'collapsed'}">
+          <table class="maint-table responsive-table">
+            <thead>
+              <tr>
+                <th>SL.</th><th>STATION</th><th>GROUP</th><th>SUB EQUIPMENT</th><th>ASSET NAME</th>
+                <th>DATE OF MAINTENANCE</th><th>TYPE OF MAINTENANCE</th><th>ATTENDED BY</th><th>CHECKSHEET</th><th>REMARKS</th>
+              </tr>
+            </thead>
+            <tbody>
+    `;
+
+    pageRows.forEach((row, idx) => {
+      const slNo = (page - 1) * ROWS_PER_PAGE + idx + 1;
+      const dateOfMaintenance = row[1] || "";
+      const typeOfMaintenance = row[2] || "";
+      const attendedBy = row[3] || "";
+      const checksheetLink = row[4] || "";
+      const remarks = row[5] || "";
+      const checksheetCell = checksheetLink
+        ? `<a href="${checksheetLink}" target="_blank" rel="noopener">CHECKSHEET</a>`
+        : "-";
+
+      html += `
+        <tr>
+          <td data-label="SL.">${slNo}</td>
+          <td data-label="Station">${meta.station}</td>
+          <td data-label="Group">${meta.group}</td>
+          <td data-label="Sub Equipment">${meta.subGroup}</td>
+          <td data-label="Asset Name">${meta.equipmentName}</td>
+          <td data-label="Date of Maintenance">${dateOfMaintenance}</td>
+          <td data-label="Type of Maintenance">${typeOfMaintenance}</td>
+          <td data-label="Attended By">${attendedBy}</td>
+          <td data-label="Checksheet">${checksheetCell}</td>
+          <td data-label="Remarks">${remarks}</td>
+        </tr>
+      `;
+    });
+
+    html += `
+            </tbody>
+          </table>
+    `;
+
+    if (totalPages > 1) {
+      html += `
+        <div class="pagination-controls">
+          <button class="page-btn" onclick="changeYearPage('maintenance','${year}',-1)" ${page <= 1 ? 'disabled' : ''}>‹ Prev</button>
+          <span class="page-info">Page ${page} of ${totalPages}</span>
+          <button class="page-btn" onclick="changeYearPage('maintenance','${year}',1)" ${page >= totalPages ? 'disabled' : ''}>Next ›</button>
+        </div>
+      `;
+    }
+
+    html += `
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+// ============================================================
+// FAILURE UI
+// ============================================================
+function initFailureUI(rows, meta) {
+  state.failure.rows = rows;
+  state.failure.meta = meta;
+  state.failure.filter = 'all';
+  state.failure.pages = {};
+  state.failure.expandedYears = null;
+  renderFailureUI();
+}
+
+function renderFailureUI() {
+  const container = document.getElementById('failData');
+  const st = state.failure;
+  const meta = st.meta;
+
+  if (!st.rows || st.rows.length === 0) {
+    container.innerHTML = "<p style='color:#666; font-style: italic;'>No matching records in Failure registry.</p>";
+    return;
+  }
+
+  const DATE_COL = 1, RECT_COL = 8;
+  const unresolvedCount = st.rows.filter(r => isUnresolvedFailure(r[RECT_COL])).length;
+  const totalCount = st.rows.length;
+
+  const filtered = filterRowsByDateRange(st.rows, DATE_COL, st.filter);
+  const sorted = sortRowsByDateDesc(filtered, DATE_COL);
+  const showingCount = sorted.length;
+
+  const yearGroups = groupRowsByYear(sorted, DATE_COL);
+  const yearKeys = getSortedYearKeys(yearGroups);
+
+  if (st.expandedYears === null) {
+    st.expandedYears = {};
+    yearKeys.forEach((y, idx) => { st.expandedYears[y] = idx === 0; });
+  } else {
+    yearKeys.forEach(y => { if (!(y in st.expandedYears)) st.expandedYears[y] = false; });
+  }
+
+  let html = `
+    <div class="records-toolbar">
+      <div class="record-counters">
+        <span class="counter-badge total">Total: <strong>${totalCount}</strong></span>
+        <span class="counter-badge overdue-counter">Open/Unresolved: <strong>${unresolvedCount}</strong></span>
+        <span class="counter-badge showing">Showing: <strong>${showingCount}</strong></span>
+      </div>
+      <div class="toolbar-actions">
+        <select class="date-filter-select" onchange="onDateFilterChange('failure', this)">
+          <option value="all" ${st.filter === 'all' ? 'selected' : ''}>All Time</option>
+          <option value="30days" ${st.filter === '30days' ? 'selected' : ''}>Last 30 Days</option>
+          <option value="thisyear" ${st.filter === 'thisyear' ? 'selected' : ''}>This Year</option>
+        </select>
+        <button class="export-btn fail-btn" onclick="exportFailureCSV()">⬇ Export CSV</button>
+        <button class="export-btn pdf-btn" onclick="exportFailurePDF()">🖨 Export PDF</button>
+      </div>
+    </div>
+  `;
+
+  if (sorted.length === 0) {
+    html += `<p style='color:#666; font-style: italic; margin-top:14px;'>No records match the selected date range.</p>`;
+    container.innerHTML = html;
+    return;
+  }
+
+  yearKeys.forEach(year => {
+    const yearRows = yearGroups[year];
+    const isExpanded = st.expandedYears[year];
+    const page = st.pages[year] || 1;
+    const totalPages = Math.max(1, Math.ceil(yearRows.length / ROWS_PER_PAGE));
+    const pageRows = paginateArray(yearRows, page, ROWS_PER_PAGE);
+
+    html += `
+      <div class="year-group">
+        <div class="year-header fail-year-header" onclick="toggleYearGroup('failure', '${year}')">
+          <span class="year-toggle-icon ${isExpanded ? 'expanded' : ''}">▶</span>
+          <span class="year-label">${year}</span>
+          <span class="year-count">(${yearRows.length} record${yearRows.length !== 1 ? 's' : ''})</span>
+        </div>
+        <div class="year-body ${isExpanded ? '' : 'collapsed'}">
+          <table class="fail-table responsive-table">
+            <thead>
+              <tr>
+                <th>SL.</th><th>STATION</th><th>GROUP</th><th>SUB EQUIPMENT</th><th>ASSET NAME</th>
+                <th>DATE OF FAILURE</th><th>FAULT</th><th>REPORTED BY</th><th>REPERCUSSION</th>
+                <th>CAUSE OF FAILURE</th><th>ACTION TAKEN</th><th>ATTENDED BY</th><th>RECTIFICATION DATE</th>
+              </tr>
+            </thead>
+            <tbody>
+    `;
+
+    pageRows.forEach((row, idx) => {
+      const slNo = (page - 1) * ROWS_PER_PAGE + idx + 1;
+      const dateOfFailure    = row[1] || "";
+      const fault            = row[2] || "";
+      const reportedBy       = row[3] || "";
+      const repercussion     = row[4] || "";
+      const causeOfFailure   = row[5] || "";
+      const actionTaken      = row[6] || "";
+      const attendedBy       = row[7] || "";
+      const rectificationDate = row[8] || "";
+
+      const rectCell = rectificationDate
+        ? `<span class="status-pill status-good">${rectificationDate}</span>`
+        : `<span class="status-pill status-bad">OPEN</span>`;
+
+      html += `
+        <tr>
+          <td data-label="SL.">${slNo}</td>
+          <td data-label="Station">${meta.station}</td>
+          <td data-label="Group">${meta.group}</td>
+          <td data-label="Sub Equipment">${meta.subGroup}</td>
+          <td data-label="Asset Name">${meta.equipmentName}</td>
+          <td data-label="Date of Failure">${dateOfFailure}</td>
+          <td data-label="Fault">${fault}</td>
+          <td data-label="Reported By">${reportedBy}</td>
+          <td data-label="Repercussion">${repercussion}</td>
+          <td data-label="Cause of Failure">${causeOfFailure}</td>
+          <td data-label="Action Taken">${actionTaken}</td>
+          <td data-label="Attended By">${attendedBy}</td>
+          <td data-label="Rectification Date">${rectCell}</td>
+        </tr>
+      `;
+    });
+
+    html += `
+            </tbody>
+          </table>
+    `;
+
+    if (totalPages > 1) {
+      html += `
+        <div class="pagination-controls">
+          <button class="page-btn" onclick="changeYearPage('failure','${year}',-1)" ${page <= 1 ? 'disabled' : ''}>‹ Prev</button>
+          <span class="page-info">Page ${page} of ${totalPages}</span>
+          <button class="page-btn" onclick="changeYearPage('failure','${year}',1)" ${page >= totalPages ? 'disabled' : ''}>Next ›</button>
+        </div>
+      `;
+    }
+
+    html += `
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+// ============================================================
+// LOCAL DECODER — validates against whitelist
+// ============================================================
+function runLocalDecoder(id) {
+  document.getElementById('Page1').style.display = "block";
+  const meta = getAssetMetadata(id);
+
+  const genericMappingOk = !!(meta.station && meta.group && meta.subGroup && meta.equipmentName);
+  const existsInRegistry = isKnownValidAssetId(id);
+
+  if (!genericMappingOk || !existsInRegistry) {
+    let messageText = "Asset ID not matched";
+    let subText = "The 9-digit code entered does not follow a recognized Station/Group/SubGroup/Asset pattern.";
+
+    if (genericMappingOk && !existsInRegistry) {
+      messageText = "Asset Not Registered At This Station";
+      subText = `"${meta.equipmentName}" under "${meta.subGroup}" is not an installed unit at ${meta.station}. Please verify the Asset ID.`;
+    }
+
+    let errorHtml = `
+      <div class="data-card" style="border-left-color: #d93025; background-color: #fce8e6;">
+        <p style="color: #d93025; font-weight: bold; font-size: 18px; text-align: center; margin: 10px 0; display:block;">
+          ${messageText}
+        </p>
+        <p style="color:#8a2e26; font-size: 13px; text-align:center; margin: 0;">
+          ${subText}
+        </p>
+      </div>
+    `;
+    document.getElementById('decodedData').innerHTML = errorHtml;
+    return false;
+  }
+
+  const frequency = getFrequencyOfMaintenance(id);
+
+  let mappedHtml = `
+    <div class="data-card">
+      <p><span class="label">Asset ID :</span> <strong>${id}</strong></p>
+      <p><span class="label">Station :</span> ${meta.station}</p>
+      <p><span class="label">Group :</span> ${meta.group}</p>
+      <p><span class="label">Sub-Group :</span> ${meta.subGroup}</p>
+      <p><span class="label">Equipment Name :</span> <strong>${meta.equipmentName}</strong></p>
+      <p><span class="label">Frequency Of Maintenance:</span> <span class="status-pill status-neutral">${frequency}</span></p>
+      <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 12px 0;">
+      <p><span class="label">Last Maintenance:</span> <span id="lastMaintField" style="font-weight:600; color:var(--primary-color)">Awaiting Sync...</span></p>
+      <p><span class="label">Next Maintenance:</span> <span id="nextMaintField" style="font-weight:600; color:var(--primary-color)">Awaiting Sync...</span></p>
+    </div>
+    <div class="data-card" style="border-left-color: var(--maint-color);">
+      <p><span class="label">This Year / Total Maintenance:</span> <span id="yearMaintField" style="font-weight:600; color:var(--maint-color)">Awaiting Sync...</span></p>
+      <p><span class="label">This Year / Total Failure:</span> <span id="yearFailField" style="font-weight:600; color:var(--fail-color)">Awaiting Sync...</span></p>
+    </div>
+  `;
+  document.getElementById('decodedData').innerHTML = mappedHtml;
+  return true;
+}
+
+// ============================================================
+// SPECIFICATIONS RENDER
+// ============================================================
+function renderSpecificationsOutput(specMatchedData, containerTargetId) {
+  let frame = document.getElementById(containerTargetId);
+  if (!specMatchedData || !specMatchedData.headers || !specMatchedData.values) {
+    frame.innerHTML = "<p style='color:#666; font-style: italic;'>No matching specification details registered.</p>";
+    return;
+  }
+
+  const headingCols = specMatchedData.headers;
+  const valueCols = specMatchedData.values;
+
+  let tableHtml = `<table class="spec-table"><tbody>`;
+  let headingToggle = 0;
+
+  for (let c = 1; c < headingCols.length; c++) {
+    const headText = headingCols[c] ? headingCols[c].toString().trim() : "";
+    if (headText === "") continue;
+
+    const rawVal = valueCols[c];
+    const cellValEmpty = (rawVal === undefined || rawVal === null || rawVal.toString().trim() === "");
+
+    if (cellValEmpty) {
+      headingToggle++;
+      const altClass = (headingToggle % 2 === 0) ? 'spec-heading-b' : 'spec-heading-a';
+      tableHtml += `
+        <tr>
+          <td colspan="2" class="spec-heading ${altClass}">${headText}</td>
+        </tr>
+      `;
+    } else {
+      const cellVal = rawVal.toString().trim();
+      tableHtml += `
+        <tr>
+          <td class="spec-label">${headText}</td>
+          <td>${cellVal}</td>
+        </tr>
+      `;
+    }
+  }
+
+  tableHtml += `</tbody></table>`;
+  frame.innerHTML = tableHtml;
+}
+
+function switchTab(clickEvent, targetPanelName) {
+  let individualPanels = document.getElementsByClassName("tabcontent");
+  for (let x = 0; x < individualPanels.length; x++) individualPanels[x].style.display = "none";
+
+  let operationalTabs = document.getElementsByClassName("tablinks");
+  for (let y = 0; y < operationalTabs.length; y++) operationalTabs[y].className = operationalTabs[y].className.replace(" active", "");
+
+  document.getElementById(targetPanelName).style.display = "block";
+  clickEvent.currentTarget.className += " active";
+}
 </script>
 </body>
- </html>
+    </html>
