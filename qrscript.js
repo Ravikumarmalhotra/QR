@@ -584,11 +584,11 @@ async function renderChecksheetTab(link, errorMsg) {
   if (!container) return;
 
   if (errorMsg) {
-    container.innerHTML = `<div class="alert-error">⚠ Could not load reference checksheet: ${errorMsg}</div>`;
+    container.innerHTML = `<div class="alert-error">⚠ Could not load Checksheet: ${errorMsg}</div>`;
     return;
   }
   if (!link) {
-    container.innerHTML = `<p style="color:#666; font-style: italic;">No reference checksheet format registered yet for this equipment type (Group + Sub-Group code). Please add a row in "Checksheet_ALL" sheet (Col A = 4-digit code, Col B = Google Drive link).</p>`;
+    container.innerHTML = `<p style="color:#666; font-style: italic;">No checksheet Found.</p>`;
     return;
   }
 
@@ -616,7 +616,7 @@ async function renderChecksheetTab(link, errorMsg) {
         <span>Page <span id="csPageNum">1</span> / ${totalPages}</span>
         <button id="csNextBtn">Next ›</button>
       </div>
-      <p class="checksheet-note">📄 Reference Checksheet Format — View Only</p>
+      <p class="checksheet-note">📄 Checksheet Format — View Only</p>
     `;
 
     const canvas = document.getElementById('checksheetCanvas');
@@ -768,7 +768,7 @@ function renderMoreTab(assetId) {
   html += `<div class="more-section">
     <h4 class="more-section-title low-title">🔮 Other Equipment Groups — Same Station <span class="more-subtle">(Future)</span></h4>`;
   if (lowKeys.length === 0) {
-    html += `<p class="more-empty">Coming soon — other equipment groups (LT, Pump, DG, Third Rail, Lift &amp; Escalator, Fire, Split &amp; HVAC) will appear here once added to the Master Whitelist.</p>`;
+    html += `<p class="more-empty">Coming soon — other equipment groups (LT, Pump, DG, Third Rail, Lift &amp; Escalator, Fire, Split &amp; HVAC) will appear here once added by Admin.</p>`;
   } else {
     lowKeys.forEach(g => {
       const gName = group[g] || `Group ${g}`;
@@ -797,7 +797,7 @@ async function processAssetPipelines(assetId) {
   const loadingEl = document.getElementById('loadingStatus');
   const loadingText = document.getElementById('loadingText');
   loadingEl.style.display = "flex";
-  loadingText.innerText = "Decoding asset identity...";
+  loadingText.innerText = "Asset Finding...";
 
   // reset More-tab state for new lookup
   moreState.medium = {};
@@ -829,7 +829,7 @@ async function processAssetPipelines(assetId) {
   }
 
   try {
-    loadingText.innerText = "Scanning index (Column A)...";
+    loadingText.innerText = "Loading...";
     const columnAResults = await fetchColumnAOnly(sheetNames);
 
     const maintRows = findExactMatchRows(columnAResults[0], assetId);
@@ -968,7 +968,7 @@ function renderMaintenanceUI() {
           <option value="30days" ${st.filter === '30days' ? 'selected' : ''}>Last 30 Days</option>
           <option value="thisyear" ${st.filter === 'thisyear' ? 'selected' : ''}>This Year</option>
         </select>
-        <button class="export-btn maint-btn" onclick="exportMaintenanceCSV()">⬇ Export CSV</button>
+        <button class="export-btn maint-btn" onclick="exportMaintenanceCSV()">⬇ Export Excel</button>
         <button class="export-btn pdf-btn" onclick="exportMaintenancePDF()">🖨 Export PDF</button>
       </div>
     </div>
@@ -1217,7 +1217,7 @@ function runLocalDecoder(id) {
 
   if (!genericMappingOk || !existsInRegistry) {
     let messageText = "Asset ID not matched";
-    let subText = "The 9-digit code entered does not follow a recognized Station/Group/SubGroup/Asset pattern.";
+    let subText = "Your Entered 9-digit is wrong please check.";
 
     if (genericMappingOk && !existsInRegistry) {
       messageText = "Asset Not Registered At This Station";
@@ -1249,12 +1249,12 @@ function runLocalDecoder(id) {
       <p><span class="label">Equipment Name :</span> <strong>${meta.equipmentName}</strong></p>
       <p><span class="label">Frequency Of Maintenance:</span> <span class="status-pill status-neutral">${frequency}</span></p>
       <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 12px 0;">
-      <p><span class="label">Last Maintenance:</span> <span id="lastMaintField" style="font-weight:600; color:var(--primary-color)">Awaiting Sync...</span></p>
-      <p><span class="label">Next Maintenance:</span> <span id="nextMaintField" style="font-weight:600; color:var(--primary-color)">Awaiting Sync...</span></p>
+      <p><span class="label">Last Maintenance:</span> <span id="lastMaintField" style="font-weight:600; color:var(--primary-color)">Searching...</span></p>
+      <p><span class="label">Next Maintenance:</span> <span id="nextMaintField" style="font-weight:600; color:var(--primary-color)">Searching...</span></p>
     </div>
     <div class="data-card" style="border-left-color: var(--maint-color);">
-      <p><span class="label">This Year / Total Maintenance:</span> <span id="yearMaintField" style="font-weight:600; color:var(--maint-color)">Awaiting Sync...</span></p>
-      <p><span class="label">This Year / Total Failure:</span> <span id="yearFailField" style="font-weight:600; color:var(--fail-color)">Awaiting Sync...</span></p>
+      <p><span class="label">This Year / Total Maintenance:</span> <span id="yearMaintField" style="font-weight:600; color:var(--maint-color)">Searching...</span></p>
+      <p><span class="label">This Year / Total Failure:</span> <span id="yearFailField" style="font-weight:600; color:var(--fail-color)">Searching...</span></p>
     </div>
   `;
   document.getElementById('decodedData').innerHTML = mappedHtml;
@@ -1267,7 +1267,7 @@ function runLocalDecoder(id) {
 function renderSpecificationsOutput(specMatchedData, containerTargetId) {
   let frame = document.getElementById(containerTargetId);
   if (!specMatchedData || !specMatchedData.headers || !specMatchedData.values) {
-    frame.innerHTML = "<p style='color:#666; font-style: italic;'>No matching specification details registered.</p>";
+    frame.innerHTML = "<p style='color:#666; font-style: italic;'>No matching specificationcfound.</p>";
     return;
   }
 
