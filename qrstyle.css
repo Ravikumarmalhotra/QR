@@ -38,17 +38,15 @@
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html { -webkit-text-size-adjust: 100%; }
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  padding: 12px 12px 40px 12px;
-  max-width: 1050px;
-  margin: auto;
-  color: var(--text-dark);
-  line-height: 1.6;
-  background: linear-gradient(135deg, #eef4ff 0%, #f7f9fc 45%, #eef7f2 100%);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--text);min-height:100vh;background:linear-gradient(135deg,#667eea 0%,#764ba2 25%,#f093fb 50%,#5ee7df 75%,#667eea 100%);background-size:400% 400%;animation:gradientShift 12s ease infinite}
+@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+@keyframes rainbowText{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes driveGradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0;transform:scale(0.97)}to{opacity:1;transform:scale(1)}}
+.page{max-width:1200px;margin:0 auto;padding:8px 8px 30px;display:none}
 .header-frame {
   background: linear-gradient(160deg, var(--header-frame-1), var(--header-frame-2));
   border-radius: 18px;
