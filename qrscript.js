@@ -836,7 +836,7 @@ async function processAssetPipelines(assetId) {
     const failRows  = findExactMatchRows(columnAResults[1], assetId);
     const specHeaderRow = findSpecHeaderRow(columnAResults[2], assetId.substring(0, 7));
 
-    loadingText.innerText = "Fetching matched records...";
+    loadingText.innerText = "Loading...";
     const detailed = await fetchTargetedRows(sheetNames, maintRows, failRows, specHeaderRow);
 
     loadingEl.style.display = "none";
@@ -933,7 +933,7 @@ function renderMaintenanceUI() {
   const meta = st.meta;
 
   if (!st.rows || st.rows.length === 0) {
-    container.innerHTML = "<p style='color:#666; font-style: italic;'>No matching records in Maintenance registry.</p>";
+    container.innerHTML = "<p style='color:#666; font-style: italic;'>No Records in Maintenance register.</p>";
     return;
   }
 
@@ -1074,7 +1074,7 @@ function renderFailureUI() {
   const meta = st.meta;
 
   if (!st.rows || st.rows.length === 0) {
-    container.innerHTML = "<p style='color:#666; font-style: italic;'>No matching records in Failure registry.</p>";
+    container.innerHTML = "<p style='color:#666; font-style: italic;'>No records in Failure register.</p>";
     return;
   }
 
