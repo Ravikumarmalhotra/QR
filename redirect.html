@@ -38,31 +38,31 @@
 
 <script>
 // ==========================================
-// STEP 1: URL SE SERIAL NUMBER NIKALO
+// STEP 1: URL SE code1 (jaise 200010101) NIKALO
 // ==========================================
 const urlParams = new URLSearchParams(window.location.search);
-const sn = parseInt(urlParams.get('sn'));
+const code1 = urlParams.get('id');
 
-if (!sn) {
+if (!code1) {
   document.getElementById('loader').innerHTML = 
-    '<div class="error-box">Invalid QR Code - Serial number missing</div>';
+    '<div class="error-box">Invalid QR Code - ID missing</div>';
 } else {
-
-  // ==========================================
-  // STEP 2: MAPPING TABLE SE DATA DHUNDO
-  // ==========================================
-  const record = qrMapping.find(item => item.sn === sn);
   
-  if (!record) {
-    document.getElementById('loader').innerHTML = 
-      '<div class="error-box">QR Code data nahi mila (SN: ' + sn + ')</div>';
-  } else {
+// ==========================================
+  // STEP 2: MAPPING SE code2 DHUNDO
+  // ==========================================
+  const code2 = qrMapping[code1];
 
+  if (!code2) {
+    document.getElementById('loader').innerHTML = 
+      '<div class="error-box">QR Code data nahi mila: ' + code1 + '</div>';
+  } else {
+  
     // ==========================================
     // STEP 3: PURA LINK BANAO (Header + Code)
     // ==========================================
-    const link1 = "https://ravikumarmalhotra.github.io/QR/index.html?id=" + record.code1;
-    const link2 = "https://powersupplyorange.github.io/QR/index.html?id=" + record.code2;
+    const link1 = "https://ravikumarmalhotra.github.io/QR/index.html?id=" + code1;
+    const link2 = "https://powersupplyorange.github.io/QR/index.html?id=" + code2;
 
     // ==========================================
     // STEP 4: CONFIG.JSON SE ACTIVE STATUS CHECK KARO
@@ -74,17 +74,17 @@ if (!sn) {
       .then(config => {
         const finalURL = config.active === 'link1' ? link1 : link2;
         
-        console.log('SN:', sn);
-        console.log('Code1:', record.code1, '→', link1);
-        console.log('Code2:', record.code2, '→', link2);
+        console.log('Code1 (from QR):', code1);
+        console.log('Code2 (mapped):', code2);
         console.log('Active:', config.active);
+        console.log('Redirecting to:', finalURL);
         
         window.location.href = finalURL;
       })
       .catch(error => {
         console.error('Config error:', error);
-        document.getElementById('loader').innerHTML = 
-          '<div class="error-box">Config load nahi hua</div>';
+        // Fallback: agar config load na ho, default link1 pe bhej do
+        window.location.href = link1;
       });
   }
 }
