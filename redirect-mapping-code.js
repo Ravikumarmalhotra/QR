@@ -1,5 +1,5 @@
 const qrMapping = [
-  { sn: 1, code1: "200010101", code2: "200HB01" },
+  { sn: 1, code1: "200010101", code2: "200010101" },
   { sn: 2, code1: "200010102", code2: "200HB02" },
   { sn: 3, code1: "200010103", code2: "200HB03" },
   { sn: 4, code1: "200010104", code2: "200HB04" },
