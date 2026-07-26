@@ -67,7 +67,7 @@ if (!sn) {
     // ==========================================
     // STEP 4: CONFIG.JSON SE ACTIVE STATUS CHECK KARO
     // ==========================================
-    const configURL = `redirect-config.json?t=${Date.now()}`; // cache-busting
+    const configURL = `redirect-config.jason?t=${Date.now()}`; // cache-busting
     
     fetch(configURL)
       .then(response => response.json())
