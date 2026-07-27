@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#6d28d9">
+<title> Orange Line Asset Maintenance Management </title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+</script>
+  <script src="https://cdn.jsdelivr.net/gh/ravikumarmalhotra/KKSO-KBGA-APP/maping.js"></script>
+ <link rel="stylesheet" href="qrstyle2.css" />
+</head>
+<body>
+  
+<!-- ===== MAIN APP ===== -->
+<div class="page" id="appPage">
+<div class="header-strip">
+<div class="h11"></div>
+<div class="h12"></div>
+<div class="h13"></div>
+</div>
+
+  <div class="header-clock-bar">
+    <div class="clock-display">
+      <span class="live-dot"></span>
+      <span id="liveClockText">--</span>
+    </div>
+  </div>
+
+ <div class="title-card">
+<h1>KKSO-KBGA Asset Management</h1>
+<h2 id="titleLevel">A Cloud Based Asset Management in Orange Line</h2>
+<h3 id="versionText">© Created by SSE/M/KKSO </h3>
+</div>
+
+<div class="input-selection-container" id="inputContainer">
+  <label>Select Asset Discovery Feature:</label>
+  <div class="input-group">
+    <input type="text" id="manualAssetId" placeholder="Enter 9-Digit ID (e.g., 200010101)" maxlength="9" inputmode="numeric">
+    <button class="action-btn" onclick="handleManualSearch()">Search ID</button>
+  </div>
+</div>
+
+<div id="loadingStatus"><span class="spinner"></span> <span id="loadingText">Processing request...</span></div>
+
+<div id="tabMenu" class="tab-bar">
+  <button class="tablinks general-tab active" onclick="switchTab(event, 'Page1')">🧩 General</button>
+  <button class="tablinks maint-tab" onclick="switchTab(event, 'Page2')">🛠 Maintenance</button>
+  <button class="tablinks fail-tab" onclick="switchTab(event, 'Page3')">⚠️ Failure Logs</button>
+  <button class="tablinks spec-tab" onclick="switchTab(event, 'Page4')">📋 Specifications</button>
+  <button class="tablinks checksheet-tab" onclick="switchTab(event, 'Page5')">📝 Checksheet</button>
+  <button class="tablinks more-tab" onclick="switchTab(event, 'Page6')">🔗 More</button>
+</div>
+
+<div id="Page1" class="tabcontent">
+  <div id="decodedData"></div>
+</div>
+
+<div id="Page2" class="tabcontent">
+  <h4>🛠 Maintenance Recoed </h4>
+  <div id="maintData">No asset actively loaded.</div>
+</div>
+
+<div id="Page3" class="tabcontent">
+  <h4>⚠️ Failure Record</h4>
+  <div id="failData">No asset actively loaded.</div>
+</div>
+
+<div id="Page4" class="tabcontent">
+  <h4>📋 Specifications</h4>
+  <div id="specData">No asset actively loaded.</div>
+</div>
+
+<!-- NEW TAB #1: CHECKSHEET -->
+<div id="Page5" class="tabcontent">
+  <h4>📝 Checksheet Format</h4>
+  <div id="checksheetData">No asset actively loaded.</div>
+</div>
+
+<!-- NEW TAB #2: MORE -->
+<div id="Page6" class="tabcontent">
+  <h4>🔗 More Assets In This Station</h4>
+  <div id="moreData">No asset actively loaded.</div>
+</div>
+   <!-- QR SCRIPT -->
+ <script src="qrscript.js"></script>
+  <!-- QR SCRIPT -->
+</body>
+  </html>
