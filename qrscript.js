@@ -722,7 +722,7 @@ function renderMoreTab(assetId) {
 
   let html = "";
 
-  // ---- HIGH MATCH (flat chip list, not expandable) ----
+  // ---- HIGH MATCH (flat chip list) ----
   const highList = getHighMatchAssets(assetId);
   html += `
     <div class="more-section">
@@ -734,14 +734,16 @@ function renderMoreTab(assetId) {
     </div>
   `;
 
-  // ---- MEDIUM MATCH (expandable per Sub-Group) ----
+  // ---- MEDIUM MATCH (Only show if there are other sub-groups available) ----
   const mediumGroups = getMediumMatchGroups(assetId);
   const mediumKeys = Object.keys(mediumGroups).sort();
-  html += `<div class="more-section">
-    <h4 class="more-section-title medium-title">🧭 Other Equipment Types — Same Group <span class="more-subtle">(${meta.group || '-'})</span></h4>`;
-  if (mediumKeys.length === 0) {
-    html += `<p class="more-empty">No other equipment types registered under this group at ${meta.station || 'this station'} yet.</p>`;
-  } else {
+  
+  // Agar same group ke ander doosre sub-groups exist karte hain tabhi ye section dikhega
+  if (mediumKeys.length > 0) {
+    const groupName = (typeof groupMap !== 'undefined' && groupMap[group]) || meta.group || group;
+    html += `<div class="more-section">
+      <h4 class="more-section-title medium-title">🧭 Other Equipment Types — Same Group <span class="more-subtle">(${groupName})</span></h4>`;
+    
     mediumKeys.forEach(sg => {
       const sgName = (subGroupMap[group] && subGroupMap[group][sg]) || `Sub-Group ${sg}`;
       const ids = mediumGroups[sg].sort();
@@ -759,19 +761,19 @@ function renderMoreTab(assetId) {
         </div>
       `;
     });
+    html += `</div>`;
   }
-  html += `</div>`;
 
-  // ---- LOW MATCH (expandable per Group — future) ----
+  // ---- LOW MATCH (Other Groups) ----
   const lowGroups = getLowMatchGroups(assetId);
   const lowKeys = Object.keys(lowGroups).sort();
-  html += `<div class="more-section">
-    <h4 class="more-section-title low-title">🔮 Other Equipment Groups — Same Station <span class="more-subtle">(Future)</span></h4>`;
-  if (lowKeys.length === 0) {
-    html += `<p class="more-empty">Coming soon — other equipment groups (LT, Pump, DG, Third Rail, Lift &amp; Escalator, Fire, Split &amp; HVAC) will appear here once added by Admin.</p>`;
-  } else {
+  
+  if (lowKeys.length > 0) {
+    html += `<div class="more-section">
+      <h4 class="more-section-title low-title">🔮 Other Equipment Groups — Same Station</h4>`;
+    
     lowKeys.forEach(g => {
-      const gName = group[g] || `Group ${g}`;
+      const gName = (typeof groupMap !== 'undefined' && groupMap[g]) || g;
       const ids = lowGroups[g].sort();
       const isExpanded = !!moreState.low[g];
       html += `
@@ -787,11 +789,12 @@ function renderMoreTab(assetId) {
         </div>
       `;
     });
+    html += `</div>`;
   }
-  html += `</div>`;
 
   container.innerHTML = html;
 }
+
 
 async function processAssetPipelines(assetId) {
   const loadingEl = document.getElementById('loadingStatus');
@@ -1316,4 +1319,4 @@ function switchTab(clickEvent, targetPanelName) {
 
   document.getElementById(targetPanelName).style.display = "block";
   clickEvent.currentTarget.className += " active";
-}
+                                 }
