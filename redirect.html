@@ -24,6 +24,19 @@
   }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   .error-box { background: #ffe6e6; padding: 20px; border-radius: 10px; color: #d32f2f; }
+  /* Disabled Message Card Styling */
+  .disabled-box { 
+    background: #fff3cd; 
+    border: 1px solid #ffeeba; 
+    padding: 25px 20px; 
+    border-radius: 12px; 
+    color: #856404; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  .disabled-box h3 { margin: 0 0 10px 0; font-size: 18px; color: #856404; }
+  .disabled-box p { margin: 0; font-size: 14px; line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -48,7 +61,7 @@ if (!code1) {
     '<div class="error-box">Invalid QR Code - ID missing</div>';
 } else {
   
-// ==========================================
+  // ==========================================
   // STEP 2: MAPPING SE code2 DHUNDO
   // ==========================================
   const code2 = qrMapping[code1];
@@ -65,13 +78,26 @@ if (!code1) {
     const link2 = "https://powersupplyorange.github.io/QR/index.html?id=" + code2;
 
     // ==========================================
-    // STEP 4: CONFIG.JSON SE ACTIVE STATUS CHECK KARO
+    // STEP 4: CONFIG.JSON SE ACTIVE & DISABLE STATUS CHECK KARO
     // ==========================================
     const configURL = `redirect-config.jason?t=${Date.now()}`; // cache-busting
     
     fetch(configURL)
       .then(response => response.json())
       .then(config => {
+
+        // Check if QR feature is disabled
+        if (config.disabled === true) {
+          const alertMessage = config.message || "QR Code is temporarily disabled.";
+          document.getElementById('loader').innerHTML = `
+            <div class="disabled-box">
+              <h3>Notice</h3>
+              <p>${alertMessage}</p>
+            </div>
+          `;
+          return;
+        }
+
         const finalURL = config.active === 'link1' ? link1 : link2;
         
         console.log('Code1 (from QR):', code1);
