@@ -1,5 +1,5 @@
 {
   "active": "link1",
-  "disabled": true,
+  "disabled": false,
   "message": "QR code is only for entry purpose. For more information contact to SSE/E/M/KKSO"
 }
