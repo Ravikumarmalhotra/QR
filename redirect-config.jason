@@ -1,3 +1,5 @@
 {
-  "active": "link1"
+  "active": "link1",
+  "disabled": false,
+  "message": "QR code is only for entry purpose."
 }
