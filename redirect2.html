@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redirecting...</title>
+<style>
+  :root {
+    --bg-color: #f0f2f5;
+    --card-bg: #ffffff;
+    --primary-color: #4285F4;
+    --text-color: #333333;
+    --error-bg: #ffe6e6;
+    --error-color: #d32f2f;
+    --warning-bg: #fff3cd;
+    --warning-border: #ffeeba;
+    --warning-text: #856404;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-color);
+    padding: 16px;
+    color: var(--text-color);
+  }
+
+  .loader-container {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    margin: auto;
+  }
+
+  .loader-card {
+    background: var(--card-bg);
+    padding: 24px 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    animation: spin 0.9s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .status-text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+    word-break: break-word;
+  }
+
+  /* Responsive Cards for Error and Disabled states */
+  .error-box {
+    background: var(--error-bg);
+    padding: 20px;
+    border-radius: 12px;
+    color: var(--error-color);
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-wrap: break-word;
+  }
+
+  .disabled-box {
+    background: var(--warning-bg);
+    border: 1px solid var(--warning-border);
+    padding: 24px 20px;
+    border-radius: 12px;
+    color: var(--warning-text);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    text-align: center;
+  }
+
+  .disabled-box h3 {
+    margin-bottom: 10px;
+    font-size: 1.15rem;
+    color: var(--warning-text);
+  }
+
+  .disabled-box p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  /* Mobile screen optimization */
+  @media (max-width: 480px) {
+    body {
+      padding: 12px;
+    }
+    
+    .loader-card, .disabled-box, .error-box {
+      padding: 20px 16px;
+    }
+
+    .status-text {
+      font-size: 0.92rem;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="loader-container" id="loader">
+  <div class="loader-card">
+    <div class="spinner"></div>
+    <p class="status-text">Redirecting, please wait...</p>
+  </div>
+</div>
+
+<!-- Mapping data file -->
+<script src="redirect-mapping-code.js"></script>
+
+<script>
+// ==========================================
+// STEP 1: URL SE code1 (jaise 200010101) NIKALO
+// ==========================================
+const urlParams = new URLSearchParams(window.location.search);
+const code1 = urlParams.get('id');
+
+if (!code1) {
+  document.getElementById('loader').innerHTML = 
+    '<div class="error-box">Invalid QR Code - ID missing</div>';
+} else {
+  
+  // ==========================================
+  // STEP 2: MAPPING SE code2 DHUNDO
+  // ==========================================
+  const code2 = qrMapping[code1];
+
+  if (!code2) {
+    document.getElementById('loader').innerHTML = 
+      '<div class="error-box">QR Code data nahi mila: ' + code1 + '</div>';
+  } else {
+  
+    // ==========================================
+    // STEP 3: PURA LINK BANAO
+    // ==========================================
+    const link1 = "https://ravikumarmalhotra.github.io/QR/index.html?id=" + code1;
+    const link2 = "https://powersupplyorange.github.io/QR/index.html?id=" + code2;
+
+    // ==========================================
+    // STEP 4: CONFIG.JSON SE STATUS CHECK KARO
+    // ==========================================
+    const configURL = `redirect-config.jason?t=${Date.now()}`;
+    
+    fetch(configURL)
+      .then(response => response.json())
+      .then(config => {
+
+        // Check if QR feature is disabled
+        if (config.disabled === true) {
+          const alertMessage = config.message || "QR Code is temporarily disabled.";
+          document.getElementById('loader').innerHTML = `
+            <div class="disabled-box">
+              <h3>Notice</h3>
+              <p>${alertMessage}</p>
+            </div>
+          `;
+          return;
+        }
+
+        const finalURL = config.active === 'link1' ? link1 : link2;
+        
+        console.log('Code1 (from QR):', code1);
+        console.log('Code2 (mapped):', code2);
+        console.log('Active:', config.active);
+        console.log('Redirecting to:', finalURL);
+        
+        window.location.href = finalURL;
+      })
+      .catch(error => {
+        console.error('Config error:', error);
+        window.location.href = link1;
+      });
+  }
+}
+</script>
+
+</body>
+</html>
